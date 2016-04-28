@@ -19,4 +19,3 @@ defmodule Kitto do
     Application.get_env :kitto, :root
   end
 end
-
