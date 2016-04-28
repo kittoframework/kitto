@@ -1,4 +1,15 @@
-%{"cowboy": {:hex, :cowboy, "1.0.4"},
+%{"certifi": {:hex, :certifi, "0.4.0"},
+  "combine": {:hex, :combine, "0.7.0"},
+  "cowboy": {:hex, :cowboy, "1.0.4"},
   "cowlib": {:hex, :cowlib, "1.0.2"},
+  "gettext": {:hex, :gettext, "0.11.0"},
+  "hackney": {:hex, :hackney, "1.6.0"},
+  "idna": {:hex, :idna, "1.2.0"},
+  "metrics": {:hex, :metrics, "1.0.1"},
+  "mimerl": {:hex, :mimerl, "1.0.2"},
   "plug": {:hex, :plug, "1.1.4"},
-  "ranch": {:hex, :ranch, "1.2.1"}}
+  "poison": {:hex, :poison, "2.1.0"},
+  "ranch": {:hex, :ranch, "1.2.1"},
+  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.0"},
+  "timex": {:hex, :timex, "2.1.4"},
+  "tzdata": {:hex, :tzdata, "0.5.7"}}
