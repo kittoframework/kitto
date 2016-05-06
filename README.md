@@ -1,20 +1,11 @@
-# Dash
+# Kitto
 
-**TODO: Add description**
+Kitto is a framework to help you create dashboards.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
 
-  1. Add dash to your list of dependencies in `mix.exs`:
+### About the name
 
-        def deps do
-          [{:dash, "~> 0.0.1"}]
-        end
-
-  2. Ensure dash is started before your application:
-
-        def application do
-          [applications: [:dash]]
-        end
+The [road to Erlang / Elixir](https://www.google.gr/maps/place/Erlanger+Rd,+London) starts with [Kitto](https://en.wikipedia.org/wiki/H._D._F._Kitto).
 
