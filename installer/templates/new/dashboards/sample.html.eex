@@ -1,0 +1,58 @@
+<div class="gridster">
+  <ul>
+    <li data-row="1" data-col="1" data-sizex="2" data-sizey="1">
+      <div class="widget-welcome"
+           data-widget="Text"
+           data-source="text"
+           data-title="Hello"
+           data-text="This is your shiny new dashboard."
+           data-moreinfo="Protip: You can drag the widgets around!"></div>
+    </li>
+
+    <li data-row="1"
+        data-col="3"
+        data-sizex="1"
+        data-sizey="1">
+      <div class="widget-synergy"
+           data-widget="Meter"
+           data-source="random"
+           data-title="Synergy"
+           data-min="0"
+           data-max="100"></div>
+    </li>
+
+    <li data-row="1"
+        data-col="4"
+        data-sizex="1"
+        data-sizey="2">
+      <div class="widget-buzzwords"
+           data-source="buzzwords"
+           data-widget="List"
+           data-unordered="true"
+           data-title="Buzzwords"
+           data-moreinfo="# of times said around the office"></div>
+    </li>
+
+    <li data-row="2"
+        data-col="1"
+        data-sizex="1"
+        data-sizey="1">
+      <div class="widget-valuation"
+           data-widget="Number"
+           data-source="random"
+           data-title="Current Valuation"
+           data-moreinfo="In billions"
+           data-prefix="$"></div>
+    </li>
+
+    <li data-row="2"
+        data-col="2"
+        data-sizex="2"
+        data-sizey="1">
+      <div class="widget-convergence"
+           data-widget="Graph"
+           data-source="convergence"
+           data-title="Convergence"></div>
+    </li>
+  </ul>
+</div>
