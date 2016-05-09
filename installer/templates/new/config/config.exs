@@ -5,7 +5,10 @@
 # is restricted to this project.
 use Mix.Config
 
-config :kitto, root: Path.dirname(__DIR__)
+config :kitto, root: Path.dirname(__DIR__), port: 4000
+
+# Use port: {:system, "PORT"} to have port port configurable via env variable
+# Example: `PORT=4444 mix kitto.server` will start the server on port 4444
 
 # Configures Elixir's Logger
 config :logger, :console,
