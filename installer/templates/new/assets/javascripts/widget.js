@@ -7,18 +7,37 @@ class Widget extends React.Component {
 
     this.state = {};
     this.source = (this.props.source || this.constructor.name).toLowerCase();
-    this.listen(this.source);
+    Widget.listen(this, this.source);
   }
-  listen(source) {
-    this.events = new EventSource('/events');
-    this.events.addEventListener((source.toLowerCase() || 'messages'), function(event) {
-      this.setState(JSON.parse(event.data).message);
-    }.bind(this));
+
+  static events() {
+    if (!this._events) {
+      this._events = new EventSource('/events');
+
+      this._events.addEventListener('error', (e) => {
+        let state = e.currentTarget.readyState;
+
+        if (state === EventSource.CONNECTING || state === EventSource.CLOSED) {
+
+          // Restart the dashboard
+          setTimeout((() => window.location.reload()), 5 * 60 * 1000)
+        }
+      });
+    }
+
+    return this._events;
   }
+
+  static listen(component, source) {
+    this.events().addEventListener((source.toLowerCase() || 'messages'), (event) => {
+      component.setState(JSON.parse(event.data).message);
+    });
+  }
+
   static mount(component) {
     const widgets = document.querySelectorAll(`[data-widget="${component.name}"]`)
 
-    Array.prototype.forEach.call(widgets, function(el) {
+    Array.prototype.forEach.call(widgets, (el) => {
       var dataset = el.dataset;
 
       dataset.className = `${el.className} widget-${component.name.toLowerCase()} widget`;
