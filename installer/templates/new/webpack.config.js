@@ -7,7 +7,7 @@ const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
   app: path.join(__dirname, 'assets/javascripts/application.js'),
   widgets: glob.sync('./widgets/**/*.js'),
-  build: path.join(__dirname, 'public'),
+  build: path.join(__dirname, 'public/assets'),
   gridster: path.join(__dirname, 'node_modules/gridster/dist'),
   d3: path.join(__dirname, 'node_modules/d3/d3.min.js'),
   rickshaw: path.join(__dirname, 'node_modules/rickshaw/rickshaw.js')
