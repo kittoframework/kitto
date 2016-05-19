@@ -81,5 +81,16 @@ if(TARGET === 'start' || !TARGET) {
 }
 
 if(TARGET === 'build') {
-  module.exports = merge(common, {});
+  module.exports = merge(common, {
+    plugins: [
+      new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        keep_fnames: true
+      },
+      mangle: {
+       keep_fnames: true
+      }
+    })]
+  });
 }
