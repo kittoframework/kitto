@@ -170,7 +170,7 @@ defmodule Mix.Tasks.Kitto.New do
     :os.cmd(String.to_char_list(cmd))
   end
 
-  defp kitto_dep("deps/kitto"), do: ~s[{:kitto, "~> 0.1.0"}]
+  defp kitto_dep("deps/kitto"), do: ~s[{:kitto, "~> #{@version}"}]
   defp kitto_dep(path), do: ~s[{:phoenix, path: #{inspect path}, override: true}]
 
   defp kitto_path(_path, false) do
