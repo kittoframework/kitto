@@ -1,6 +1,11 @@
 # Kitto
 
-Kitto is a framework to help you create dashboards.
+Kitto is a framework to help you create dashboards, written in Elixir / React.
+It is heavily inspired by [shopify/dashing](http://dashing.io/).
+
+[Demo](http://kitto.io/dashboards/sample)
+
+![demo](http://i.imgur.com/c9SloLX.png)
 
 ## Installation
 
