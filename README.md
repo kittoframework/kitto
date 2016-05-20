@@ -13,7 +13,7 @@ mix archive.install https://github.com/kittoframework/archives/blob/master/kitto
 ## Create a dashboard
 
 ```shell
-mix kitto.dashboard <project_name>
+mix kitto.new <project_name>
 ```
 
 ## Development
@@ -21,7 +21,7 @@ mix kitto.dashboard <project_name>
 Start a kitto server
 
 ```shell
-mix kitto server
+mix kitto.server
 ```
 
 Have assets compiled
@@ -31,6 +31,14 @@ npm run start
 ```
 
 Try the sample dashboard at: http://localhost:4000/dashboards/sample
+
+## Production
+
+Compile assets for production
+
+```shell
+npm run build
+```
 
 ### About the name
 
