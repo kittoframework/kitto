@@ -12,7 +12,7 @@ It is heavily inspired by [shopify/dashing](http://dashing.io/).
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/blob/master/kitto_new-0.0.1.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.0.1.ez
 ```
 
 ## Create a dashboard
