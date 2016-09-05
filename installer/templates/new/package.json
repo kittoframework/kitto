@@ -4,8 +4,8 @@
   "description": "Dashboard Application",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server --progress --colors"
+    "build": "./node_modules/.bin/webpack --config webpack.config.js",
+    "start": "./node_modules/.bin/webpack-dev-server --progress --colors"
   },
   "keywords": [
     "webpack"
