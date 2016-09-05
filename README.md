@@ -23,6 +23,12 @@ mix kitto.new <project_name>
 
 ## Development
 
+Install dependencies
+
+```shell
+mix deps.get && npm install
+```
+
 Start a kitto server
 
 ```shell
@@ -35,7 +41,7 @@ Have assets compiled
 npm run start
 ```
 
-Try the sample dashboard at: http://localhost:4000/dashboards/sample
+Try the sample dashboard at: [http://localhost:4000/dashboards/sample](http://localhost:4000/dashboards/sample)
 
 ## Production
 
