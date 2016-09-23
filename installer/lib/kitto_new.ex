@@ -12,6 +12,7 @@ defmodule Mix.Tasks.Kitto.New do
     {:eex,  "new/mix.exs",                             "mix.exs"},
     {:eex,  "new/README.md",                           "README.md"},
     {:text, "new/.gitignore",                          ".gitignore"},
+    {:text, "new/Dockerfile",                          "Dockerfile"},
     {:eex,  "new/lib/application_name.ex",             "lib/application_name.ex"},
     {:text, "new/dashboards/layout.html.eex",          "dashboards/layout.html.eex"},
     {:text, "new/dashboards/sample.html.eex",          "dashboards/sample.html.eex"},
