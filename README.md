@@ -51,6 +51,30 @@ Compile assets for production
 npm run build
 ```
 
+### Deployment
+
+#### Using Docker
+
+By scaffolding a new dashboard with:
+
+```shell
+mix kitto.new
+```
+
+you also get a `Dockerfile`.
+
+Build an image including your code, ready to be deployed.
+
+```shell
+docker build . -t my-awesome-dashboard
+```
+
+Spawn a container of the image
+
+```shell
+docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
+```
+
 ### About the name
 
 The [road to Erlang / Elixir](https://www.google.gr/maps/place/Erlanger+Rd,+London) starts with [Kitto](https://en.wikipedia.org/wiki/H._D._F._Kitto).
