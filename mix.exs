@@ -19,7 +19,7 @@ defmodule Kitto.Mixfile do
 
   defp deps do
     [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 1.0"},
+     {:plug, "~> 1.2"},
      {:poison, "~> 2.0"}]
   end
 
