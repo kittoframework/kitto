@@ -5,9 +5,12 @@ defmodule Kitto.Router do
 
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
 
-  plug :match
-  plug :dispatch
   plug Plug.Logger
+  plug :match
+  if Mix.env == :prod do
+    plug Plug.Static, at: "assets", from: Path.join "public", "assets"
+  end
+  plug :dispatch
 
   get "dashboards/:id", do: conn |> render(id)
 
@@ -27,12 +30,14 @@ defmodule Kitto.Router do
     conn |> send_resp(204, "")
   end
 
-  get "assets/:asset" do
-    conn
-    |> put_resp_header("location", "#{@development_assets_url}#{asset}")
-    |> send_resp(301, "")
+  if Mix.env == :dev do
+    get "assets/:asset" do
+      conn
+      |> put_resp_header("location", "#{@development_assets_url}#{asset}")
+      |> send_resp(301, "")
 
-    conn
+      conn
+    end
   end
 
   defp initialize_sse(conn) do
