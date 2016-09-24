@@ -14,7 +14,7 @@ defmodule Kitto.Mixfile do
 
   def application do
     [mod: {Kitto, []},
-     applications: [:logger, :cowboy, :plug]]
+     applications: [:logger]]
   end
 
   defp deps do
