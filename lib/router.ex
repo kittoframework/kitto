@@ -8,7 +8,7 @@ defmodule Kitto.Router do
   plug Plug.Logger
   plug :match
   if Mix.env == :prod do
-    plug Plug.Static, at: "assets", from: Path.join "public", "assets"
+    plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"
   end
   plug :dispatch
 

@@ -81,16 +81,25 @@ if(TARGET === 'start' || !TARGET) {
 }
 
 if(TARGET === 'build') {
+  var CompressionPlugin = require("compression-webpack-plugin");
+
   module.exports = merge(common, {
     plugins: [
       new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        keep_fnames: true
-      },
-      mangle: {
-       keep_fnames: true
-      }
-    })]
+        compress: {
+          warnings: false,
+          keep_fnames: true
+        },
+        mangle: {
+         keep_fnames: true
+        }
+      }),
+      new CompressionPlugin({
+        asset: '[path].gz[query]',
+        algorithm: 'gzip',
+        test: /\.js$|\.html$/,
+        verbose: true
+      })
+    ]
   });
 }
