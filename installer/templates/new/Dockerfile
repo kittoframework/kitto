@@ -1,4 +1,4 @@
-FROM kitto
+FROM zorbash/kitto
 
 ADD . /dashboard
 WORKDIR /dashboard
