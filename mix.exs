@@ -20,7 +20,8 @@ defmodule Kitto.Mixfile do
   defp deps do
     [{:cowboy, "~> 1.0.0"},
      {:plug, "~> 1.2"},
-     {:poison, "~> 2.0"}]
+     {:poison, "~> 2.0"},
+     {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 
   defp description, do: "Framework for creating interactive dashboards"
