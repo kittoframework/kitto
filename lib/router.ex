@@ -12,12 +12,18 @@ defmodule Kitto.Router do
   end
   plug :dispatch
 
-  get "dashboards/:id", do: conn |> render(id)
+  get "dashboards/:id" do
+    if Kitto.View.exists?(id) do
+      conn |> render(id)
+    else
+      send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
+    end
+  end
 
   get "events" do
     conn = initialize_sse(conn)
     Kitto.Notifier.register(conn.owner)
-    listen_sse(conn)
+    conn = listen_sse(conn)
 
     conn
   end
@@ -54,15 +60,16 @@ defmodule Kitto.Router do
 
   defp listen_sse(conn) do
     receive do
-      {:broadcast, {topic, data}} -> send_event(conn, topic, data)
-      {:error, :closed} -> IO.puts "Connection was closed"
+      {:broadcast, {topic, data}} ->
+        send_event(conn, topic, data) |> listen_sse
+      {:error, :closed} -> conn
+      {:misc, :close} -> conn
+      _ -> listen_sse(conn)
     end
-
-    listen_sse(conn)
   end
 
   defp send_event(conn, topic, data) do
-    chunk(conn, "event: #{topic}\ndata: {\"message\": #{Poison.encode!(data)}}\n\n")
+    {_, conn} = chunk(conn, "event: #{topic}\ndata: {\"message\": #{Poison.encode!(data)}}\n\n")
 
     conn
   end
