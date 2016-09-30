@@ -10,7 +10,7 @@ defmodule Kitto.Jobs.Convergence do
     pid |> Agent.get_and_update(fn(n) -> next = n + 1; {next, next} end)
   end
 
-  defp random, do: :random.uniform * 100 |> Float.round
+  defp random, do: :rand.uniform * 100 |> Float.round
 end
 
 {:ok, convergence} = Kitto.Jobs.Convergence.new
