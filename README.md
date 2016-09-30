@@ -1,5 +1,8 @@
 # Kitto
 
+[![Build Status](https://travis-ci.org/kittoframework/kitto.svg?branch=master)](https://travis-ci.org/kittoframework/kitto)
+[![Package Version](https://img.shields.io/hexpm/v/kitto.svg)](https://hex.pm/packages/kitto)
+
 Kitto is a framework to help you create dashboards, written in Elixir / React.
 It is heavily inspired by [shopify/dashing](http://dashing.io/).
 
