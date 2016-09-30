@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/widgets/text/text.scss",              "widgets/text/text.scss"},
     {:text, "new/jobs/text.ex",                        "jobs/text.ex"},
     {:text, "new/jobs/convergence.ex",                 "jobs/convergence.ex"},
-    {:text, "new/jobs/buzzwords.ex",                   "jobs/buzzowrds.ex"},
+    {:text, "new/jobs/buzzwords.ex",                   "jobs/buzzwords.ex"},
     {:text, "new/jobs/random.ex",                      "jobs/random.ex"},
     {:keep, "new/assets/images",                       "assets/images/"},
     {:keep, "new/assets/fonts",                        "assets/fonts/"},
