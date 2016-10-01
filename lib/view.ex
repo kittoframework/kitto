@@ -1,6 +1,6 @@
 defmodule Kitto.View do
-  @templates_dir Application.get_env :kitto, :templates_dir
-  @default_layout Application.get_env :kitto, :default_layout
+  @templates_dir Application.get_env :kitto, :templates_dir, "dashboards"
+  @default_layout Application.get_env :kitto, :default_layout, "layout"
 
   def render(template) do
     path(@default_layout) |> EEx.eval_file([template: render_template(template)])
