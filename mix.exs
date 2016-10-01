@@ -9,7 +9,15 @@ defmodule Kitto.Mixfile do
      start_permanent: Mix.env == :prod,
      description: description,
      package: package,
-     deps: deps]
+     deps: deps,
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: [
+       "coveralls": :test,
+       "coveralls.detail": :test,
+       "coveralls.post": :test,
+       "coveralls.travis": :test,
+       "coveralls.html": :test],
+    ]
   end
 
   def application do
@@ -22,7 +30,9 @@ defmodule Kitto.Mixfile do
      {:plug, "~> 1.2"},
      {:poison, "~> 2.0"},
      {:ex_doc, ">= 0.0.0", only: :dev},
-     {:mock, "~> 0.1.1", only: :test}]
+     {:mock, "~> 0.1.1", only: :test},
+     {:excoveralls, "~> 0.5", only: :test}]
+
   end
 
   defp description, do: "Framework for creating interactive dashboards"
