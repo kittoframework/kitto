@@ -38,13 +38,12 @@ defmodule Kitto.Router do
 
   get "assets/:asset" do
     if Mix.env == :dev do
-      conn
+      conn = conn
       |> put_resp_header("location", "#{@development_assets_url}#{asset}")
       |> send_resp(301, "")
-
-      conn
+      |> halt
     else
-      send_resp(conn, 404, "Not Found")
+      send_resp(conn, 404, "Not Found") |> halt
     end
   end
 
@@ -64,8 +63,8 @@ defmodule Kitto.Router do
     receive do
       {:broadcast, {topic, data}} ->
         send_event(conn, topic, data) |> listen_sse
-      {:error, :closed} -> conn
-      {:misc, :close} -> conn
+      {:error, :closed} -> conn |> halt
+      {:misc, :close} -> conn |> halt
       _ -> listen_sse(conn)
     end
   end
