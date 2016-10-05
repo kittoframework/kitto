@@ -3,7 +3,7 @@ defmodule Kitto.New.Mixfile do
 
   def project do
     [app: :kitto_new,
-     version: "0.0.3",
+     version: "0.0.4",
      elixir: "~> 1.3"]
   end
 

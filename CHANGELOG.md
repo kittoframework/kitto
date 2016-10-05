@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.0.4] - 2016-10-05
+
+### Fixed
+
+* Properly serve assets in development via Webpack
+* Fix deprecation warning caused by :random.uniform
+
 ## [0.0.3] - 2016-09-25
 
 ### Added
