@@ -12,7 +12,7 @@ Widget.mount(class Clock extends Widget {
   update() { this.setState(Clock.dateTime()); }
   render() {
     return (
-      <div className="widget clock-content">
+      <div className={this.props.className}>
         <h1>{this.state.date}</h1>
         <h2>{this.state.time}</h2>
       </div>
