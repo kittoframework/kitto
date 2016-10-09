@@ -53,6 +53,7 @@ defmodule Kitto.Router do
     |> put_resp_header("cache-control", "no-cache")
     |> put_resp_header("x-accel-buffering", "no")
     |> send_chunked(200)
+    |> send_cached_events
   end
 
   match _, do: send_resp(conn, 404, "Not Found")
@@ -71,6 +72,12 @@ defmodule Kitto.Router do
 
   defp send_event(conn, topic, data) do
     {_, conn} = chunk(conn, "event: #{topic}\ndata: {\"message\": #{Poison.encode!(data)}}\n\n")
+
+    conn
+  end
+
+  defp send_cached_events(conn) do
+    Kitto.Notifier.initial_broadcast!(conn.owner)
 
     conn
   end

@@ -1,5 +1,5 @@
 defmodule Kitto.RouterTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   use Plug.Test
 
   import Mock
@@ -56,6 +56,7 @@ defmodule Kitto.RouterTest do
   end
 
   test "GET events streams broadcasted messages" do
+    Kitto.Notifier.clear_cache
     conn = conn(:get, "events")
     topic = "technology"
     message = "Kitto is awesome!"
@@ -65,6 +66,26 @@ defmodule Kitto.RouterTest do
       after
         1 ->
           send conn.owner, {:broadcast, {topic, message}}
+          send conn.owner, {:misc, :close}
+      end
+    end
+
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
+  end
+
+  @tag :pending
+  test "GET events streams cached events first" do
+    Kitto.Notifier.clear_cache
+    Kitto.Notifier.cache :technology, %{news: "man made it to mars"}
+    conn = conn(:get, "events")
+    topic = "technology"
+    message = "man made it to mars"
+
+    spawn fn ->
+      receive do
+      after
+        1 ->
           send conn.owner, {:misc, :close}
       end
     end
