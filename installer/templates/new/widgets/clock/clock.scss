@@ -8,5 +8,9 @@ $background-color:  #dc5945;
 // ----------------------------------------------------------------------------
 .widget-clock {
   background-color: $background-color;
+
+  .time {
+    font-size: 55px;
+  }
 }
 
