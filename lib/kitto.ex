@@ -8,9 +8,9 @@ defmodule Kitto do
     import Supervisor.Spec, warn: false
 
     children = [worker(__MODULE__, [], function: :start_server),
-                worker(Kitto.Notifier, [])]
+                worker(Kitto.Notifier, []),
+                worker(Kitto.Runner, [])]
 
-    Kitto.Runner.start_jobs
     Supervisor.start_link(children, [strategy: :one_for_one, name: Kitto.Supervisor])
   end
 
