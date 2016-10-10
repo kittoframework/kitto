@@ -79,6 +79,13 @@ Spawn a container of the image
 docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 ```
 
+### Contributing
+#### Run the Tests
+
+```shell
+mix test
+```
+
 ### About the name
 
 The [road to Erlang / Elixir](https://www.google.gr/maps/place/Erlanger+Rd,+London) starts with [Kitto](https://en.wikipedia.org/wiki/H._D._F._Kitto).

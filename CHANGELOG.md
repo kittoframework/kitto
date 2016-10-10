@@ -4,6 +4,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.0.5] - 2016-10-10
+
+### Added
+
+* Kitto.Job.new/1 to support streaming jobs without interval
+* Job cache. The last broadcasted message of each job is cached and sent
+  upon connecting to `GET /events`
+
+### Changed
+
+* Supervise Notifier connections cache
+* Supervise job processes
+
 ## [0.0.4] - 2016-10-05
 
 ### Fixed
