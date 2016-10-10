@@ -7,6 +7,14 @@ defmodule Kitto.Job do
     {:ok, pid}
   end
 
+  def new(job), do: register(job, interval: nil)
+  def new(nil, job, _) do
+    job.(Kitto.Notifier)
+
+    receive do
+    end
+  end
+
   def new(interval, job, options) do
     first_at(options[:first_at], job)
 

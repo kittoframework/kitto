@@ -23,11 +23,9 @@ defmodule Kitto.Runner do
     end)
   end
 
-  defp load_jobs do
-    job_files |> Enum.each(&Code.eval_file/1)
-  end
-
   def jobs, do: runner |> Agent.get(&(&1))
+
+  defp load_jobs, do: job_files |> Enum.each(&Code.eval_file/1)
 
   defp job_files do
     Path.wildcard Path.join(System.cwd, "jobs/**/*.{ex,exs}")
