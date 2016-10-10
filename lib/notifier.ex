@@ -39,7 +39,7 @@ defmodule Kitto.Notifier do
   end
 
   def cache, do: notifier_cache |> Agent.get(&(&1))
-  def clear_cache, do: notifier_cache |> Agent.update(fn (cache) -> %{} end)
+  def clear_cache, do: notifier_cache |> Agent.update(fn (_) -> %{} end)
 
   def cache(topic, data) do
     notifier_cache |> Agent.update(fn (cache) -> Map.merge(cache, %{topic => data}) end)

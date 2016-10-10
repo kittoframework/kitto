@@ -35,7 +35,7 @@ defmodule Kitto.Job do
   def every(:hour, job), do: every(60, :minutes, job)
   def every(:day, job), do: every(24, :hours, job)
 
-  defp first_at(false, job), do: nil
+  defp first_at(false, _job), do: nil
 
   defp first_at(t, job) do
     if t, do: :timer.sleep(round(t * 1000))
