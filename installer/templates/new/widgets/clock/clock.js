@@ -13,8 +13,8 @@ Widget.mount(class Clock extends Widget {
   render() {
     return (
       <div className={this.props.className}>
-        <h1>{this.state.date}</h1>
-        <h2>{this.state.time}</h2>
+        <h1 className="date">{this.state.date}</h1>
+        <h2 className="time">{this.state.time}</h2>
       </div>
     );
   }
