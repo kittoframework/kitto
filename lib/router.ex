@@ -63,7 +63,12 @@ defmodule Kitto.Router do
   defp listen_sse(conn) do
     receive do
       {:broadcast, {topic, data}} ->
-        send_event(conn, topic, data) |> listen_sse
+        res = send_event(conn, topic, data)
+
+        case res do
+          :closed -> conn |> halt
+          _ -> res |> listen_sse
+        end
       {:error, :closed} -> conn |> halt
       {:misc, :close} -> conn |> halt
       _ -> listen_sse(conn)
@@ -71,7 +76,9 @@ defmodule Kitto.Router do
   end
 
   defp send_event(conn, topic, data) do
-    {_, conn} = chunk(conn, "event: #{topic}\ndata: {\"message\": #{Poison.encode!(data)}}\n\n")
+    {_, conn} = chunk(conn, (["event: #{topic}",
+                              "data: {\"message\": #{Poison.encode!(data)}}"]
+                             |> Enum.join("\n")) <> "\n\n")
 
     conn
   end
