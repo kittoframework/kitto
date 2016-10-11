@@ -5,11 +5,19 @@
 [![Coverage](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_73.svg)](https://coveralls.io/github/kittoframework/kitto)
 
 Kitto is a framework to help you create dashboards, written in Elixir / React.
+
 It is heavily inspired by [shopify/dashing](http://dashing.io/).
 
-[Demo](http://kitto.io/dashboards/sample)
 
 ![demo](http://i.imgur.com/c9SloLX.png)
+
+## Demo
+
++ [Sample Dashboard](http://kitto.io/dashboards/sample)
++ [Elixir Dashboard](http://kitto.io/dashboards/elixir)
+
+The source for the demo dashboards can be found at: [kittoframework/demo](https://github.com/kittoframework/demo).
+To start creating your own, follow the steps below.
 
 ## Installation
 
@@ -33,26 +41,32 @@ Install dependencies
 mix deps.get && npm install
 ```
 
-Start a kitto server
+Start a kitto server (also watches for assets changes)
 
 ```shell
 mix kitto.server
-```
-
-Have assets compiled
-
-```shell
-npm run start
 ```
 
 Try the sample dashboard at: [http://localhost:4000/dashboards/sample](http://localhost:4000/dashboards/sample)
 
 ## Production
 
+Compile the project
+
+```shell
+MIX_ENV=prod mix compile
+```
+
 Compile assets for production
 
 ```shell
 npm run build
+```
+
+Start the server
+
+```shell
+MIX_ENV=prod mix kitto.server
 ```
 
 ### Deployment
