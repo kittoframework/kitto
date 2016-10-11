@@ -1,5 +1,6 @@
 defmodule Kitto.Router do
   use Plug.Router
+  alias Kitto.View
 
   @development_assets_url "http://localhost:8080/assets/"
 
@@ -13,8 +14,10 @@ defmodule Kitto.Router do
   plug :dispatch
 
   get "dashboards/:id" do
+    conn = conn |> fetch_query_params
+
     if Kitto.View.exists?(id) do
-      conn |> render(id)
+      conn |> render(id, request: conn)
     else
       send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
     end
@@ -58,7 +61,9 @@ defmodule Kitto.Router do
 
   match _, do: send_resp(conn, 404, "Not Found")
 
-  defp render(conn, template), do: send_resp(conn, 200, Kitto.View.render(template))
+  defp render(conn, template, context) do
+    send_resp(conn, 200, View.render(template, context))
+  end
 
   defp listen_sse(conn) do
     receive do
