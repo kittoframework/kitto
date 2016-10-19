@@ -54,7 +54,9 @@ defmodule Mix.Tasks.Kitto.New do
   end
 
   @moduledoc """
-  TBA
+  Kitto installer. Generates a scaffolding to build a new dashboard upon.
+
+  See: https://github.com/kittoframework/demo
   """
 
   def run([version]) when version in ~w(-v --version) do
