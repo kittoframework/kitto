@@ -1,9 +1,11 @@
-random = fn -> :rand.uniform * 100 |> Float.round end
+use Kitto.Job.DSL
 
-Kitto.Job.every 2, :seconds, fn (notifier) ->
+job :buzzwords, every: :second do
+  random = fn -> :rand.uniform * 100 |> Float.round end
+
   list = ~w[synergy startup catalyst docker microservice container elixir react]
-  |> Enum.map(fn (w) -> %{ label: w, value: random.() } end)
-  |> Enum.shuffle
+          |> Enum.map(fn (w) -> %{ label: w, value: random.() } end)
+          |> Enum.shuffle
 
-  notifier.broadcast! :buzzwords, %{items: list}
+  broadcast! :buzzwords, %{items: list}
 end
