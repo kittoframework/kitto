@@ -15,6 +15,7 @@ It is heavily inspired by [shopify/dashing](http://dashing.io/).
 
 + [Sample Dashboard](http://kitto.io/dashboards/sample)
 + [Elixir Dashboard](http://kitto.io/dashboards/elixir)
++ [Jobs Dashboard](http://kitto.io/dashboards/jobs)
 
 The source for the demo dashboards can be found at: [kittoframework/demo](https://github.com/kittoframework/demo).
 To start creating your own, follow the steps below.
