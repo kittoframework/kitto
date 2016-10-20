@@ -1,3 +1,5 @@
+use Kitto.Job.DSL
+
 defmodule Kitto.Jobs.Convergence do
   def new, do: Agent.start(fn -> 0 end)
 
@@ -16,6 +18,6 @@ end
 {:ok, convergence} = Kitto.Jobs.Convergence.new
 points = &(&1 |> Kitto.Jobs.Convergence.points)
 
-Kitto.Job.every 2, :seconds, fn (notifier) ->
-  notifier.broadcast! :convergence, %{points: convergence |> points.()}
+job :convergence, every: {2, :seconds} do
+  broadcast! :convergence, %{points: convergence |> points.()}
 end

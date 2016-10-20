@@ -1,49 +1,48 @@
 defmodule Kitto.Job do
-  @defaults first_at: nil
-
-  def start_link(interval, job, options \\ @defaults) do
-    pid = spawn_link(Kitto.Job, :new, [interval, job, options])
-
-    {:ok, pid}
+  def start_link(job) do
+    {:ok, spawn_link(Kitto.Job, :new, [job])}
   end
 
-  def new(job), do: register(job, interval: nil)
-  def new(nil, job, _) do
-    job.(Kitto.Notifier)
+  def register(name, options, job) do
+    import Kitto.Time
 
-    receive do
+    opts = [interval: options[:every] |> mseconds,
+            first_at: options[:first_at] |> mseconds]
+
+    Kitto.Runner.register(name: name, job: job, options: opts)
+  end
+
+  def new(job) do
+    case job[:options][:interval] do
+      nil -> once(job)
+      _   -> with_interval(job)
     end
   end
 
-  def new(interval, job, options) do
-    first_at(options[:first_at], job)
+  defp with_interval(job) do
+    first_at(job[:options][:first_at], job)
 
     receive do
     after
-      interval ->
-        job.(Kitto.Notifier)
-        new(interval, job, first_at: false)
+      job[:options][:interval] ->
+        run job
+        with_interval(put_in(job[:options][:first_at], false))
     end
   end
 
-  def every(n, :seconds, job), do: register(job, interval: n * 1000)
-  def every(n, :minutes, job), do: register(job, interval: n * 1000 * 60)
-  def every(n, :hours, job), do: register(job, interval: n * 1000 * 60)
+  defp run(job), do: Kitto.StatsServer.measure(job[:name], job[:job])
 
-  def every(:second, job), do: every(1, :seconds, job)
-  def every(:minute, job), do: every(1, :minutes, job)
-  def every(:hour, job), do: every(60, :minutes, job)
-  def every(:day, job), do: every(24, :hours, job)
+  defp once(job) do
+    run job
 
-  defp first_at(false, _job), do: nil
-
-  defp first_at(t, job) do
-    if t, do: :timer.sleep(round(t * 1000))
-
-    job.(Kitto.Notifier)
+    receive do
+    end
   end
 
-  defp register(job, options) do
-    Kitto.Runner.register(job: job, options: options)
+  defp first_at(false, _job), do: nil
+  defp first_at(t, job) do
+    if t, do: :timer.sleep(t)
+
+    run job
   end
 end

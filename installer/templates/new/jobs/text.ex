@@ -1,7 +1,7 @@
-Kitto.Job.every 4, :seconds, fn (notifier) ->
+use Kitto.Job.DSL
+
+job :text, every: {4, :seconds} do
   phrases = ["This is your shiny new dashboard", "Built on the Kitto Framework"]
 
-  with text <- (phrases |> Enum.shuffle |> Enum.take(1)) do
-    notifier.broadcast! :text, %{text: text}
-  end
+  broadcast! :text, %{text: (phrases |> Enum.shuffle |> Enum.take(1))}
 end

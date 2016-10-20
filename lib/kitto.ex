@@ -9,6 +9,7 @@ defmodule Kitto do
 
     children = [worker(__MODULE__, [], function: :start_server),
                 worker(Kitto.Notifier, []),
+                worker(Kitto.StatsServer, []),
                 worker(Kitto.Runner, [])]
 
     Supervisor.start_link(children, [strategy: :one_for_one, name: Kitto.Supervisor])

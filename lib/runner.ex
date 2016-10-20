@@ -1,5 +1,8 @@
 defmodule Kitto.Runner do
   use Supervisor
+  alias Kitto.Job.Workspace
+
+  @max_restarts Application.get_env :kitto, :job_max_restarts, 300
 
   def start_link do
     Supervisor.start_link(__MODULE__, :ok, name: :runner_sup)
@@ -10,11 +13,9 @@ defmodule Kitto.Runner do
 
     load_jobs
 
-    children = jobs |> Enum.map(fn (job) ->
-      worker(Kitto.Job, [job[:options][:interval], job[:job]], id: make_ref)
-    end)
+    children = jobs |> Enum.map(&(worker(Kitto.Job, [&1], id: make_ref)))
 
-    supervise(children, strategy: :one_for_one)
+    supervise(children, strategy: :one_for_one, max_restarts: @max_restarts)
   end
 
   def register(job) do
@@ -25,7 +26,7 @@ defmodule Kitto.Runner do
 
   def jobs, do: runner |> Agent.get(&(&1))
 
-  defp load_jobs, do: job_files |> Enum.each(&Code.eval_file/1)
+  defp load_jobs, do: job_files |> Enum.each(&Workspace.eval_file/1)
 
   defp job_files do
     Path.wildcard Path.join(System.cwd, "jobs/**/*.{ex,exs}")
