@@ -3,7 +3,10 @@ defmodule Kitto.Job do
   Starts a job process
   """
   def start_link(job) do
-    {:ok, spawn_link(Kitto.Job, :new, [job])}
+    pid = spawn_link(Kitto.Job, :new, [job])
+    pid |> Process.register(job[:name])
+
+    {:ok, pid}
   end
 
   @doc """
