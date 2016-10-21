@@ -4,6 +4,23 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.1.0] - 2016-10-21
+
+### Added
+
+* Kitto.StatsServer which keeps stats about job runs
+* A DSL to declare jobs. See: https://github.com/kittoframework/kitto#jobs
+* Kitto.Time declares functions to handle time conversions
+* mix kitto.server in :dev env watches assets and rebuilds then
+
+### Changed
+
+* Job processes are named
+
+### Removed
+
+* Kitto.Job.every(options, fun)  api is removed
+
 ## [0.0.5] - 2016-10-10
 
 ### Added

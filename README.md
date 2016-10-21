@@ -26,7 +26,7 @@ To start creating your own, follow the steps below.
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.0.5.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.1.0.ez
 ```
 
 ## Create a dashboard
