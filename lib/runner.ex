@@ -4,6 +4,9 @@ defmodule Kitto.Runner do
 
   @max_restarts Application.get_env :kitto, :job_max_restarts, 300
 
+  @doc """
+  Starts the runner supervision tree
+  """
   def start_link do
     Supervisor.start_link(__MODULE__, :ok, name: :runner_sup)
   end
@@ -18,12 +21,18 @@ defmodule Kitto.Runner do
     supervise(children, strategy: :one_for_one, max_restarts: @max_restarts)
   end
 
+  @doc """
+  Updates the list of jobs to be run with the provided one
+  """
   def register(job) do
     runner |> Agent.update(fn (jobs) ->
       jobs ++ [job]
     end)
   end
 
+  @doc """
+  Returns the list of registered jobs
+  """
   def jobs, do: runner |> Agent.get(&(&1))
 
   defp load_jobs, do: job_files |> Enum.each(&Workspace.eval_file/1)

@@ -11,12 +11,18 @@ defmodule Kitto.StatsServer do
     Agent.start_link(fn -> %{} end, name: :stats_server)
   end
 
+  @doc """
+  Executes the given function and keeps stats about it in the provided key
+  """
   def measure(name, job) do
     name |> initialize_stats
     name |> update_trigger_count
     name |> measure_func(job)
   end
 
+  @doc """
+  Returns the current stats
+  """
   def stats do
     server |> Agent.get(&(&1))
   end

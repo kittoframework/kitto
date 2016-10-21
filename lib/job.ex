@@ -1,8 +1,14 @@
 defmodule Kitto.Job do
+  @doc """
+  Starts a job process
+  """
   def start_link(job) do
     {:ok, spawn_link(Kitto.Job, :new, [job])}
   end
 
+  @doc """
+  Registers a job to be started as a process by the runner supervisor
+  """
   def register(name, options, job) do
     import Kitto.Time
 
@@ -12,6 +18,9 @@ defmodule Kitto.Job do
     Kitto.Runner.register(name: name, job: job, options: opts)
   end
 
+  @doc """
+  Runs the job based on the given options
+  """
   def new(job) do
     case job[:options][:interval] do
       nil -> once(job)
