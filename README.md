@@ -64,7 +64,7 @@ mix kitto.server
 Try the sample dashboard at: [http://localhost:4000/dashboards/sample](http://localhost:4000/dashboards/sample)
 
 For configuration options and troubleshooting be sure to consult the
-[wiki](wiki).
+[wiki][wiki].
 
 ## The dashboard grid
 
