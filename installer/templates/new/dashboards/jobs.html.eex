@@ -1,0 +1,71 @@
+<div class="gridster">
+  <ul>
+    <li data-row="1"
+        data-col="1"
+        data-sizex="1"
+        data-sizey="2">
+      <div class="widget-list widget-job time-took"
+        data-unordered="true"
+        data-widget="List"
+        data-source="job_avg_time_took"
+        data-title="Average Time Took"></div>
+    </li>
+
+    <li data-row="1"
+        data-col="2"
+        data-sizex="1"
+        data-sizey="1">
+      <div class="widget-valuation"
+        data-widget="Number"
+        data-source="processes_count"
+        data-title="Processes Count"
+        data-moreinfo=""
+        data-prefix=""></div>
+    </li>
+
+    <li data-row="2"
+        data-col="2"
+        data-sizex="1"
+        data-sizey="1">
+      <div class="widget-valuation"
+        data-widget="Number"
+        data-source="jobs_running"
+        data-title="Running Jobs"
+        data-prefix=""></div>
+    </li>
+
+    <li data-row="2"
+        data-col="3"
+        data-sizex="1"
+        data-sizey="1">
+      <div class="widget-valuation"
+           data-widget="Number"
+           data-source="uptime"
+           data-title="Uptime (hours)"
+           data-prefix=""></div>
+    </li>
+
+    <li data-row="1"
+        data-col="3"
+        data-sizex="1"
+        data-sizey="1">
+      <div class="widget-valuation"
+        data-widget="Number"
+        data-source="memory_usage"
+        data-title="Memory Usage (MB)"
+        data-moreinfo=""
+        data-prefix=""></div>
+    </li>
+
+    <li data-row="1"
+        data-col="4"
+        data-sizex="1"
+        data-sizey="2">
+      <div class="widget-list widget-job widget status-danger"
+        data-unordered="true"
+        data-widget="List"
+        data-source="job_failures"
+        data-title="Failures"></div>
+    </li>
+  </ul>
+</div>

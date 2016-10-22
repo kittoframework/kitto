@@ -193,45 +193,6 @@ h3 {
   right: 0;
 }
 
-#save-gridster {
-  display: none;
-  position: fixed;
-  top: 0;
-  margin: 0px auto;
-  left: 50%;
-  z-index: 1000;
-  background: black;
-  width: 190px;
-  text-align: center;
-  border: 1px solid white;
-  border-top: 0px;
-  margin-left: -95px;
-  padding: 15px;
-}
-
-#save-gridster:hover {
-  padding-top: 25px;
-}
-
-#saving-instructions {
-  display: none;
-  padding: 10px;
-  width: 500px;
-  height: 122px;
-  z-index: 1000;
-  background: white;
-  top: 100px;
-  color: black;
-  font-size: 15px;
-  padding-bottom: 4px;
-
-  textarea {
-    white-space: nowrap;
-    width: 494px;
-    height: 80px;
-  }
-}
-
 #lean_overlay {
     position: fixed;
     z-index:100;
