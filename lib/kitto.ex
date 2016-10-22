@@ -7,10 +7,10 @@ defmodule Kitto do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    children = [worker(__MODULE__, [], function: :start_server),
-                worker(Kitto.Notifier, []),
+    children = [supervisor(__MODULE__, [], function: :start_server),
+                supervisor(Kitto.Notifier, []),
                 worker(Kitto.StatsServer, []),
-                worker(Kitto.Runner, [])]
+                supervisor(Kitto.Runner, [])]
 
     Supervisor.start_link(children, [strategy: :one_for_one, name: Kitto.Supervisor])
   end
