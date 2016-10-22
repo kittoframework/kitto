@@ -9,7 +9,7 @@ Kitto is a framework to help you create dashboards, written in [Elixir][elixir] 
 It is heavily inspired by [shopify/dashing](http://dashing.io/).
 
 
-![demo](http://i.imgur.com/c9SloLX.png)
+![demo](http://i.imgur.com/YgZibXU.png)
 
 ## Demo
 
@@ -19,7 +19,19 @@ It is heavily inspired by [shopify/dashing](http://dashing.io/).
 
 The source for the demo dashboards can be found at: [kittoframework/demo](https://github.com/kittoframework/demo).
 
-To start creating your own, follow the steps below.
+To start creating your own, read [below](https://github.com/kittoframework/kitto#create-a-dashboard).
+
+## Features
+
+* Jobs are supervised processes running concurrently
+* Widgets are coded in the popular [React][react] library
+* Uses a modern asset tool-chain, [Webpack][webpack]
+* Allows streaming SSE to numerous clients concurrently with low
+  memory/CPU footprint
+* Easy to deploy using the provided Docker images
+* Can serve assets in production
+* Keeps stats about defined jobs and comes with a dashboard to monitor
+  them
 
 ## Installation
 
@@ -43,13 +55,16 @@ Install dependencies
 mix deps.get && npm install
 ```
 
-Start a kitto server (also watches for assets changes)
+Start a Kitto server (also watches for assets changes)
 
 ```shell
 mix kitto.server
 ```
 
 Try the sample dashboard at: [http://localhost:4000/dashboards/sample](http://localhost:4000/dashboards/sample)
+
+For configuration options and troubleshooting be sure to consult the
+[wiki](wiki).
 
 ## The dashboard grid
 
@@ -104,7 +119,7 @@ event](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using
 Widgets live in `widgets/` are compiled using
 [Webpack](https://webpack.github.io/) and are automatically loaded in the dashboards.
 Assets are rebuilt upon change in development, but have to be compiled
-for production. See `webpack.config.js` for built options.
+for production. See `webpack.config.js` for build options.
 
 Example widget (`widgets/text/text.js`)
 
@@ -192,3 +207,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [react]: https://facebook.github.io/react/
 [webpack]: https://webpack.github.io/
 [gridster]: http://dsmorse.github.io/gridster.js/
+[wiki]: https://github.com/kittoframework/kitto/wiki
