@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.1.1] - 2016-10-22
+
+### Added
+
+* Installer creates a sample jobs dashboard to monitor jobs
+
+### Changed
+
+* Supervisors are supervised using Supervisor.Spec.supervisor/3
+
 ## [0.1.0] - 2016-10-21
 
 ### Added
