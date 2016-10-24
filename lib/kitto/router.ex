@@ -12,6 +12,13 @@ defmodule Kitto.Router do
   end
   plug :dispatch
 
+  get "/" do
+    conn = conn
+    |> put_resp_header("location", "/dashboards/" <> default_dashboard)
+    |> send_resp(301, "")
+    |> halt
+  end
+
   get "dashboards/:id" do
     if Kitto.View.exists?(id) do
       conn |> render(id)
@@ -88,4 +95,6 @@ defmodule Kitto.Router do
 
     conn
   end
+
+  defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")
 end

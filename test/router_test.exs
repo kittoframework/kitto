@@ -16,6 +16,28 @@ defmodule Kitto.RouterTest do
     assert conn.resp_body == "Not Found"
   end
 
+  test "GET / with :default_dashboard left unconfigured redirects to dashboards/sample" do
+    conn = conn(:get, "/")
+    Application.delete_env :kitto, :default_dashboard
+    conn = Kitto.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 301
+    assert (conn |> get_resp_header("location") |> hd) == "/dashboards/sample"
+  end
+
+  test "GET / with :default_dashboard configured redirects to the configured dashboard" do
+    conn = conn(:get, "/")
+
+    Application.put_env :kitto, :default_dashboard, "jobs"
+    conn = Kitto.Router.call(conn, @opts)
+    Application.delete_env :kitto, :default_dashboard
+
+    assert conn.state == :sent
+    assert conn.status == 301
+    assert (conn |> get_resp_header("location") |> hd) == "/dashboards/jobs"
+  end
+
   test "GET dashboards/:id when dashboard does not exist responds with 404 Not Found" do
     dashboard = "nonexistant"
     conn = conn(:get, "/dashboards/#{dashboard}")

@@ -10,6 +10,9 @@ config :kitto, root: Path.dirname(__DIR__), port: 4000
 # Use port: {:system, "KITT0_PORT"} to have port port configurable via env variable
 # Example: `KITTO_PORT=4444 mix kitto.server` will start the server on port 4444
 
+# Use default_dashboard: "your-dashboard" to specify the dashboard to be served
+# when the root path is requested.
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
