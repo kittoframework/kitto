@@ -7,18 +7,17 @@ defmodule Kitto.Time do
   @doc """
   Return the number of milliseconds when for n seconds
   """
-  def mseconds({n, :seconds}), do: n * 1000
+  def mseconds({n, :seconds}), do: :timer.seconds(n)
 
   @doc """
   Return the number of milliseconds when for n minutes
   """
-  def mseconds({n, :minutes}), do: n * mseconds({60, :seconds})
+  def mseconds({n, :minutes}), do: :timer.minutes(n)
 
   @doc """
   Return the number of milliseconds when for n hours
   """
-  def mseconds({n, :hours}), do: n * mseconds({60, :minutes})
-
+  def mseconds({n, :hours}), do: :timer.hours(n)
   @doc """
   Return the number of milliseconds when for n days
   """
