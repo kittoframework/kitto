@@ -12,12 +12,8 @@ defmodule Kitto.Router do
   end
   plug :dispatch
 
-  get "/" do
-    conn = conn
-    |> put_resp_header("location", "/dashboards/" <> default_dashboard)
-    |> send_resp(301, "")
-    |> halt
-  end
+  get "/", do: conn |> redirect_to_default_dashboard
+  get "dashboards", do: conn |> redirect_to_default_dashboard
 
   get "dashboards/:id" do
     if Kitto.View.exists?(id) do
@@ -45,10 +41,7 @@ defmodule Kitto.Router do
 
   get "assets/:asset" do
     if Mix.env == :dev do
-      conn = conn
-      |> put_resp_header("location", "#{@development_assets_url}#{asset}")
-      |> send_resp(301, "")
-      |> halt
+      conn = conn |> redirect_to("#{@development_assets_url}#{asset}")
     else
       send_resp(conn, 404, "Not Found") |> halt
     end
@@ -94,6 +87,17 @@ defmodule Kitto.Router do
     Kitto.Notifier.initial_broadcast!(conn.owner)
 
     conn
+  end
+
+  defp redirect_to(conn, path) do
+    conn
+    |> put_resp_header("location", path)
+    |> send_resp(301, "")
+    |> halt
+  end
+
+  defp redirect_to_default_dashboard(conn) do
+    conn |> redirect_to("/dashboards/" <> default_dashboard)
   end
 
   defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")
