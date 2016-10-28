@@ -1,10 +1,11 @@
 FROM elixir:1.3-slim
 MAINTAINER Dimitris Zorbas "dimitrisplusplus@gmail.com"
 
-RUN echo Y | mix local.hex --force
-RUN mix hex.info
-RUN apt-get update
-RUN apt-get install curl xz-utils -y
+RUN mix local.hex --force && mix local.rebar --force
+RUN apt-get update \
+  && apt-get -qq install curl xz-utils git \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN set -ex \
   && for key in \
