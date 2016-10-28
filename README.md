@@ -41,6 +41,23 @@ Install the latest archive
 mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.1.1.ez
 ```
 
+## Requirements
+
+* `Elixir`: 1.3
+* `Erlang/OTP`: 19
+
+### Assets
+
+* `Node`: 4.3.1
+* `npm`: 1.4
+
+It may may work in versions other than the above, but it won't have been
+thoroughly tested (travis matrix builds are planned to be added).
+
+You may also use the official [Docker image](https://github.com/kittoframework/kitto#using-docker).
+
+Please open an issue to request support for a specific platform.
+
 ## Create a dashboard
 
 ```shell
