@@ -107,8 +107,8 @@ The snippet below will place a simple `Text` widget in the dashboard.
 
 The most important data attributes here are
 
-* `data-widget` Selects the widget to be used. See: Widgets
-* `data-source` Selects the data source to populate the widget. See: Jobs
+* `data-widget` Selects the widget to be used. See: [Widgets](https://github.com/kittoframework/kitto#widgets)
+* `data-source` Selects the data source to populate the widget. See: [Jobs](https://github.com/kittoframework/kitto#jobs)
 
 The other data attributes are options to be passed as props to the React widget.
 
