@@ -15,8 +15,11 @@ Widget.mount(class Graph extends Widget {
   }
   renderGraph() {
     let container = this.$node.parent();
-    let width = (300 * container.data('sizex')) + 5 * 2 * (container.data('sizex') - 1);
-    let height = (360 * container.data('sizey'));
+    let $gridster = $('.gridster');
+    let widget_base_dimensions = $gridster.data('widget_base_dimensions');
+    let width = (widget_base_dimensions[0] *
+                 container.data('sizex')) + 5 * 2 * (container.data('sizex') - 1);
+    let height = (widget_base_dimensions[1] * container.data('sizey'));
 
     this.graph = new Rickshaw.Graph({
       element: this.$node[0],
