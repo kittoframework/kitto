@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.2.0] - 2016-10-31
+
+### Added
+
+* data-resolution="1080" dashboard attribute (506c6d2)
+* labelLength, valueLength props on list widget (566edb13)
+* truncate JavaScript helper function
+* GET /dashboards redirects to the default dashboard (07d8497f)
+* GET / redirects to the default dashboard (99cdef2)
+
 ## [0.1.1] - 2016-10-22
 
 ### Added

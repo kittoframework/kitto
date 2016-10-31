@@ -39,7 +39,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.1.1.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.2.0.ez
 ```
 
 ## Requirements
