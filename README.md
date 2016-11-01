@@ -6,8 +6,6 @@
 
 Kitto is a framework to help you create dashboards, written in [Elixir][elixir] / [React][react].
 
-It is heavily inspired by [shopify/dashing](http://dashing.io/).
-
 
 ![demo](http://i.imgur.com/YgZibXU.png)
 
@@ -211,6 +209,17 @@ docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 ```shell
 mix test
 ```
+
+### Support
+
+Have a question?
+
+* See [elixirforum/kitto](https://elixirforum.com/t/kitto-a-framework-for-interactive-dashboards)
+* Open an [issue](https://github.com/kittoframework/kitto/issues/new)
+
+### Inspiration
+
+It is heavily inspired by [shopify/dashing](http://dashing.io/). :heart:
 
 ### About the name
 
