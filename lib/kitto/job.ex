@@ -4,7 +4,7 @@ defmodule Kitto.Job do
   """
   def start_link(job) do
     pid = spawn_link(Kitto.Job, :new, [job])
-    pid |> Process.register(job[:name])
+    pid |> Process.register(job.name)
 
     {:ok, pid}
   end
@@ -12,20 +12,20 @@ defmodule Kitto.Job do
   @doc """
   Registers a job to be started as a process by the runner supervisor
   """
-  def register(name, options, job) do
+  def register(name, options, definition, job) do
     import Kitto.Time
 
     opts = [interval: options[:every] |> mseconds,
             first_at: options[:first_at] |> mseconds]
 
-    Kitto.Runner.register(name: name, job: job, options: opts)
+    Kitto.Runner.register(%{name: name, job: job, options: opts, definition: definition})
   end
 
   @doc """
   Runs the job based on the given options
   """
   def new(job) do
-    case job[:options][:interval] do
+    case job.options[:interval] do
       nil -> once(job)
       _   -> with_interval(job)
     end
@@ -36,13 +36,13 @@ defmodule Kitto.Job do
 
     receive do
     after
-      job[:options][:interval] ->
+      job.options[:interval] ->
         run job
-        with_interval(put_in(job[:options][:first_at], false))
+        with_interval(put_in(job.options[:first_at], false))
     end
   end
 
-  defp run(job), do: Kitto.StatsServer.measure(job[:name], job[:job])
+  defp run(job), do: Kitto.StatsServer.measure(job)
 
   defp once(job) do
     run job

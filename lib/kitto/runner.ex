@@ -35,7 +35,7 @@ defmodule Kitto.Runner do
   """
   def jobs, do: runner |> Agent.get(&(&1))
 
-  defp load_jobs, do: job_files |> Enum.each(&Workspace.eval_file/1)
+  defp load_jobs, do: job_files |> Enum.each(&Workspace.load_file/1)
 
   defp job_files do
     Path.wildcard Path.join(System.cwd, "jobs/**/*.{ex,exs}")

@@ -14,10 +14,10 @@ defmodule Kitto.StatsServer do
   @doc """
   Executes the given function and keeps stats about it in the provided key
   """
-  def measure(name, job) do
-    name |> initialize_stats
-    name |> update_trigger_count
-    name |> measure_func(job)
+  def measure(job) do
+    job.name |> initialize_stats
+    job.name |> update_trigger_count
+    job |> measure_call
   end
 
   @doc """
@@ -42,11 +42,11 @@ defmodule Kitto.StatsServer do
     end)
   end
 
-  defp measure_func(name, job) do
-    run = timed_call(job)
+  defp measure_call(job) do
+    run = timed_call(job.job)
 
     server |> Agent.update(fn (stats) ->
-      new_stats = stats[name]
+      new_stats = stats[job.name]
 
       new_stats = case run do
         {:ok, time_took} ->
@@ -60,10 +60,12 @@ defmodule Kitto.StatsServer do
         {:error, _} -> %{new_stats | failures: new_stats[:failures] + 1}
       end
 
-      stats |> Map.merge(%{name => new_stats})
+      stats |> Map.merge(%{job.name => new_stats})
     end)
 
-    if (elem(run, 0) == :error), do: raise(elem(run, 1))
+    if (elem(run, 0) == :error) do
+      raise Kitto.Job.Error, %{exception: elem(run, 1), job: job}
+    end
   end
 
   defp timed_call(f) do
