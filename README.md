@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/kittoframework/kitto.svg?branch=master)](https://travis-ci.org/kittoframework/kitto)
 [![Package Version](https://img.shields.io/hexpm/v/kitto.svg)](https://hex.pm/packages/kitto)
-[![Coverage](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_73.svg)](https://coveralls.io/github/kittoframework/kitto)
+[![Coverage](https://coveralls.io/repos/github/kittoframework/kitto/badge.svg?branch=master)](https://coveralls.io/github/kittoframework/kitto)
 
 Kitto is a framework to help you create dashboards, written in [Elixir][elixir] / [React][react].
 
