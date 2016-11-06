@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.2.1] - 2016-11-06
+
+### Changed
+
+* Job error output contains job definition and error locations
+* Generated job files have .exs file extension
+
 ## [0.2.0] - 2016-10-31
 
 ### Added
