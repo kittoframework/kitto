@@ -26,7 +26,7 @@ end
 
 job :jobs_running, every: {200, :milliseconds} do
   stats = Kitto.StatsServer.stats
-  |> Enum.filter(fn ({name, m}) ->
+  |> Enum.filter(fn ({_name, m}) ->
     (m[:times_completed] + m[:failures]) < m[:times_triggered]
   end)
   |> length
