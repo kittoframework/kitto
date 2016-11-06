@@ -31,7 +31,8 @@ defmodule Kitto.Mixfile do
      {:poison, "~> 2.0"},
      {:ex_doc, ">= 0.0.0", only: :dev},
      {:mock, "~> 0.1.1", only: :test},
-     {:excoveralls, "~> 0.5", only: :test}]
+     {:excoveralls, "~> 0.5", only: :test},
+     {:inch_ex, ">= 0.0.0", only: :docs}]
 
   end
 
