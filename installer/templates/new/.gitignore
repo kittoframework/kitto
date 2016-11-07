@@ -16,7 +16,7 @@ erl_crash.dump
 *~
 *.sass-cache
 
-# OS or Editor folders
+# OS or Editor files/dirs
 .DS_Store
 .cache
 .project
@@ -25,8 +25,11 @@ erl_crash.dump
 nbproject
 Thumbs.db
 
-# NPM packages folder.
+# NPM packages
 node_modules/
 
-# Brunch output folder.
-public/
+# Compiled Assets
+public/*
+!public/assets
+public/assets/*
+!public/assets/favicon.*

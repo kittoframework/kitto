@@ -42,6 +42,8 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/assets/javascripts/helpers.js",       "assets/javascripts/helpers.js"},
     {:text, "new/assets/javascripts/widget.js",        "assets/javascripts/widget.js"},
     {:text, "new/assets/stylesheets/application.scss", "assets/stylesheets/application.scss"},
+    {:keep, "new/public/assets",                       "public/assets"},
+    {:text, "new/public/assets/favicon.ico",           "public/assets/favicon.ico"},
     {:text, "new/webpack.config.js",                   "webpack.config.js"},
     {:text, "new/.babelrc",                            ".babelrc"},
     {:eex,  "new/package.json",                        "package.json"}
