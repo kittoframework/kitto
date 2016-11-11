@@ -4,6 +4,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.2.2] - 2016-11-11
+
+### Changed
+
+* Fonts are no longer bundled in js but are served independently
+
+### Fixed
+
+* Font assets are now served in development
+* Added missing favicon
+
 ## [0.2.1] - 2016-11-06
 
 ### Changed
