@@ -170,4 +170,31 @@ defmodule Kitto.RouterTest do
       assert_receive :ok
     end
   end
+
+  test "with auth token post widgets/:id grants access when provided" do
+    Application.put_env :kitto, :auth_token, "asecret"
+    topic = "technology"
+    body = %{elixir: "is awesome!"}
+
+    conn = conn(:post, "widgets/#{topic}", Poison.encode!(body))
+      |> put_req_header("authentication", "Token asecret")
+      |> Kitto.Router.call(@opts)
+
+    assert conn.state == :sent
+    assert conn.status == 204
+    Application.delete_env :kitto, :auth_token
+  end
+
+  test "with auth token post widgets/:id denies access when not provided" do
+    Application.put_env :kitto, :auth_token, "asecret"
+    topic = "technology"
+    body = %{elixir: "is awesome!"}
+
+    conn = conn(:post, "widgets/#{topic}", Poison.encode!(body))
+      |> Kitto.Router.call @opts
+
+    assert conn.state == :sent
+    assert conn.status == 401
+    Application.delete_env :kitto, :auth_token
+  end
 end

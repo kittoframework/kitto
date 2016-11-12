@@ -20,3 +20,8 @@ config :kitto, root: Path.dirname(__DIR__), port: 4000
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+# Add authentication to `PORT /widgets/:id`. Change "asecret" to something more
+# secure.
+#
+# config :kitto, :auth_token: "asecret"
