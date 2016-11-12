@@ -3,7 +3,7 @@ MAINTAINER Dimitris Zorbas "dimitrisplusplus@gmail.com"
 
 RUN mix local.hex --force && mix local.rebar --force
 RUN apt-get update \
-  && apt-get -qq install curl xz-utils git \
+  && apt-get -qq install curl xz-utils git make \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
