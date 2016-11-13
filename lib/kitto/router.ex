@@ -4,8 +4,8 @@ defmodule Kitto.Router do
   @development_assets_url "http://localhost:8080/assets/"
 
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
+  unless Mix.env == :test, do: plug Plug.Logger
 
-  plug Plug.Logger
   plug :match
   if Mix.env == :prod do
     plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"

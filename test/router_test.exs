@@ -191,7 +191,7 @@ defmodule Kitto.RouterTest do
     body = %{elixir: "is awesome!"}
 
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(body))
-      |> Kitto.Router.call @opts
+      |> Kitto.Router.call(@opts)
 
     assert conn.state == :sent
     assert conn.status == 401
