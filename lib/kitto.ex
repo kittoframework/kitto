@@ -2,7 +2,7 @@ defmodule Kitto do
   use Application
   require Logger
 
-  @defaults %{port: 4000}
+  @defaults %{ip: {127, 0, 0, 1}, port: 4000}
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
@@ -16,11 +16,27 @@ defmodule Kitto do
   end
 
   def start_server do
-    Logger.info "Starting Kitto server on port #{port}"
-    { :ok, _pid } = Plug.Adapters.Cowboy.http(Kitto.Router, [], port: port)
+    Logger.info "Starting Kitto server, listening on #{ip_human(ip)}:#{port}"
+    { :ok, _pid } = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip, port: port)
   end
 
   def root, do: Application.get_env :kitto, :root
+
+  defp ip, do: ip(Application.get_env(:kitto, :ip, @defaults.ip))
+  defp ip({:system, var}) do
+    case System.get_env(var) do
+      nil ->
+        Logger.error "Configured binding ip via #{var} but no value is set"
+        exit(:shutdown)
+      address -> address
+        |> String.split(".")
+        |> Enum.map(&String.to_integer/1)
+        |> List.to_tuple
+    end
+  end
+  defp ip(address) when is_tuple(address), do: address
+  defp ip(_), do: @defaults.ip
+  defp ip_human(tup), do: tup |> Tuple.to_list |> Enum.join(".")
 
   defp port, do: port(Application.get_env(:kitto, :port))
   defp port({:system, var}), do: System.get_env(var) |> Integer.parse |> elem(0)

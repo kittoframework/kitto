@@ -7,6 +7,9 @@ use Mix.Config
 
 config :kitto, root: Path.dirname(__DIR__), port: 4000
 
+# Use ip: {:system, "KITTO_IP"} to have binding ip configurable via env variable
+# Example: `KITTO_IP=0.0.0.0 mix kitto.server` will start the server on 0.0.0.0
+
 # Use port: {:system, "KITT0_PORT"} to have port port configurable via env variable
 # Example: `KITTO_PORT=4444 mix kitto.server` will start the server on port 4444
 
