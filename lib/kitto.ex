@@ -20,7 +20,20 @@ defmodule Kitto do
     { :ok, _pid } = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip, port: port)
   end
 
+  @doc """
+  Returns the root path of the dashboard project
+  """
   def root, do: Application.get_env :kitto, :root
+
+  @doc """
+  Returns the binding ip of the assets watcher server
+  """
+  def asset_server_host, do: Application.get_env :kitto, :assets_host, "127.0.0.1"
+
+  @doc """
+  Returns the binding port of the assets watcher server
+  """
+  def asset_server_port, do: Application.get_env :kitto, :assets_port, 8080
 
   defp ip, do: ip(Application.get_env(:kitto, :ip, @defaults.ip))
   defp ip({:system, var}) do

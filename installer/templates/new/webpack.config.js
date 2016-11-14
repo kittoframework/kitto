@@ -61,7 +61,8 @@ const common = {
   }
 };
 
-if(TARGET === 'start' || !TARGET) {
+// Development Environment
+if (TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
     devtool: 'eval-source-map',
     devServer: {
@@ -75,16 +76,17 @@ if(TARGET === 'start' || !TARGET) {
       // display only errors to reduce the amount of output
       stats: 'errors-only',
 
-      // parse host and port from env so this is easy
-      // to customize
-      host: process.env.HOST,
-      port: process.env.PORT
+      // Binding address of webpack-dev-server
+      // Read more: https://github.com/kittoframework/kitto/wiki/Customize-Asset-Watcher
+      host: process.env.KITTO_ASSETS_HOST,
+      port: process.env.KITTO_ASSETS_PORT
     },
     plugins: [new webpack.HotModuleReplacementPlugin()]
   });
 }
 
-if(TARGET === 'build') {
+// Production Environment
+if (TARGET === 'build') {
   var CompressionPlugin = require("compression-webpack-plugin");
 
   module.exports = merge(common, {

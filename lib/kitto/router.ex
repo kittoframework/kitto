@@ -1,8 +1,6 @@
 defmodule Kitto.Router do
   use Plug.Router
 
-  @development_assets_url "http://localhost:8080/assets/"
-
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
@@ -45,7 +43,7 @@ defmodule Kitto.Router do
 
   get "assets/*asset" do
     if Mix.env == :dev do
-      conn = conn |> redirect_to("#{@development_assets_url}#{asset |> Enum.join("/")}")
+      conn = conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
       send_resp(conn, 404, "Not Found") |> halt
     end
@@ -116,5 +114,9 @@ defmodule Kitto.Router do
       |> List.first
       |> to_string
       |> String.replace(~r/^Token\s/, "")
+  end
+
+  defp development_assets_url do
+    "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
   end
 end

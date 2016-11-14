@@ -25,8 +25,16 @@ defmodule Mix.Tasks.Kitto.Server do
   end
 
   defp start_watcher do
+    import Kitto, only: [asset_server_host: 0, asset_server_port: 0]
+
     validate_watcher
-    System.cmd watcher_bin, watcher[:opts]
+
+    Logger.info "Starting assets watcher at: #{asset_server_host}:#{asset_server_port}"
+
+    System.cmd watcher_bin,
+               watcher[:opts],
+               env: [{"KITTO_ASSETS_HOST", asset_server_host},
+                     {"KITTO_ASSETS_PORT", "#{Kitto.asset_server_port}"}]
   end
 
   defp validate_watcher do
