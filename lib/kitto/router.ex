@@ -4,6 +4,8 @@ defmodule Kitto.Router do
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
+  plug Kitto.Plugs.Authentication
+
   plug :match
   if Mix.env == :prod do
     plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"
@@ -30,15 +32,11 @@ defmodule Kitto.Router do
   end
 
   post "widgets/:id" do
-    if authentication_required? && !authenticated?(conn) do
-      conn |> send_resp(401, "Authorization required") |> halt
-    else
-      {:ok, body, conn} = read_body(conn)
+    {:ok, body, conn} = read_body(conn)
 
-      Kitto.Notifier.broadcast!(id, body |> Poison.decode!)
+    Kitto.Notifier.broadcast!(id, body |> Poison.decode!)
 
-      conn |> send_resp(204, "")
-    end
+    conn |> send_resp(204, "")
   end
 
   get "assets/*asset" do
@@ -103,18 +101,6 @@ defmodule Kitto.Router do
   end
 
   defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")
-
-  defp auth_token, do: Application.get_env(:kitto, :auth_token)
-
-  defp authentication_required?, do: !!auth_token
-
-  defp authenticated?(conn) do
-    auth_token == conn
-      |> get_req_header("authentication")
-      |> List.first
-      |> to_string
-      |> String.replace(~r/^Token\s/, "")
-  end
 
   defp development_assets_url do
     "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
