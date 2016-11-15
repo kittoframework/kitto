@@ -4,6 +4,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.2.3] - 2016-11-15
+
+### Added
+
+* Kitto :assets_host and :assets_port config settings for the dev asset server
+  binding address
+* Kitto :ip config setting the server binding ip
+* Authentication to POST /widgets/:id, (#11)
+
+### Changed
+
+* Scaffolded version of d3 is 3.5.17 gcc, python no longer required for
+  `npm install` (acbda885)
+
 ## [0.2.2] - 2016-11-11
 
 ### Changed
