@@ -156,15 +156,7 @@ defmodule Kitto.RouterTest do
     body = %{elixir: "is awesome!"}
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
 
-    mock = fn (t, b) ->
-      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
-
-      if (t == topic && stringified_body == body) do
-        send self, :ok
-      end
-    end
-
-    with_mock Kitto.Notifier, [broadcast!: mock] do
+    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
       Kitto.Router.call(conn, @opts)
 
       assert_receive :ok
@@ -203,15 +195,11 @@ defmodule Kitto.RouterTest do
     body = %{command: "reload"}
     conn = conn(:post, "dashboards/#{dashboard}", Poison.encode!(body))
 
-    mock = fn (t, b) ->
-      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
-      if t == "_kitto" && stringified_body == Map.put(body, :dashboard, dashboard) do
-        send self, :ok
-      end
-    end
+    mock = mock_broadcast "_kitto", Map.put(body, :dashboard, dashboard)
 
     with_mock Kitto.Notifier, [broadcast!: mock] do
       Kitto.Router.call(conn, @opts)
+
       assert_receive :ok
     end
   end
@@ -220,15 +208,11 @@ defmodule Kitto.RouterTest do
     body = %{command: "reload"}
     conn = conn(:post, "dashboards", Poison.encode!(body))
 
-    mock = fn (t, b) ->
-      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
-      if t == "_kitto" && stringified_body == Map.put(body, :dashboard, "*") do
-        send self, :ok
-      end
-    end
+    mock = mock_broadcast "_kitto", Map.put(body, :dashboard, "*")
 
     with_mock Kitto.Notifier, [broadcast!: mock] do
       Kitto.Router.call(conn, @opts)
+
       assert_receive :ok
     end
   end
@@ -237,16 +221,26 @@ defmodule Kitto.RouterTest do
     body = %{command: "reload", dashboard: "sample"}
     conn = conn(:post, "dashboards", Poison.encode!(body))
 
-    mock = fn (t, b) ->
-      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
-      if t == "_kitto" && stringified_body == Map.put(body, :dashboard, "sample") do
-        send self, :ok
-      end
-    end
+    mock = mock_broadcast "_kitto", Map.put(body, :dashboard, "sample")
 
     with_mock Kitto.Notifier, [broadcast!: mock] do
       Kitto.Router.call(conn, @opts)
+
       assert_receive :ok
+    end
+  end
+
+  def mock_broadcast(expected_topic, expected_body) do
+    fn (topic, body) ->
+      atomified_body = for {key, value} <- body, into: %{} do
+        {String.to_atom(key), value}
+      end
+
+      if topic == expected_topic && atomified_body == expected_body do
+        send self, :ok
+      else
+        send self, :error
+      end
     end
   end
 end
