@@ -197,4 +197,56 @@ defmodule Kitto.RouterTest do
     assert conn.status == 401
     Application.delete_env :kitto, :auth_token
   end
+
+  test "POST dashboards/:id reloads single dashboard" do
+    dashboard = "sample"
+    body = %{command: "reload"}
+    conn = conn(:post, "dashboards/#{dashboard}", Poison.encode!(body))
+
+    mock = fn (t, b) ->
+      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
+      if t == "_kitto" && stringified_body == Map.put(body, :dashboard, dashboard) do
+        send self, :ok
+      end
+    end
+
+    with_mock Kitto.Notifier, [broadcast!: mock] do
+      Kitto.Router.call(conn, @opts)
+      assert_receive :ok
+    end
+  end
+
+  test "POST dashboards reloads all dashboards" do
+    body = %{command: "reload"}
+    conn = conn(:post, "dashboards", Poison.encode!(body))
+
+    mock = fn (t, b) ->
+      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
+      if t == "_kitto" && stringified_body == Map.put(body, :dashboard, "*") do
+        send self, :ok
+      end
+    end
+
+    with_mock Kitto.Notifier, [broadcast!: mock] do
+      Kitto.Router.call(conn, @opts)
+      assert_receive :ok
+    end
+  end
+
+  test "POST dashbords with dashboard in body reloads that dashboard" do
+    body = %{command: "reload", dashboard: "sample"}
+    conn = conn(:post, "dashboards", Poison.encode!(body))
+
+    mock = fn (t, b) ->
+      stringified_body = for {key, val} <- b, into: %{}, do: {String.to_atom(key), val}
+      if t == "_kitto" && stringified_body == Map.put(body, :dashboard, "sample") do
+        send self, :ok
+      end
+    end
+
+    with_mock Kitto.Notifier, [broadcast!: mock] do
+      Kitto.Router.call(conn, @opts)
+      assert_receive :ok
+    end
+  end
 end
