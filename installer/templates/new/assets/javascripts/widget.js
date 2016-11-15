@@ -23,9 +23,27 @@ class Widget extends React.Component {
           setTimeout((() => window.location.reload()), 5 * 60 * 1000)
         }
       });
+
+      this.bindInternalEvents();
     }
 
     return this._events;
+  }
+
+  static bindInternalEvents() {
+    this._events.addEventListener('_kitto', (event) => {
+      let data = JSON.parse(event.data);
+
+      switch (data.message.event) {
+        case 'reload':
+          if (data.message.dashboard === '*' ||
+              document.location.pathname.endsWith(data.message.dashboard)) {
+            document.location.reload()
+          }
+
+          break;
+      }
+    });
   }
 
   static listen(component, source) {
