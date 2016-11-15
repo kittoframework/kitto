@@ -23,7 +23,18 @@ defmodule Kitto do
   @doc """
   Returns the root path of the dashboard project
   """
-  def root, do: Application.get_env :kitto, :root
+  def root do
+    case Application.get_env(:kitto, :root) do
+      path when is_bitstring(path) -> path
+      nil ->
+        """
+        Kitto config :root is nil.
+        It should normally be set to Path.dirname(__DIR__) in config/config.exs
+        """ |> Logger.error
+
+        exit(:shutdown)
+    end
+  end
 
   @doc """
   Returns the binding ip of the assets watcher server
