@@ -21,6 +21,22 @@ defmodule Kitto.Router do
     end
   end
 
+  post "dashboards" do
+    {:ok, body, conn} = read_body conn
+    command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
+    Kitto.Notifier.broadcast! "_kitto", command
+
+    conn |> send_resp(204, "")
+  end
+
+  post "dashboards/:id" do
+    {:ok, body, conn} = read_body conn
+    command = body |> Poison.decode! |> Map.put("dashboard", id)
+    Kitto.Notifier.broadcast! "_kitto", command
+
+    conn |> send_resp(204, "")
+  end
+
   get "events" do
     conn = initialize_sse(conn)
     Kitto.Notifier.register(conn.owner)
