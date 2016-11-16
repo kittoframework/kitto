@@ -3,6 +3,7 @@ defmodule Kitto.RouterTest do
   use Plug.Test
 
   import Mock
+  import Kitto.TestHelper, only: [atomify_map: 1]
 
   @opts Kitto.Router.init([])
 
@@ -142,6 +143,51 @@ defmodule Kitto.RouterTest do
     assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
   end
 
+  test "GET /widgets responds with 200 OK" do
+    conn = conn(:get, "widgets")
+    conn = Kitto.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+  end
+
+  test "GET /widgets responds with valid JSON" do
+    conn = conn(:get, "widgets")
+    conn = Kitto.Router.call(conn, @opts)
+
+    Poison.decode! conn.resp_body
+  end
+
+  test "GET /widgets responds with all cached events" do
+    conn = conn(:get, "widgets")
+
+    Kitto.Notifier.clear_cache
+    Kitto.Notifier.cache :technology, %{news: "man made it to mars"}
+    Kitto.Notifier.cache :stockmarket, %{trend: "it's going up"}
+
+    conn = Kitto.Router.call(conn, @opts)
+
+    with parsed_body <- Poison.decode!(conn.resp_body) do
+      assert parsed_body |> Map.has_key?("technology")
+      assert parsed_body |> Map.has_key?("stockmarket")
+    end
+  end
+
+  test "GET /widgets/:id responds with cached events for the specified key" do
+    conn = conn(:get, "widgets/technology")
+    cached_event = %{news: "man made it to mars"}
+    irrelevant_event = %{message: "nobody cares about this"}
+
+    Kitto.Notifier.clear_cache
+    Kitto.Notifier.cache :technology, cached_event
+    Kitto.Notifier.cache :irrelevant, irrelevant_event
+
+    conn = Kitto.Router.call(conn, @opts)
+    parsed_body = Poison.decode!(conn.resp_body)
+
+    assert atomify_map(parsed_body) == cached_event
+  end
+
   test "POST /widgets/:id responds with 204 No Content" do
     topic = "technology"
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
@@ -232,11 +278,7 @@ defmodule Kitto.RouterTest do
 
   def mock_broadcast(expected_topic, expected_body) do
     fn (topic, body) ->
-      atomified_body = for {key, value} <- body, into: %{} do
-        {String.to_atom(key), value}
-      end
-
-      if topic == expected_topic && atomified_body == expected_body do
+      if topic == expected_topic && atomify_map(body) == expected_body do
         send self, :ok
       else
         send self, :error

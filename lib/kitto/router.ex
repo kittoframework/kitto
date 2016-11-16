@@ -45,6 +45,9 @@ defmodule Kitto.Router do
     conn
   end
 
+  get "widgets", do: conn |> render_json(Kitto.Notifier.cache)
+  get "widgets/:id", do: conn |> render_json(Kitto.Notifier.cache[String.to_atom(id)])
+
   post "widgets/:id" do
     if authentication_required? && !authenticated?(conn) do
       conn |> send_resp(401, "Authorization required") |> halt
@@ -134,5 +137,11 @@ defmodule Kitto.Router do
 
   defp development_assets_url do
     "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
+  end
+
+  defp render_json(conn, json, opts \\ %{status: 200}) do
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(opts.status, Poison.encode!(json))
   end
 end
