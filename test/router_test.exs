@@ -64,7 +64,7 @@ defmodule Kitto.RouterTest do
     assert (conn |> get_resp_header("location") |> hd) == "/dashboards/jobs"
   end
 
-  test "GET dashboards/:id when dashboard does not exist responds with 404 Not Found" do
+  test "GET /dashboards/:id when dashboard does not exist responds with 404 Not Found" do
     dashboard = "nonexistant"
     conn = conn(:get, "/dashboards/#{dashboard}")
 
@@ -75,7 +75,7 @@ defmodule Kitto.RouterTest do
     assert conn.resp_body == "Dashboard \"#{dashboard}\" does not exist"
   end
 
-  test "GET dashboards/:id when dashboard exists responds with 200 OK" do
+  test "GET /dashboards/:id when dashboard exists responds with 200 OK" do
     view = "body"
     conn = conn(:get, "/dashboards/sample")
 
@@ -88,7 +88,7 @@ defmodule Kitto.RouterTest do
     end
   end
 
-  test "GET events responds with 200 OK" do
+  test "GET /events responds with 200 OK" do
     conn = conn(:get, "events")
 
     spawn fn ->
@@ -103,7 +103,7 @@ defmodule Kitto.RouterTest do
     assert conn.status == 200
   end
 
-  test "GET events streams broadcasted messages" do
+  test "GET /events streams broadcasted messages" do
     Kitto.Notifier.clear_cache
     conn = conn(:get, "events")
     topic = "technology"
@@ -123,7 +123,7 @@ defmodule Kitto.RouterTest do
   end
 
   @tag :pending
-  test "GET events streams cached events first" do
+  test "GET /events streams cached events first" do
     Kitto.Notifier.clear_cache
     Kitto.Notifier.cache :technology, %{news: "man made it to mars"}
     conn = conn(:get, "events")
@@ -142,7 +142,7 @@ defmodule Kitto.RouterTest do
     assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
   end
 
-  test "post widgets/:id responds with 204 No Content" do
+  test "POST /widgets/:id responds with 204 No Content" do
     topic = "technology"
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
 
@@ -151,7 +151,7 @@ defmodule Kitto.RouterTest do
     assert conn.status == 204
   end
 
-  test "post widgets/:id broadcasts the body on the given topic" do
+  test "POST /widgets/:id broadcasts the body on the given topic" do
     topic = "technology"
     body = %{elixir: "is awesome!"}
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
@@ -163,7 +163,7 @@ defmodule Kitto.RouterTest do
     end
   end
 
-  test "with auth token post widgets/:id grants access when provided" do
+  test "with auth token POST /widgets/:id grants access when provided" do
     Application.put_env :kitto, :auth_token, "asecret"
     topic = "technology"
     body = %{elixir: "is awesome!"}
@@ -177,7 +177,7 @@ defmodule Kitto.RouterTest do
     Application.delete_env :kitto, :auth_token
   end
 
-  test "with auth token post widgets/:id denies access when not provided" do
+  test "with auth token POST /widgets/:id denies access when not provided" do
     Application.put_env :kitto, :auth_token, "asecret"
     topic = "technology"
     body = %{elixir: "is awesome!"}
@@ -190,7 +190,7 @@ defmodule Kitto.RouterTest do
     Application.delete_env :kitto, :auth_token
   end
 
-  test "POST dashboards/:id reloads single dashboard" do
+  test "POST /dashboards/:id reloads single dashboard" do
     dashboard = "sample"
     body = %{command: "reload"}
     conn = conn(:post, "dashboards/#{dashboard}", Poison.encode!(body))
@@ -204,7 +204,7 @@ defmodule Kitto.RouterTest do
     end
   end
 
-  test "POST dashboards reloads all dashboards" do
+  test "POST /dashboards reloads all dashboards" do
     body = %{command: "reload"}
     conn = conn(:post, "dashboards", Poison.encode!(body))
 
@@ -217,7 +217,7 @@ defmodule Kitto.RouterTest do
     end
   end
 
-  test "POST dashbords with dashboard in body reloads that dashboard" do
+  test "POST /dashboards with dashboard in body reloads that dashboard" do
     body = %{command: "reload", dashboard: "sample"}
     conn = conn(:post, "dashboards", Poison.encode!(body))
 
