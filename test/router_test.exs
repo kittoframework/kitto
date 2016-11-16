@@ -79,7 +79,7 @@ defmodule Kitto.RouterTest do
     view = "body"
     conn = conn(:get, "/dashboards/sample")
 
-    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_) -> view end, ] do
+    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_) -> view end] do
       conn = Kitto.Router.call(conn, @opts)
 
       assert conn.state == :sent
