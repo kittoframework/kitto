@@ -181,7 +181,7 @@ defmodule Mix.Tasks.Kitto.New do
   end
 
   defp kitto_dep("deps/kitto"), do: ~s[{:kitto, "~> #{@version}"}]
-  defp kitto_dep(path), do: ~s[{:phoenix, path: #{inspect path}, override: true}]
+  defp kitto_dep(path), do: ~s[{:kitto, path: #{inspect path}, override: true}]
 
   defp kitto_path(_path, false) do
     "deps/kitto"
