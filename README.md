@@ -203,7 +203,7 @@ Spawn a container of the image
 ```shell
 docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 ```
-#### Using Docker
+#### Heroku
 
 Please read the detailed [instructions][wiki-heroku] in the wiki.
 
