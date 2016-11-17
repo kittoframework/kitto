@@ -4,9 +4,9 @@ defmodule Kitto.Router do
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
-  plug Kitto.Plugs.Authentication
 
   plug :match
+  plug Kitto.Plugs.Authentication
   if Mix.env == :prod do
     plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"
   end
@@ -50,7 +50,7 @@ defmodule Kitto.Router do
   get "widgets", do: conn |> render_json(Kitto.Notifier.cache)
   get "widgets/:id", do: conn |> render_json(Kitto.Notifier.cache[String.to_atom(id)])
 
-  post "widgets/:id" do
+  post "widgets/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body(conn)
 
     Kitto.Notifier.broadcast!(id, body |> Poison.decode!)

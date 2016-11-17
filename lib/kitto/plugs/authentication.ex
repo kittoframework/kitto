@@ -14,11 +14,11 @@ defmodule Kitto.Plugs.Authentication do
   defp auth_token, do: Application.get_env(:kitto, :auth_token)
 
   defp authentication_required?(conn) do
-    !!auth_token && validate_request(conn)
+    !!auth_token && should_validate_request(conn)
   end
 
-  defp validate_request(conn) do
-    conn.method == "POST" && conn.request_path =~ ~r/^\/?widgets/
+  defp should_validate_request(conn) do
+    Map.has_key?(conn.private, :authenticated) && conn.private.authenticated
   end
 
   defp authenticated?(conn) do
