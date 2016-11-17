@@ -203,6 +203,9 @@ Spawn a container of the image
 ```shell
 docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 ```
+#### Using Docker
+
+Please read the detailed [instructions][wiki-heroku] in the wiki.
 
 ### Contributing
 #### Run the Tests
@@ -237,3 +240,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [webpack]: https://webpack.github.io/
 [gridster]: http://dsmorse.github.io/gridster.js/
 [wiki]: https://github.com/kittoframework/kitto/wiki
+[wiki-heroku]: https://github.com/kittoframework/kitto/wiki/Deploying-to-Heroku
