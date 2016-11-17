@@ -38,7 +38,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.2.2.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.2.3.ez
 ```
 
 ## Requirements
@@ -217,6 +217,7 @@ Have a question?
 
 * See [elixirforum/kitto](https://elixirforum.com/t/kitto-a-framework-for-interactive-dashboards)
 * Open an [issue](https://github.com/kittoframework/kitto/issues/new)
+* Ask in [elixir-lang.slack.com/#kitto](https://elixir-lang.slack.com/messages/kitto/)
 
 ### Inspiration
 

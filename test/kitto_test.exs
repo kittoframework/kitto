@@ -1,6 +1,30 @@
 defmodule KittoTest do
   use ExUnit.Case
 
+  import ExUnit.CaptureLog
+
+  test "#root when the :root config is set to a bitstring, it returns it" do
+    path = "somewhere"
+    Application.put_env :kitto, :root, path
+
+    assert Kitto.root == path
+  end
+
+  test "#root when the :root config is set to a non-bitstring, it raises error" do
+    num = 42
+    Application.put_env :kitto, :root, num
+
+    assert catch_error(Kitto.root) == {:case_clause, num}
+  end
+
+  test "#root when the :root config is not set, it logs config info and exits" do
+    Application.delete_env :kitto, :root
+
+    assert capture_log(fn ->
+      catch_exit(Kitto.root) == :shutdown
+    end) =~ "config :root is nil."
+  end
+
   test "#asset_server_host when the :assets_host is set, it returns it" do
     ip = "0.0.0.0"
 

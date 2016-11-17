@@ -23,6 +23,22 @@ defmodule Kitto.Router do
     end
   end
 
+  post "dashboards" do
+    {:ok, body, conn} = read_body conn
+    command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
+    Kitto.Notifier.broadcast! "_kitto", command
+
+    conn |> send_resp(204, "")
+  end
+
+  post "dashboards/:id" do
+    {:ok, body, conn} = read_body conn
+    command = body |> Poison.decode! |> Map.put("dashboard", id)
+    Kitto.Notifier.broadcast! "_kitto", command
+
+    conn |> send_resp(204, "")
+  end
+
   get "events" do
     conn = initialize_sse(conn)
     Kitto.Notifier.register(conn.owner)
@@ -30,6 +46,9 @@ defmodule Kitto.Router do
 
     conn
   end
+
+  get "widgets", do: conn |> render_json(Kitto.Notifier.cache)
+  get "widgets/:id", do: conn |> render_json(Kitto.Notifier.cache[String.to_atom(id)])
 
   post "widgets/:id" do
     {:ok, body, conn} = read_body(conn)
@@ -104,5 +123,11 @@ defmodule Kitto.Router do
 
   defp development_assets_url do
     "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
+  end
+
+  defp render_json(conn, json, opts \\ %{status: 200}) do
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(opts.status, Poison.encode!(json))
   end
 end

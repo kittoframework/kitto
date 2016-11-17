@@ -38,7 +38,7 @@ defmodule Kitto.Notifier do
   topic and payload
   """
   def broadcast!(topic, data) do
-    cache(topic, data)
+    unless topic == "_kitto", do: cache(topic, data)
 
     connections |> Enum.each(fn (connection) -> broadcast!(connection, topic, data) end)
   end
