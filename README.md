@@ -28,7 +28,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 * Uses a modern asset tool-chain, [Webpack][webpack]
 * Allows streaming SSE to numerous clients concurrently with low
   memory/CPU footprint
-* Easy to deploy using the provided Docker images
+* Easy to deploy using the provided Docker images, or Heroku
 * Can serve assets in production
 * Keeps stats about defined jobs and comes with a dashboard to monitor
   them
