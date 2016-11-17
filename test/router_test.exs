@@ -236,6 +236,16 @@ defmodule Kitto.RouterTest do
     Application.delete_env :kitto, :auth_token
   end
 
+  test "POST /dashboards/:id required authentication" do
+    Application.put_env :kitto, :auth_token, "asecret"
+    conn = conn(:post, "dashboards/sample", "")
+      |> Kitto.Router.call(@opts)
+
+    assert conn.state == :sent
+    assert conn.status == 401
+    Application.delete_env :kitto, :auth_token
+  end
+
   test "POST /dashboards/:id reloads single dashboard" do
     dashboard = "sample"
     body = %{command: "reload"}
@@ -248,6 +258,16 @@ defmodule Kitto.RouterTest do
 
       assert_receive :ok
     end
+  end
+
+  test "POST /dashboards required authentication" do
+    Application.put_env :kitto, :auth_token, "asecret"
+    conn = conn(:post, "dashboards", "")
+      |> Kitto.Router.call(@opts)
+
+    assert conn.state == :sent
+    assert conn.status == 401
+    Application.delete_env :kitto, :auth_token
   end
 
   test "POST /dashboards reloads all dashboards" do

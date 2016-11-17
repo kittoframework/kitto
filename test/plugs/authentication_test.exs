@@ -40,8 +40,8 @@ defmodule Kitto.PlugAuthenticationTest do
   """ do
     Application.put_env :kitto, :auth_token, "asecret"
     conn = conn(:post, "/widgets")
-           |> put_private(:authenticated, true)
-           |> Kitto.Plugs.Authentication.call(@opts)
+      |> put_private(:authenticated, true)
+      |> Kitto.Plugs.Authentication.call(@opts)
 
     assert conn.status == 401
     assert conn.state == :sent
@@ -54,8 +54,8 @@ defmodule Kitto.PlugAuthenticationTest do
   """ do
     Application.put_env :kitto, :auth_token, "asecret"
     conn = conn(:post, "/widgets")
-           |> put_private(:authenticated, true)
-           |> put_req_header("authentication", "Token asecret")
+      |> put_private(:authenticated, true)
+      |> put_req_header("authentication", "Token asecret")
 
     assert Kitto.Plugs.Authentication.call(conn, @opts) == conn
     Application.delete_env :kitto, :auth_token

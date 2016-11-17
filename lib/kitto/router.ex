@@ -23,7 +23,7 @@ defmodule Kitto.Router do
     end
   end
 
-  post "dashboards" do
+  post "dashboards", private: %{authenticated: true} do
     {:ok, body, conn} = read_body conn
     command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
     Kitto.Notifier.broadcast! "_kitto", command
@@ -31,7 +31,7 @@ defmodule Kitto.Router do
     conn |> send_resp(204, "")
   end
 
-  post "dashboards/:id" do
+  post "dashboards/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body conn
     command = body |> Poison.decode! |> Map.put("dashboard", id)
     Kitto.Notifier.broadcast! "_kitto", command
