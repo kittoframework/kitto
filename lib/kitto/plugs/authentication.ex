@@ -1,4 +1,37 @@
 defmodule Kitto.Plugs.Authentication do
+  @moduledoc """
+  Defines authentication logic for routes that require it. Authentication uses token based auth with
+  the Authentication header.
+
+  ## Setting up authentication:
+
+  To configure the dashboard with authentication, add the expected auth token to your application's
+  config:
+
+      # config/config.exs
+      config :kitto, auth_token: "asecret"
+
+  ## Authenticating requests
+
+  To authenticate requests that require it, pass the auth token in the Authentication header of
+  the request:
+
+      Authentication: Token asecret
+
+  An example cURL request to reload all dashboards with authentication:
+
+      $ curl -H "Authentication: Token asecret" -X POST http://localhost:4000/dashboards
+
+  ## Marking routes as authenticated
+
+  When adding new routes, to mark them as authenticated, add the `authenticated` key to the route's
+  private config:
+
+  get "my/authenticated/route", private: %{authenticated: true} do
+    # Process normal request
+  end
+  """
+
   import Plug.Conn
 
   def init(opts), do: opts
@@ -11,14 +44,8 @@ defmodule Kitto.Plugs.Authentication do
     end
   end
 
-  defp auth_token, do: Application.get_env(:kitto, :auth_token)
-
   defp authentication_required?(conn) do
-    !!auth_token && should_validate_request(conn)
-  end
-
-  defp should_validate_request(conn) do
-    Map.has_key?(conn.private, :authenticated) && conn.private.authenticated
+    !!auth_token && conn.private[:authenticated]
   end
 
   defp authenticated?(conn) do
@@ -28,4 +55,6 @@ defmodule Kitto.Plugs.Authentication do
       |> to_string
       |> String.replace(~r/^Token\s/, "")
   end
+
+  defp auth_token, do: Application.get_env(:kitto, :auth_token)
 end
