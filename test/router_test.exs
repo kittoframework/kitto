@@ -236,7 +236,7 @@ defmodule Kitto.RouterTest do
     Application.delete_env :kitto, :auth_token
   end
 
-  test "POST /dashboards/:id required authentication" do
+  test "POST /dashboards/:id requires authentication" do
     Application.put_env :kitto, :auth_token, "asecret"
     conn = conn(:post, "dashboards/sample", "")
       |> Kitto.Router.call(@opts)
@@ -260,7 +260,7 @@ defmodule Kitto.RouterTest do
     end
   end
 
-  test "POST /dashboards required authentication" do
+  test "POST /dashboards requires authentication" do
     Application.put_env :kitto, :auth_token, "asecret"
     conn = conn(:post, "dashboards", "")
       |> Kitto.Router.call(@opts)
