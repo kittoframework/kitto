@@ -123,6 +123,54 @@ defmodule Kitto.RouterTest do
     assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
   end
 
+  test """
+  GET /events streams does not broadcast messages not included in the provided topics
+  """ do
+    Kitto.Notifier.clear_cache
+    conn = conn(:get, "events?topics=weather")
+    topic = "technology"
+    message = "Kitto is awesome!"
+
+    spawn fn ->
+      receive do
+      after
+        1 ->
+          send conn.owner, {:broadcast, {topic, message}}
+          send conn.owner, {:misc, :close}
+      end
+    end
+
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.resp_body == ""
+  end
+
+  test """
+  GET /events streams broadcasts only messages included in the provided topics
+  """ do
+    Kitto.Notifier.clear_cache
+    conn = conn(:get, "events?topics=technology")
+    events = [
+      {:weather, "cloudy with a chance of meatballs"},
+      {:technology, "kitto is awesome"}
+    ]
+
+    spawn fn ->
+      receive do
+      after
+        1 ->
+          send conn.owner, {:broadcast, events |> Enum.at(0)}
+          send conn.owner, {:broadcast, events |> Enum.at(1)}
+          send conn.owner, {:misc, :close}
+      end
+    end
+
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.resp_body == """
+    event: #{events |> Enum.at(1) |> elem(0)}
+    data: {\"message\": \"#{events |> Enum.at(1) |> elem(1)}\"}\n
+    """
+  end
+
   @tag :pending
   test "GET /events streams cached events first" do
     Kitto.Notifier.clear_cache
