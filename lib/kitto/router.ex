@@ -12,51 +12,11 @@ defmodule Kitto.Router do
   end
   plug :dispatch
 
-  get "/", do: conn |> redirect_to_default_dashboard
-  get "dashboards", do: conn |> redirect_to_default_dashboard
+  get "/", do: conn |> Kitto.Endpoints.Dashboard.redirect_to_default_dashboard
 
-  get "dashboards/:id" do
-    if Kitto.View.exists?(id) do
-      conn |> render(id)
-    else
-      send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
-    end
-  end
-
-  post "dashboards", private: %{authenticated: true} do
-    {:ok, body, conn} = read_body conn
-    command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
-    Kitto.Notifier.broadcast! "_kitto", command
-
-    conn |> send_resp(204, "")
-  end
-
-  post "dashboards/:id", private: %{authenticated: true} do
-    {:ok, body, conn} = read_body conn
-    command = body |> Poison.decode! |> Map.put("dashboard", id)
-    Kitto.Notifier.broadcast! "_kitto", command
-
-    conn |> send_resp(204, "")
-  end
-
-  get "events" do
-    conn = initialize_sse(conn)
-    Kitto.Notifier.register(conn.owner)
-    conn = listen_sse(conn)
-
-    conn
-  end
-
-  get "widgets", do: conn |> render_json(Kitto.Notifier.cache)
-  get "widgets/:id", do: conn |> render_json(Kitto.Notifier.cache[String.to_atom(id)])
-
-  post "widgets/:id", private: %{authenticated: true} do
-    {:ok, body, conn} = read_body(conn)
-
-    Kitto.Notifier.broadcast!(id, body |> Poison.decode!)
-
-    conn |> send_resp(204, "")
-  end
+  forward "/dashboards", to: Kitto.Endpoints.Dashboard
+  forward "/widgets", to: Kitto.Endpoints.Widget
+  forward "/events", to: Kitto.Endpoints.Event
 
   get "assets/*asset" do
     if Mix.env == :dev do
@@ -66,47 +26,7 @@ defmodule Kitto.Router do
     end
   end
 
-  defp initialize_sse(conn) do
-    conn
-    |> put_resp_header("content-type", "text/event-stream")
-    |> put_resp_header("cache-control", "no-cache")
-    |> put_resp_header("x-accel-buffering", "no")
-    |> send_chunked(200)
-    |> send_cached_events
-  end
-
   match _, do: send_resp(conn, 404, "Not Found")
-
-  defp render(conn, template), do: send_resp(conn, 200, Kitto.View.render(template))
-
-  defp listen_sse(conn) do
-    receive do
-      {:broadcast, {topic, data}} ->
-        res = send_event(conn, topic, data)
-
-        case res do
-          :closed -> conn |> halt
-          _ -> res |> listen_sse
-        end
-      {:error, :closed} -> conn |> halt
-      {:misc, :close} -> conn |> halt
-      _ -> listen_sse(conn)
-    end
-  end
-
-  defp send_event(conn, topic, data) do
-    {_, conn} = chunk(conn, (["event: #{topic}",
-                              "data: {\"message\": #{Poison.encode!(data)}}"]
-                             |> Enum.join("\n")) <> "\n\n")
-
-    conn
-  end
-
-  defp send_cached_events(conn) do
-    Kitto.Notifier.initial_broadcast!(conn.owner)
-
-    conn
-  end
 
   defp redirect_to(conn, path) do
     conn
@@ -115,19 +35,8 @@ defmodule Kitto.Router do
     |> halt
   end
 
-  defp redirect_to_default_dashboard(conn) do
-    conn |> redirect_to("/dashboards/" <> default_dashboard)
-  end
-
-  defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")
-
   defp development_assets_url do
     "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
   end
 
-  defp render_json(conn, json, opts \\ %{status: 200}) do
-    conn
-    |> put_resp_header("content-type", "application/json")
-    |> send_resp(opts.status, Poison.encode!(json))
-  end
 end
