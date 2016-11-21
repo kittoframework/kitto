@@ -47,6 +47,10 @@ defmodule Kitto.Notifier do
   Emits a server-sent event to each of the active connections with the given
   topic and payload to a specific process
   """
+  def broadcast!(pid, topic, data) when is_bitstring(topic) do
+    broadcast!(pid, topic |> String.to_atom, data)
+  end
+
   def broadcast!(pid, topic, data) do
     if !Process.alive?(pid), do: delete(pid)
 

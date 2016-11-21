@@ -5,6 +5,7 @@ defmodule Kitto.Router do
   unless Mix.env == :test, do: plug Plug.Logger
 
   plug :match
+  plug Kitto.Plugs.Authentication
   if Mix.env == :prod do
     plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"
   end
@@ -21,7 +22,7 @@ defmodule Kitto.Router do
     end
   end
 
-  post "dashboards" do
+  post "dashboards", private: %{authenticated: true} do
     {:ok, body, conn} = read_body conn
     command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
     Kitto.Notifier.broadcast! "_kitto", command
@@ -29,7 +30,7 @@ defmodule Kitto.Router do
     conn |> send_resp(204, "")
   end
 
-  post "dashboards/:id" do
+  post "dashboards/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body conn
     command = body |> Poison.decode! |> Map.put("dashboard", id)
     Kitto.Notifier.broadcast! "_kitto", command
@@ -39,8 +40,9 @@ defmodule Kitto.Router do
 
   get "events" do
     conn = initialize_sse(conn)
+
     Kitto.Notifier.register(conn.owner)
-    conn = listen_sse(conn)
+    conn = listen_sse(conn, subscribed_topics(conn))
 
     conn
   end
@@ -48,23 +50,19 @@ defmodule Kitto.Router do
   get "widgets", do: conn |> render_json(Kitto.Notifier.cache)
   get "widgets/:id", do: conn |> render_json(Kitto.Notifier.cache[String.to_atom(id)])
 
-  post "widgets/:id" do
-    if authentication_required? && !authenticated?(conn) do
-      conn |> send_resp(401, "Authorization required") |> halt
-    else
-      {:ok, body, conn} = read_body(conn)
+  post "widgets/:id", private: %{authenticated: true} do
+    {:ok, body, conn} = read_body(conn)
 
-      Kitto.Notifier.broadcast!(id, body |> Poison.decode!)
+    Kitto.Notifier.broadcast!(id, body |> Poison.decode!)
 
-      conn |> send_resp(204, "")
-    end
+    conn |> send_resp(204, "")
   end
 
   get "assets/*asset" do
     if Mix.env == :dev do
       conn = conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
-      send_resp(conn, 404, "Not Found") |> halt
+      conn |> send_resp(404, "Not Found") |> halt
     end
   end
 
@@ -81,18 +79,22 @@ defmodule Kitto.Router do
 
   defp render(conn, template), do: send_resp(conn, 200, Kitto.View.render(template))
 
-  defp listen_sse(conn) do
+  defp listen_sse(conn, :""), do: listen_sse(conn, nil)
+  defp listen_sse(conn, topics) do
     receive do
       {:broadcast, {topic, data}} ->
-        res = send_event(conn, topic, data)
+        res = case is_nil(topics) || topic in topics do
+          true -> send_event(conn, topic, data)
+          false -> conn
+        end
 
         case res do
           :closed -> conn |> halt
-          _ -> res |> listen_sse
+          _ -> res |> listen_sse(topics)
         end
       {:error, :closed} -> conn |> halt
       {:misc, :close} -> conn |> halt
-      _ -> listen_sse(conn)
+      _ -> listen_sse(conn, topics)
     end
   end
 
@@ -123,18 +125,6 @@ defmodule Kitto.Router do
 
   defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")
 
-  defp auth_token, do: Application.get_env(:kitto, :auth_token)
-
-  defp authentication_required?, do: !!auth_token
-
-  defp authenticated?(conn) do
-    auth_token == conn
-      |> get_req_header("authentication")
-      |> List.first
-      |> to_string
-      |> String.replace(~r/^Token\s/, "")
-  end
-
   defp development_assets_url do
     "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
   end
@@ -143,5 +133,15 @@ defmodule Kitto.Router do
     conn
     |> put_resp_header("content-type", "application/json")
     |> send_resp(opts.status, Poison.encode!(json))
+  end
+
+  defp subscribed_topics(conn) do
+    case Plug.Conn.fetch_query_params(conn).query_params
+         |> Map.get("topics", "")
+         |> String.split(",")
+         |> Enum.map(&String.to_atom/1) do
+      [:""] -> nil
+      topics -> MapSet.new(topics)
+    end
   end
 end
