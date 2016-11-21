@@ -46,6 +46,11 @@ defmodule Kitto do
   """
   def asset_server_port, do: Application.get_env :kitto, :assets_port, 8080
 
+  @doc """
+  Returns whether the asset server should be used or not
+  """
+  def asset_server_enabled?, do: Mix.env == :dev
+
   defp ip, do: ip(Application.get_env(:kitto, :ip, @defaults.ip))
   defp ip({:system, var}) do
     case System.get_env(var) do
