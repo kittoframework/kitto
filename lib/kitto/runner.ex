@@ -1,4 +1,8 @@
 defmodule Kitto.Runner do
+  @moduledoc """
+  Module responsible for loading job files
+  """
+
   use Supervisor
   alias Kitto.Job.Workspace
 
@@ -24,11 +28,7 @@ defmodule Kitto.Runner do
   @doc """
   Updates the list of jobs to be run with the provided one
   """
-  def register(job) do
-    runner |> Agent.update(fn (jobs) ->
-      jobs ++ [job]
-    end)
-  end
+  def register(job), do: runner |> Agent.update(&(&1 ++ [job]))
 
   @doc """
   Returns the list of registered jobs

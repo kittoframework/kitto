@@ -1,4 +1,10 @@
 defmodule Kitto.Job do
+  @moduledoc """
+  Contains functions to run jobs based on their specified options.
+  """
+
+  alias Kitto.Runner
+
   @doc """
   Starts a job process
   """
@@ -18,7 +24,7 @@ defmodule Kitto.Job do
     opts = [interval: options[:every] |> mseconds,
             first_at: options[:first_at] |> mseconds]
 
-    Kitto.Runner.register(%{name: name, job: job, options: opts, definition: definition})
+    Runner.register(%{name: name, job: job, options: opts, definition: definition})
   end
 
   @doc """

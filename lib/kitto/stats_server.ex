@@ -1,4 +1,10 @@
 defmodule Kitto.StatsServer do
+  @moduledoc """
+  Module responsible for keeping stats about jobs.
+  """
+
+  import Agent, only: [start_link: 2, update: 2, get: 2]
+
   @default_stats %{
     times_triggered: 0,
     times_completed: 0,
@@ -7,9 +13,8 @@ defmodule Kitto.StatsServer do
     total_running_time: 0.0
   }
 
-  def start_link do
-    Agent.start_link(fn -> %{} end, name: :stats_server)
-  end
+  @doc false
+  def start_link, do: start_link(fn -> %{} end, name: :stats_server)
 
   @doc """
   Executes the given function and keeps stats about it in the provided key
@@ -23,21 +28,19 @@ defmodule Kitto.StatsServer do
   @doc """
   Returns the current stats
   """
-  def stats do
-    server |> Agent.get(&(&1))
-  end
+  def stats, do: server |> get(&(&1))
 
   defp initialize_stats(name) do
-    server |> Agent.update(fn (stats) ->
-      Map.merge(stats, %{name => Map.get(stats, name, @default_stats)})
+    server |> update(fn (metrics) ->
+      Map.merge(metrics, %{name => Map.get(metrics, name, @default_stats)})
     end)
   end
 
   defp update_trigger_count(name) do
-    server |> Agent.update(fn (stats) ->
-      new_stats = stats[name]
+    server |> update(fn (metrics) ->
+      new_stats = metrics[name]
 
-      stats |> Map.merge(%{name => %{new_stats |
+      metrics |> Map.merge(%{name => %{new_stats |
         times_triggered: new_stats[:times_triggered] + 1}})
     end)
   end
@@ -45,8 +48,8 @@ defmodule Kitto.StatsServer do
   defp measure_call(job) do
     run = timed_call(job.job)
 
-    server |> Agent.update(fn (stats) ->
-      new_stats = stats[job.name]
+    server |> update(fn (metrics) ->
+      new_stats = metrics[job.name]
 
       new_stats = case run do
         {:ok, time_took} ->
@@ -60,10 +63,10 @@ defmodule Kitto.StatsServer do
         {:error, _} -> %{new_stats | failures: new_stats[:failures] + 1}
       end
 
-      stats |> Map.merge(%{job.name => new_stats})
+      metrics |> Map.merge(%{job.name => new_stats})
     end)
 
-    if (elem(run, 0) == :error) do
+    if elem(run, 0) == :error do
       raise Kitto.Job.Error, %{exception: elem(run, 1), job: job}
     end
   end

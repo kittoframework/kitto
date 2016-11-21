@@ -1,11 +1,18 @@
 defmodule Kitto.Notifier do
+  @moduledoc """
+  Module responsible for broadcasting events across connections.
+  """
+
   use Supervisor
+
+  import Agent, only: [start_link: 2, update: 2, get: 2]
 
   @doc """
   Starts the notifier supervision tree
   """
   def start_link, do: Supervisor.start_link(__MODULE__, :ok, name: :notifier_sup)
 
+  @doc false
   def init(:ok) do
     children = [worker(__MODULE__, [], function: :start_connections_cache, id: make_ref),
                 worker(__MODULE__, [], function: :start_notifier_cache, id: make_ref)]
@@ -16,14 +23,12 @@ defmodule Kitto.Notifier do
   @doc """
   Starts the connections cache agent
   """
-  def start_connections_cache do
-    Agent.start_link(fn -> [] end, name: :notifier_connections)
-  end
+  def start_connections_cache, do: start_link(fn -> [] end, name: :notifier_connections)
 
   @doc """
   Starts the notifier cache agent
   """
-  def start_notifier_cache, do: Agent.start_link(fn -> %{} end, name: :notifier_cache)
+  def start_notifier_cache, do: start_link(fn -> %{} end, name: :notifier_cache)
 
   @doc """
   Every new SSE connection gets all the cached payloads for each job.
@@ -61,7 +66,7 @@ defmodule Kitto.Notifier do
   Updates the list of connections to use for broadcasting
   """
   def register(conn) do
-    notifier_connections |> Agent.update(fn (connections) -> connections ++ [conn] end)
+    notifier_connections |> update(&(&1 ++ [conn]))
 
     conn
   end
@@ -69,29 +74,27 @@ defmodule Kitto.Notifier do
   @doc """
   Returns cached broadcasts
   """
-  def cache, do: notifier_cache |> Agent.get(&(&1))
+  def cache, do: notifier_cache |> get(&(&1))
 
   @doc """
   Resets the broadcast cache
   """
-  def clear_cache, do: notifier_cache |> Agent.update(fn (_) -> %{} end)
+  def clear_cache, do: notifier_cache |> update(fn (_) -> %{} end)
 
   @doc """
   Caches the given payload with the key provided as the first argument
   """
-  def cache(topic, data) do
-    notifier_cache |> Agent.update(fn (cache) -> Map.merge(cache, %{topic => data}) end)
-  end
+  def cache(topic, data), do: notifier_cache |> update(&(Map.merge(&1, %{topic => data})))
 
   @doc """
   Removes a connection from the connections list
   """
-  def delete(conn), do: notifier_connections |> Agent.update(&(&1 |> List.delete(conn)))
+  def delete(conn), do: notifier_connections |> update(&(&1 |> List.delete(conn)))
 
   @doc """
   Returns the registered connections
   """
-  def connections, do: notifier_connections |> Agent.get(&(&1))
+  def connections, do: notifier_connections |> get(&(&1))
 
   defp notifier_connections, do: Process.whereis(:notifier_connections)
   defp notifier_cache, do: Process.whereis(:notifier_cache)
