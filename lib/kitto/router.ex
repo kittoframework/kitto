@@ -62,7 +62,7 @@ defmodule Kitto.Router do
     if Mix.env == :dev do
       conn = conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
-      send_resp(conn, 404, "Not Found") |> halt
+      conn |> send_resp(404, "Not Found") |> halt
     end
   end
 

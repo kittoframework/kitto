@@ -70,7 +70,7 @@ defmodule Kitto.StatsServer do
 
   defp timed_call(f) do
     try do
-      {:ok, ((:timer.tc(f) |> elem(0)) / 1_000_000)}
+      {:ok, ((f |> :timer.tc |> elem(0)) / 1_000_000)}
     rescue
       e -> {:error, e}
     end

@@ -17,7 +17,7 @@ defmodule Kitto do
 
   def start_server do
     Logger.info "Starting Kitto server, listening on #{ip_human(ip)}:#{port}"
-    { :ok, _pid } = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip, port: port)
+    {:ok, _pid} = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip, port: port)
   end
 
   @doc """
@@ -63,7 +63,7 @@ defmodule Kitto do
   defp ip_human(tup), do: tup |> Tuple.to_list |> Enum.join(".")
 
   defp port, do: port(Application.get_env(:kitto, :port))
-  defp port({:system, var}), do: System.get_env(var) |> Integer.parse |> elem(0)
+  defp port({:system, var}), do: var |> System.get_env |> Integer.parse |> elem(0)
   defp port(p) when is_integer(p), do: p
   defp port(_), do: @defaults.port
 end
