@@ -14,6 +14,8 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/.gitignore",                          ".gitignore"},
     {:text, "new/Dockerfile",                          "Dockerfile"},
     {:text, "new/.dockerignore",                       ".dockerignore"},
+    {:text, "new/Procfile",                            "Procfile"},
+    {:text, "new/elixir_buildpack.config",             "elixir_buildpack.config"},
     {:eex,  "new/lib/application_name.ex",             "lib/application_name.ex"},
     {:text, "new/dashboards/layout.html.eex",          "dashboards/layout.html.eex"},
     {:text, "new/dashboards/sample.html.eex",          "dashboards/sample.html.eex"},
