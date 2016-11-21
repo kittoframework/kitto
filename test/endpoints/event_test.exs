@@ -39,6 +39,23 @@ defmodule Kitto.Endpoints.EventTest do
     assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
   end
 
+  test "GET /events breaks on error" do
+    Kitto.Notifier.clear_cache
+    conn = conn(:get, "/")
+
+    spawn fn ->
+      receive do
+      after
+        1 ->
+          send conn.owner, {:error, :closed}
+      end
+    end
+
+    conn = @endpoint.call(conn, @opts)
+    assert conn.state == :chunked
+    assert conn.status == 200
+  end
+
   @tag :pending
   test "GET /events streams cached events first" do
     Kitto.Notifier.clear_cache
