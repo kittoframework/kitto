@@ -40,8 +40,9 @@ defmodule Kitto.Router do
 
   get "events" do
     conn = initialize_sse(conn)
+
     Kitto.Notifier.register(conn.owner)
-    conn = listen_sse(conn)
+    conn = listen_sse(conn, subscribed_topics(conn))
 
     conn
   end
@@ -78,18 +79,22 @@ defmodule Kitto.Router do
 
   defp render(conn, template), do: send_resp(conn, 200, Kitto.View.render(template))
 
-  defp listen_sse(conn) do
+  defp listen_sse(conn, :""), do: listen_sse(conn, nil)
+  defp listen_sse(conn, topics) do
     receive do
       {:broadcast, {topic, data}} ->
-        res = send_event(conn, topic, data)
+        res = case is_nil(topics) || topic in topics do
+          true -> send_event(conn, topic, data)
+          false -> conn
+        end
 
         case res do
           :closed -> conn |> halt
-          _ -> res |> listen_sse
+          _ -> res |> listen_sse(topics)
         end
       {:error, :closed} -> conn |> halt
       {:misc, :close} -> conn |> halt
-      _ -> listen_sse(conn)
+      _ -> listen_sse(conn, topics)
     end
   end
 
@@ -128,5 +133,15 @@ defmodule Kitto.Router do
     conn
     |> put_resp_header("content-type", "application/json")
     |> send_resp(opts.status, Poison.encode!(json))
+  end
+
+  defp subscribed_topics(conn) do
+    case Plug.Conn.fetch_query_params(conn).query_params
+         |> Map.get("topics", "")
+         |> String.split(",")
+         |> Enum.map(&String.to_atom/1) do
+      [:""] -> nil
+      topics -> MapSet.new(topics)
+    end
   end
 end

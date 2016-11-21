@@ -12,7 +12,7 @@ class Widget extends React.Component {
 
   static events() {
     if (!this._events) {
-      this._events = new EventSource('/events');
+      this._events = new EventSource(`/events?topics=${this.sources().join()}`);
 
       this._events.addEventListener('error', (e) => {
         let state = e.currentTarget.readyState;
@@ -28,6 +28,11 @@ class Widget extends React.Component {
     }
 
     return this._events;
+  }
+
+  static sources() {
+    return Array.prototype.map
+      .call(document.querySelectorAll('[data-source]'), (el) => el.dataset.source);
   }
 
   static bindInternalEvents() {
