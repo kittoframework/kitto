@@ -38,5 +38,4 @@ defmodule Kitto.Router do
   defp development_assets_url do
     "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
   end
-
 end
