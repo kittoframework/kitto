@@ -4,7 +4,6 @@ defmodule Kitto.Router do
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
-
   plug :match
   plug Kitto.Plugs.Authentication
   if Mix.env == :prod do
@@ -19,7 +18,7 @@ defmodule Kitto.Router do
   forward "/events", to: Kitto.Endpoints.Event
 
   get "assets/*asset" do
-    if Mix.env == :dev do
+    if Kitto.asset_server_enabled? do
       conn = conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
       send_resp(conn, 404, "Not Found") |> halt
