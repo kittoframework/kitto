@@ -1,6 +1,10 @@
 defmodule Kitto.Router do
   use Plug.Router
 
+  alias Kitto.View
+  alias Kitto.Notifier
+  alias Kitto.View
+
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
@@ -15,7 +19,7 @@ defmodule Kitto.Router do
   get "dashboards", do: conn |> redirect_to_default_dashboard
 
   get "dashboards/:id" do
-    if Kitto.View.exists?(id) do
+    if View.exists?(id) do
       conn |> render(id)
     else
       send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
@@ -25,7 +29,7 @@ defmodule Kitto.Router do
   post "dashboards", private: %{authenticated: true} do
     {:ok, body, conn} = read_body conn
     command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
-    Kitto.Notifier.broadcast! "_kitto", command
+    Notifier.broadcast! "_kitto", command
 
     conn |> send_resp(204, "")
   end
@@ -33,7 +37,7 @@ defmodule Kitto.Router do
   post "dashboards/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body conn
     command = body |> Poison.decode! |> Map.put("dashboard", id)
-    Kitto.Notifier.broadcast! "_kitto", command
+    Notifier.broadcast! "_kitto", command
 
     conn |> send_resp(204, "")
   end
@@ -41,19 +45,19 @@ defmodule Kitto.Router do
   get "events" do
     conn = initialize_sse(conn)
 
-    Kitto.Notifier.register(conn.owner)
+    Notifier.register(conn.owner)
     conn = listen_sse(conn, subscribed_topics(conn))
 
     conn
   end
 
-  get "widgets", do: conn |> render_json(Kitto.Notifier.cache)
-  get "widgets/:id", do: conn |> render_json(Kitto.Notifier.cache[String.to_atom(id)])
+  get "widgets", do: conn |> render_json(Notifier.cache)
+  get "widgets/:id", do: conn |> render_json(Notifier.cache[String.to_atom(id)])
 
   post "widgets/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body(conn)
 
-    Kitto.Notifier.broadcast!(id, body |> Poison.decode!)
+    Notifier.broadcast!(id, body |> Poison.decode!)
 
     conn |> send_resp(204, "")
   end
@@ -77,7 +81,7 @@ defmodule Kitto.Router do
 
   match _, do: send_resp(conn, 404, "Not Found")
 
-  defp render(conn, template), do: send_resp(conn, 200, Kitto.View.render(template))
+  defp render(conn, template), do: send_resp(conn, 200, View.render(template))
 
   defp listen_sse(conn, :""), do: listen_sse(conn, nil)
   defp listen_sse(conn, topics) do
@@ -107,7 +111,7 @@ defmodule Kitto.Router do
   end
 
   defp send_cached_events(conn) do
-    Kitto.Notifier.initial_broadcast!(conn.owner)
+    Notifier.initial_broadcast!(conn.owner)
 
     conn
   end

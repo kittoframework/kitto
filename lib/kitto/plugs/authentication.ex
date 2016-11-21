@@ -1,20 +1,20 @@
 defmodule Kitto.Plugs.Authentication do
   @moduledoc """
-  Defines authentication logic for routes that require it. Authentication uses token based auth with
-  the Authentication header.
+  Defines authentication logic for routes that require it.
+  Authentication uses token based auth with the Authentication header.
 
   ## Setting up authentication:
 
-  To configure the dashboard with authentication, add the expected auth token to your application's
-  config:
+  To configure the dashboard with authentication, add the expected auth token to
+  your application's config:
 
       # config/config.exs
       config :kitto, auth_token: "asecret"
 
   ## Authenticating requests
 
-  To authenticate requests that require it, pass the auth token in the Authentication header of
-  the request:
+  To authenticate requests that require it, pass the auth token in the
+  Authentication header of the request:
 
       Authentication: Token asecret
 
@@ -24,8 +24,8 @@ defmodule Kitto.Plugs.Authentication do
 
   ## Marking routes as authenticated
 
-  When adding new routes, to mark them as authenticated, add the `authenticated` key to the route's
-  private config:
+  When adding new routes, to mark them as authenticated, add the `authenticated` key
+  to the route's private config:
 
   get "my/authenticated/route", private: %{authenticated: true} do
     # Process normal request

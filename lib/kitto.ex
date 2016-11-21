@@ -1,4 +1,17 @@
 defmodule Kitto do
+  @moduledoc """
+  This is the documentation for the Kitto project.
+
+  You can find documentation about developing with Kitto and configuration
+  options at the [wiki](https://github.com/kittoframework/kitto#support)
+
+  By default, Kitto applications depend on the following packages:
+
+    * [Plug](https://hexdocs.pm/plug) - a specification and conveniences
+      for composable modules in between web applications
+    * [Poison](https://hexdocs.pm/poison) - an Elixir JSON library
+  """
+
   use Application
   require Logger
 

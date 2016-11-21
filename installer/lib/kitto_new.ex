@@ -7,6 +7,7 @@ defmodule Mix.Tasks.Kitto.New do
   @shortdoc "Creates a new Kitto v#{@version} application"
 
   # File mappings
+  @lint {Credo.Check.Readability.MaxLineLength, false}
   @new [
     {:text, "new/config/config.exs",                   "config/config.exs"},
     {:eex,  "new/mix.exs",                             "mix.exs"},

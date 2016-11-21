@@ -1,4 +1,16 @@
 defmodule Kitto.View do
+  @moduledoc """
+  HTML rendering facility.
+
+  This module defines functions to deal with EEx templates used to provide markup
+  for the dashboards.
+
+  ## Configuration Options
+  * `templates_dir` - Where to look for templates, defaults to "dashboards".
+  * `default_layout` - The layout in which to wrap dashboards, defaults to
+  "layout" found in the `templates_dir`.
+  """
+
   @templates_dir Application.get_env :kitto, :templates_dir, "dashboards"
   @default_layout Application.get_env :kitto, :default_layout, "layout"
 
