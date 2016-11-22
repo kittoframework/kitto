@@ -134,8 +134,9 @@ event](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using
 
 ## Hooks
 
-When jobs don't work, whether you want something more realtime than polling or
-if the data doesn't change very often, hooks may be the solution.
+If, instead of polling for new data from a data source, you want to act on data
+as it changes, hooks are a useful feature for implementing webhooks to feed data
+to your dashboards.
 
 Hooks are stored in the `hooks/` directory and are structured as follows:
 

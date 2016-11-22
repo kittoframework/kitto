@@ -32,7 +32,8 @@ defmodule Kitto.Hooks do
 
   defp load_hooks, do: hook_files |> Enum.each(&Code.load_file/1)
   defp hook_files do
-    [System.cwd, hook_dir, "**/*.{ex,exs}"] |> Path.join |> Path.wildcard
+    [hook_dir, "**/*.{ex,exs}"] |> Path.join |> Path.wildcard
   end
-  defp hook_dir, do: Application.get_env(:kitto, :hook_dir, "hooks")
+  defp hook_dir, do: Application.get_env(:kitto, :hook_dir, default_hook_dir)
+  defp default_hook_dir, do: [Kitto.root, "hooks"] |> Path.join
 end

@@ -13,6 +13,8 @@ defmodule Kitto.Hooks.DSL do
   Hooks act like routes in `Plug.Route` and come complete with the `conn`
   object for accessing request information.
   """
+
+  @doc false
   defmacro __using__(_opts) do
     quote do
       import Kitto.Hooks.DSL
@@ -21,6 +23,14 @@ defmodule Kitto.Hooks.DSL do
     end
   end
 
+  @doc """
+  The hook macro lets you register hooks. Hooks are implemented as follows:
+
+      hook :hello do
+        # Handle data from the request with the `conn` object.
+        # Broadcast events to widgets with `broadcast!/2`
+      end
+  """
   defmacro hook(name, do: block) do
     quote do
       # Append the hook to the list of hooks
