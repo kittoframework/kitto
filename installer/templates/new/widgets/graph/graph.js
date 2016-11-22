@@ -8,6 +8,10 @@ import {prettyNumber, prepend} from '../../assets/javascripts/helpers';
 import './graph.scss';
 
 Widget.mount(class Graph extends Widget {
+  static get defaultProps() {
+    return { graphType: 'area' };
+  }
+  
   componentDidMount() {
     this.$node = $(ReactDOM.findDOMNode(this));
     this.current = 0;
@@ -42,6 +46,12 @@ Widget.mount(class Graph extends Widget {
   currentValue() {
     return prettyNumber(prepend(this.current));
   }
+  getDefaultProps() {
+    return {
+      graphType: 'line'
+    };
+  }
+
   render() {
     return (
       <div className={this.props.className}>
