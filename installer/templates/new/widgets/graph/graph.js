@@ -11,9 +11,9 @@ Widget.mount(class Graph extends Widget {
   componentDidMount() {
     this.$node = $(ReactDOM.findDOMNode(this));
     this.current = 0;
-    this.renderGraph();
+    this.renderGraph(this.props);
   }
-  renderGraph() {
+  renderGraph(props) {
     let container = this.$node.parent();
     let $gridster = $('.gridster');
     let widget_base_dimensions = $gridster.data('widget_base_dimensions');
@@ -25,6 +25,7 @@ Widget.mount(class Graph extends Widget {
       element: this.$node[0],
       width: width,
       height: height,
+      renderer: props.graphType,
       series: [{color: '#fff', data: [{ x: 0, y: 0 }]}]
     });
 
