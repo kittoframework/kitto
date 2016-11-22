@@ -24,7 +24,7 @@ defmodule Kitto do
                 supervisor(Kitto.Notifier, []),
                 worker(Kitto.StatsServer, []),
                 supervisor(Kitto.Runner, []),
-                supervisor(Kitto.Hooks.Server, [])]
+                supervisor(Kitto.Hooks, [])]
 
     Supervisor.start_link(children, [strategy: :one_for_one, name: Kitto.Supervisor])
   end

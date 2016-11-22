@@ -132,6 +132,27 @@ end
 The above will spawn a supervised process which will emit a [server-sent
 event](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) with the name `random` every second.
 
+## Hooks
+
+When jobs don't work, whether you want something more realtime than polling or
+if the data doesn't change very often, hooks may be the solution.
+
+Hooks are stored in the `hooks/` directory and are structured as follows:
+
+```elixir
+# File jobs/github.exs
+use Kitto.Hooks.DSL
+
+hook :github do
+  {:ok, body, _} = read_body conn
+  commits = GitHub.parse_commits_from_hook(body)
+  broadcast! :github_commits, %{commits: commits}
+end
+```
+
+The hook generates a route using the atom in the `hook/2` method. The hook above
+will listen at `/hooks/github` on any HTTP method.
+
 ## Widgets
 
 Widgets live in `widgets/` are compiled using

@@ -2,8 +2,9 @@ defmodule Kitto.RouterTest do
   use ExUnit.Case
   use Plug.Test
 
+  import ExUnit.CaptureIO
   import Mock
-  import Kitto.TestHelper, only: [atomify_map: 1]
+  import Kitto.TestHelper, only: [atomify_map: 1, mock_broadcast: 2]
 
   @opts Kitto.Router.init([])
 
@@ -344,13 +345,13 @@ defmodule Kitto.RouterTest do
     end
   end
 
-  def mock_broadcast(expected_topic, expected_body) do
-    fn (topic, body) ->
-      if topic == expected_topic && atomify_map(body) == expected_body do
-        send self, :ok
-      else
-        send self, :error
-      end
-    end
+  test "GET /hooks forwards to hook router" do
+    conn = conn(:get, "hooks")
+    |> Kitto.Router.call(@opts)
+
+    assert conn.state == :sent
+    assert String.contains?(capture_io(fn ->
+      IO.inspect(conn.private.plug_route)
+    end), "Kitto.Hooks.Router")
   end
 end
