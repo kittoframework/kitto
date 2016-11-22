@@ -1,9 +1,7 @@
 defmodule Kitto.Router do
   use Plug.Router
 
-  alias Kitto.View
-  alias Kitto.Notifier
-  alias Kitto.View
+  alias Kitto.{View, Notifier}
 
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
