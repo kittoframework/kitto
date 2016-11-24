@@ -38,7 +38,7 @@ defmodule Kitto.Runner do
   defp load_jobs, do: job_files |> Enum.each(&Workspace.load_file/1)
 
   defp job_files do
-    Path.wildcard Path.join(System.cwd, "jobs/**/*.{ex,exs}")
+    Path.wildcard Path.join(Kitto.root, "jobs/**/*.{ex,exs}")
   end
 
   defp runner, do: Process.whereis(:job_registrar)
