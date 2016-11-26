@@ -63,8 +63,8 @@ defmodule Mix.Tasks.Kitto.Install do
 
   def extract_file_properties({_filename, file}), do: file
 
-  defp download_gist(url), do: HTTPoison.get!(url) |> process_response
   defp build_gist_url([_user | gist]), do: 'https://api.github.com/gists/#{gist}'
+  defp download_gist(url), do: url |> HTTPoison.get! |> process_response
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}), do: body |> Poison.decode!(keys: :atoms)
   defp process_response(error), do: {:error, error}
