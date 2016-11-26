@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Kitto.Install do
   use Mix.Task
   @shortdoc "Install community Widget/Job from a Github Gist"
   @supported_languages ["JavaScript", "SCSS", "Markdown", "Elixir"]
+  @github_url "https://api.github.com/gists/"
 
   @moduledoc """
   Installs community Widget/Job from a Github Gist
@@ -66,7 +67,7 @@ defmodule Mix.Tasks.Kitto.Install do
 
   defp download_gist(url), do: url |> HTTPoison.get! |> process_response
 
-  defp build_gist_url(gist_url) when length(gist_url) == 1, do: 'https://api.github.com/gists/#{hd(gist_url)}'
+  defp build_gist_url(gist_url) when length(gist_url) == 1, do: '#{@github_url}#{hd(gist_url)}'
   defp build_gist_url([_ | gist_url]), do: build_gist_url(gist_url)
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}), do: body |> Poison.decode!(keys: :atoms)
