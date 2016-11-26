@@ -45,7 +45,7 @@ defmodule Mix.Tasks.Kitto.Install do
 
   defp write_file(file) do
     Mix.Generator.create_directory(file.path)
-    filename = file.path <> file.filename
+    filename = Path.join([file.path, file.filename])
     Mix.Generator.create_file(filename, file.content)
   end
 
@@ -56,12 +56,12 @@ defmodule Mix.Tasks.Kitto.Install do
 
   # Elixir files we place in the jobs dir
   defp determine_file_location(%{language: "Elixir"} = file, _) do
-    Map.put(file, :path, "./jobs/")
+    Map.put(file, :path, "jobs")
   end
 
   # Other files all go into the widget dir
   defp determine_file_location(file, widget_name) do
-    Map.put(file, :path, "./widgets/#{widget_name}/")
+    Map.put(file, :path, Path.join(["widgets", widget_name]))
   end
 
   defp supported_file_type?(file) do
