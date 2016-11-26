@@ -4,13 +4,18 @@ defmodule Mix.Tasks.Kitto.Install do
   @supported_languages ["JavaScript", "SCSS", "Markdown", "Elixir"]
 
   @moduledoc """
-  Installs a custom Widget/Job from a Github gist
+  Installs community Widget/Job from a Github Gist
 
-  ## Command line options
+      mix kitto.install --widget test_widget --gist JanStevens/0209a4a80cee782e5cdbe11a1e9bc393
+      mix kitto.install --gist 0209a4a80cee782e5cdbe11a1e9bc393
 
-  This task accepts the same command-line arguments as `run`.
-  For additional information, refer to the documentation for
-  `Mix.Tasks.Run`.
+  ## Options
+
+    * `--widget` - specifies the widget name that will be used as folder name
+      in the widgets directory. If the gist only contains a job it can be ommited
+
+    * `--gist` - The gist to download from, specified as `Username/Gist` or `Gist`
+
   """
   def run(args) do
     {:ok, _started} = Application.ensure_all_started(:httpoison)
@@ -19,9 +24,6 @@ defmodule Mix.Tasks.Kitto.Install do
     process(opts_map)
   end
 
-  # Process the install incase we have a gist and widget name
-  # It will download the gist files and place them in the right location
-  #
   defp process(%{gist: gist, widget: widget}) do
     gist
       |> String.split("/")
