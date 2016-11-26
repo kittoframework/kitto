@@ -23,7 +23,8 @@ defmodule Kitto do
     children = [supervisor(__MODULE__, [], function: :start_server),
                 supervisor(Kitto.Notifier, []),
                 worker(Kitto.StatsServer, []),
-                supervisor(Kitto.Runner, [])]
+                supervisor(Kitto.Runner, [[name: :runner_sup,
+                                           registrar_name: :job_registrar]])]
 
     Supervisor.start_link(children, [strategy: :one_for_one, name: Kitto.Supervisor])
   end
@@ -44,7 +45,6 @@ defmodule Kitto do
         Kitto config :root is nil.
         It should normally be set to Path.dirname(__DIR__) in config/config.exs
         """ |> Logger.error
-
         exit(:shutdown)
     end
   end
