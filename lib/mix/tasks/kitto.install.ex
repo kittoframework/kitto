@@ -71,5 +71,10 @@ defmodule Mix.Tasks.Kitto.Install do
   defp build_gist_url([_ | gist_url]), do: build_gist_url(gist_url)
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}), do: body |> Poison.decode!(keys: :atoms)
-  defp process_response(error), do: {:error, error}
+  defp process_response(%HTTPoison.Response{status_code: code, body: body}) do
+    decoded_body = body |> Poison.decode!(keys: :atoms)
+    Mix.shell.error "Could not fetch the gist from GitHub: " <>
+                    "#{code}: #{decoded_body.message}"
+    Mix.raise "Installation failed"
+  end
 end
