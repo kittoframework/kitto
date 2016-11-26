@@ -37,8 +37,7 @@ defmodule Mix.Tasks.Kitto.Install do
   end
 
   defp process(_) do
-    Logger.error "Unsupported arguments"
-    exit(:shutdown)
+    Mix.shell.error "Unsupported arguments"
   end
 
   defp write_file(file) do
