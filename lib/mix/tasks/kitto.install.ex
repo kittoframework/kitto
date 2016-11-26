@@ -12,7 +12,7 @@ defmodule Mix.Tasks.Kitto.Install do
 
   ## Options
 
-    * `--widget` - specifies the widget name that will be used as folder name
+    * `--widget` - specifies the widget name that will be used as directory name
       in the widgets directory. If the gist only contains a job it can be ommited
 
     * `--gist` - The gist to download from, specified as `Username/Gist` or `Gist`
