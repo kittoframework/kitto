@@ -23,33 +23,41 @@ defmodule Mix.Tasks.Kitto.InstallTest do
 
   test "fails when `--gist` is not provided" do
     Mix.Tasks.Kitto.Install.run(["--widget", "numbers"])
+
     assert_received {:mix_shell, :error, ["Unsupported arguments"]}
   end
 
   test "fails when the gist is not found" do
     with_mock HTTPoison, [get!: mock_gist_with(404, %{message: "Not Found"})] do
+
       assert_raise Mix.Error, fn ->
-        Mix.Tasks.Kitto.Install.run(["--widget", "numbers", "--gist", "aaaa"])
-        assert called HTTPoison.get!("https://api.github.com/gists/aaaa")
+        Mix.Tasks.Kitto.Install.run(["--widget", "numbers", "--gist", "0209a4a80cee78"])
+
+        assert called HTTPoison.get!("https://api.github.com/gists/0209a4a80cee78")
       end
+
       assert_received {:mix_shell, :error, ["Could not fetch the gist from GitHub: 404: Not Found"]}
     end
   end
 
   test "fails when the gist has widget but no `--widget` provided" do
     with_mock HTTPoison, [get!: mock_gist_with(200, @gist_response)] do
+
       assert_raise Mix.Error, fn ->
-        Mix.Tasks.Kitto.Install.run(["--gist", "aaaa"])
-        assert called HTTPoison.get!("https://api.github.com/gists/aaaa")
+        Mix.Tasks.Kitto.Install.run(["--gist", "0209a4a80cee78"])
+
+        assert called HTTPoison.get!("https://api.github.com/gists/0209a4a80cee78")
       end
     end
+
     assert_received {:mix_shell, :error, ["Please specify a widget directory using the --widget flag"]}
   end
 
   test "places all the files in the correct locations" do
-    in_tmp "installes widgets and jobs", fn ->
+    in_tmp "installs widgets and jobs", fn ->
       with_mock HTTPoison, [get!: mock_gist_with(200, @gist_response)] do
-        Mix.Tasks.Kitto.Install.run(["--gist", "aaaa", "--widget", "number"])
+        Mix.Tasks.Kitto.Install.run(["--gist", "0209a4a80cee78", "--widget", "number"])
+
         assert_file "widgets/number/number_job.js", fn file ->
           assert file =~ "js"
         end
