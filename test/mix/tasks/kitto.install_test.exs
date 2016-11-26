@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Kitto.InstallTest do
   use ExUnit.Case, async: true
   import Mock
-  import Kitto.TestHelper, except: [atomify_map: 1]
+  import Kitto.FileAssertionHelper
 
   @job_gist_response %{ files:
     %{"job.ex" => %{filename: "job.ex", language: "Elixir", content: "job"}}
