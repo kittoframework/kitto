@@ -1,14 +1,7 @@
 defmodule Mix.Tasks.Kitto.Install do
   use Mix.Task
-  require Logger
-
-  @supported_languages [
-    "JavaScript",
-    "SCSS",
-    "Markdown",
-    "Elixir"
-  ]
-  @shortdoc "Install a custom Widget from a Github gist"
+  @shortdoc "Install community Widget/Job from a Github Gist"
+  @supported_languages ["JavaScript", "SCSS", "Markdown", "Elixir"]
 
   @moduledoc """
   Installs a custom Widget/Job from a Github gist
