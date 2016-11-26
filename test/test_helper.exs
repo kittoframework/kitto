@@ -9,3 +9,4 @@ end
 Mix.shell(Mix.Shell.Process)
 ExUnit.configure(exclude: [pending: true])
 ExUnit.start()
+Code.require_file("file_assertion_helper.exs", __DIR__)

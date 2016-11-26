@@ -1,4 +1,8 @@
 defmodule Kitto.FileAssertionHelper do
+  @moduledoc """
+  Original code from the Phoenix Framework
+  https://github.com/phoenixframework/phoenix/blob/master/installer/test/mix_helper.exs
+  """
   import ExUnit.Assertions
 
   def assert_file(file) do
