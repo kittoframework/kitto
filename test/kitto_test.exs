@@ -3,6 +3,14 @@ defmodule KittoTest do
 
   import ExUnit.CaptureLog
 
+  setup do
+    path = Application.get_env :kitto, :root
+
+    on_exit fn ->
+      Application.put_env :kitto, :root, path
+    end
+  end
+
   test "#root when the :root config is set to a bitstring, it returns it" do
     path = "somewhere"
     Application.put_env :kitto, :root, path
