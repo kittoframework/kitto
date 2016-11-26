@@ -36,6 +36,8 @@ defmodule Mix.Tasks.Kitto.Install do
       |> Enum.each(&write_file/1)
   end
 
+  defp process(%{gist: gist}), do: process(%{gist: gist, widget: nil})
+
   defp process(_) do
     Mix.shell.error "Unsupported arguments"
   end
@@ -62,8 +64,10 @@ defmodule Mix.Tasks.Kitto.Install do
 
   def extract_file_properties({_filename, file}), do: file
 
-  defp build_gist_url([_user | gist]), do: 'https://api.github.com/gists/#{gist}'
   defp download_gist(url), do: url |> HTTPoison.get! |> process_response
+
+  defp build_gist_url(gist_url) when length(gist_url) == 1, do: 'https://api.github.com/gists/#{hd(gist_url)}'
+  defp build_gist_url([_ | gist_url]), do: build_gist_url(gist_url)
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}), do: body |> Poison.decode!(keys: :atoms)
   defp process_response(error), do: {:error, error}
