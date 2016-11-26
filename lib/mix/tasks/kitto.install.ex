@@ -49,6 +49,11 @@ defmodule Mix.Tasks.Kitto.Install do
     Mix.Generator.create_file(filename, file.content)
   end
 
+  defp determine_file_location(_file, widget_name) when widget_name == nil do
+    Mix.shell.error "Please specify a widget directory using the --widget flag"
+    Mix.raise "Installation failed"
+  end
+
   # Elixir files we place in the jobs dir
   defp determine_file_location(%{language: "Elixir"} = file, _) do
     Map.put(file, :path, "./jobs/")
