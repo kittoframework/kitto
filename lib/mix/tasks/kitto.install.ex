@@ -72,7 +72,7 @@ defmodule Mix.Tasks.Kitto.Install do
 
   defp download_gist(url), do: url |> HTTPoison.get! |> process_response
 
-  defp build_gist_url(gist_url) when length(gist_url) == 1, do: '#{@github_url}#{hd(gist_url)}'
+  defp build_gist_url(gist_url) when length(gist_url) == 1, do: @github_url <> hd(gist_url)
   defp build_gist_url([_ | gist_url]), do: build_gist_url(gist_url)
 
   defp process_response(%HTTPoison.Response{status_code: 200, body: body}), do: body |> Poison.decode!(keys: :atoms)
