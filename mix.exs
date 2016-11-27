@@ -33,8 +33,9 @@ defmodule Kitto.Mixfile do
      {:credo, "~> 0.5", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},
      {:excoveralls, "~> 0.5", only: :test},
-     {:inch_ex, ">= 0.0.0", only: :docs}]
-
+     {:inch_ex, ">= 0.0.0", only: :docs},
+     {:httpoison, "~> 0.10.0", only: [:dev, :test]}
+   ]
   end
 
   defp description, do: "Framework for creating interactive dashboards"
