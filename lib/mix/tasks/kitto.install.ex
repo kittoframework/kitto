@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Kitto.Install do
   ## Options
 
     * `--widget` - specifies the widget name that will be used as directory name
-      in the widgets directory. If the gist only contains a job it can be ommited
+      in the widgets directory. By default we use the js filename as directory
 
     * `--gist` - The gist to download from, specified as `Username/Gist` or `Gist`
 
@@ -26,14 +26,16 @@ defmodule Mix.Tasks.Kitto.Install do
   end
 
   defp process(%{gist: gist, widget: widget}) do
-    gist
-      |> String.split("/")
+    files = gist |> String.split("/")
       |> build_gist_url
       |> download_gist
       |> Map.get(:files)
       |> Enum.map(&extract_file_properties/1)
       |> Enum.filter(&supported_file_type?/1)
-      |> Enum.map(&(determine_file_location(&1, widget)))
+
+    widget_dir = widget || find_widget_filename(files)
+    files
+      |> Enum.map(&(determine_file_location(&1, widget_dir)))
       |> Enum.each(&write_file/1)
   end
 
@@ -63,6 +65,19 @@ defmodule Mix.Tasks.Kitto.Install do
   defp determine_file_location(file, widget_name) do
     Map.put(file, :path, Path.join(["widgets", widget_name]))
   end
+
+  defp find_widget_filename(files) do
+    files
+      |> Enum.filter(fn(file) -> file.language == "JavaScript" end)
+      |> List.first
+      |> extract_widget_dir
+  end
+
+  defp extract_widget_dir(%{filename: filename}) do
+    filename |> String.replace(~r/\.js$/, "")
+  end
+
+  defp extract_widget_dir(nil), do: nil
 
   defp supported_file_type?(file) do
     Enum.member?(@supported_languages, file.language)

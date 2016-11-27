@@ -7,12 +7,16 @@ defmodule Mix.Tasks.Kitto.InstallTest do
     %{"job.ex" => %{filename: "job.ex", language: "Elixir", content: "job"}}
   }
 
+  @css_gist_response %{ files:
+    %{"number_job.scss" => %{filename: "number_job.scss", language: "SCSS", content: "style"}}
+  }
+
   @gist_response %{ files:
     %{
       "README.md" => %{filename: "README.md", language: "Markdown", content: "Title"},
       "number_job.ex" => %{filename: "number_job.ex", language: "Elixir", content: "job"},
-      "number_job.scss" => %{filename: "number_job.scss", language: "SCSS", content: "style"},
-      "number_job.js" => %{filename: "number_job.js", language: "JavaScript", content: "js"}
+      "number.scss" => %{filename: "number.scss", language: "SCSS", content: "style"},
+      "number.js" => %{filename: "number.js", language: "JavaScript", content: "js"}
     }
   }
 
@@ -40,8 +44,8 @@ defmodule Mix.Tasks.Kitto.InstallTest do
     end
   end
 
-  test "fails when the gist has widget but no `--widget` provided" do
-    with_mock HTTPoison, [get!: mock_gist_with(200, @gist_response)] do
+  test "fails when no widget directory is specified or found" do
+    with_mock HTTPoison, [get!: mock_gist_with(200, @css_gist_response)] do
 
       assert_raise Mix.Error, fn ->
         Mix.Tasks.Kitto.Install.run(["--gist", "0209a4a80cee78"])
@@ -56,23 +60,48 @@ defmodule Mix.Tasks.Kitto.InstallTest do
   test "places all the files in the correct locations" do
     in_tmp "installs widgets and jobs", fn ->
       with_mock HTTPoison, [get!: mock_gist_with(200, @gist_response)] do
-        Mix.Tasks.Kitto.Install.run(["--gist", "0209a4a80cee78", "--widget", "number"])
+        Mix.Tasks.Kitto.Install.run(["--gist", "0209a4a80cee78"])
 
-        assert_file "widgets/number/number_job.js", fn file ->
-          assert file =~ "js"
+        assert_file "widgets/number/number.js", fn contents ->
+          assert contents =~ "js"
         end
 
-        assert_file "widgets/number/number_job.scss", fn file ->
-          assert file =~ "style"
+        assert_file "widgets/number/number.scss", fn contents ->
+          assert contents =~ "style"
         end
 
-        assert_file "widgets/number/README.md", fn file ->
-          assert file =~ "Title"
+        assert_file "widgets/number/README.md", fn contents ->
+          assert contents =~ "Title"
         end
         refute_file "widgets/number/number_job.ex"
 
-        assert_file "jobs/number_job.ex", fn file ->
-          assert file =~ "job"
+        assert_file "jobs/number_job.ex", fn contents ->
+          assert contents =~ "job"
+        end
+      end
+    end
+  end
+
+  test "uses the widget overwrite for the widget directory" do
+    in_tmp "installs widgets and jobs using overwrite", fn ->
+      with_mock HTTPoison, [get!: mock_gist_with(200, @gist_response)] do
+        Mix.Tasks.Kitto.Install.run(["--gist", "0209a4a80cee78", "--widget", "overwrite"])
+
+        assert_file "widgets/overwrite/number.js", fn contents ->
+          assert contents =~ "js"
+        end
+
+        assert_file "widgets/overwrite/number.scss", fn contents ->
+          assert contents =~ "style"
+        end
+
+        assert_file "widgets/overwrite/README.md", fn contents ->
+          assert contents =~ "Title"
+        end
+        refute_file "widgets/overwrite/number_job.ex"
+
+        assert_file "jobs/number_job.ex", fn contents ->
+          assert contents =~ "job"
         end
       end
     end
