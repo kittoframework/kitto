@@ -65,6 +65,30 @@ defmodule Kitto.RouterTest do
     assert (conn |> get_resp_header("location") |> hd) == "/dashboards/jobs"
   end
 
+  test "GET /dashboards/rotator responds with 200 OK" do
+    view = "body"
+    conn = conn(:get, "/dashboards/rotator?dashboards=sample,jobs&interval=10")
+
+    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_template, _bindings) -> view end] do
+      conn = Kitto.Router.call(conn, @opts)
+
+      assert conn.state == :sent
+      assert conn.status == 200
+      assert conn.resp_body == view
+    end
+  end
+
+  test "GET /dashboards/rotator it renders proper template with bindings" do
+    view = "body"
+    conn = conn(:get, "/dashboards/rotator?dashboards=sample,jobs&interval=10")
+
+    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_template, _bindings) -> view end] do
+      Kitto.Router.call(conn, @opts)
+
+      assert called Kitto.View.render("rotator", [dashboards: ["sample", "jobs"], interval: "10"])
+    end
+  end
+
   test "GET /dashboards/:id when dashboard does not exist responds with 404 Not Found" do
     dashboard = "nonexistant"
     conn = conn(:get, "/dashboards/#{dashboard}")

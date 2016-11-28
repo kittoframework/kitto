@@ -16,6 +16,14 @@ defmodule Kitto.Router do
   get "/", do: conn |> redirect_to_default_dashboard
   get "dashboards", do: conn |> redirect_to_default_dashboard
 
+  get "dashboards/rotator" do
+    query_params = (conn |> fetch_query_params).query_params
+    dashboards = String.split(query_params["dashboards"], ",")
+    interval = query_params["interval"] || 60
+
+    conn |> render("rotator", [dashboards: dashboards, interval: interval])
+  end
+
   get "dashboards/:id" do
     if View.exists?(id) do
       conn |> render(id)
