@@ -13,21 +13,15 @@ defmodule Kitto do
   """
 
   use Application
+  import Supervisor.Spec, warn: false
   require Logger
 
   @defaults %{ip: {127, 0, 0, 1}, port: 4000}
 
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
+    opts = [strategy: :one_for_one, name: Kitto.Supervisor]
 
-    children = [supervisor(__MODULE__, [], function: :start_server),
-                supervisor(Kitto.Notifier, []),
-                worker(Kitto.StatsServer, []),
-                supervisor(Kitto.Runner, [[name: :runner_sup,
-                                           registrar_name: :job_registrar]]),
-                supervisor(Kitto.Hooks, [])]
-
-    Supervisor.start_link(children, [strategy: :one_for_one, name: Kitto.Supervisor])
+    Supervisor.start_link(children(Mix.env), opts)
   end
 
   def start_server do
@@ -81,4 +75,19 @@ defmodule Kitto do
   defp port({:system, var}), do: var |> System.get_env |> Integer.parse |> elem(0)
   defp port(p) when is_integer(p), do: p
   defp port(_), do: @defaults.port
+
+  defp children(:dev) do
+    case Application.get_env(:kitto, :reload_code?, true) do
+      true -> children(:all) ++ [worker(Kitto.CodeReloader, [[server: :runner]])]
+      false -> children(:all)
+    end
+  end
+
+  defp children(_env) do
+    [supervisor(__MODULE__, [], function: :start_server),
+     supervisor(Kitto.Notifier, []),
+     worker(Kitto.StatsServer, []),
+     worker(Kitto.Runner, [[name: :runner]]),
+     supervisor(Kitto.Hooks, [])]
+  end
 end

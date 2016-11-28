@@ -32,8 +32,8 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
   memory/CPU footprint
 * Easy to deploy using the provided Docker images, or Heroku
 * Can serve assets in production
-* Keeps stats about defined jobs and comes with a dashboard to monitor
-  them
+* Keeps stats about defined jobs and comes with a dashboard to monitor them
+* [Reloads][code-reloading] code upon change in development
 
 ## Installation
 
@@ -265,3 +265,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [gridster]: http://dsmorse.github.io/gridster.js/
 [wiki]: https://github.com/kittoframework/kitto/wiki
 [wiki-heroku]: https://github.com/kittoframework/kitto/wiki/Deploying-to-Heroku
+[code-reloading]: https://github.com/kittoframework/kitto/wiki/Code-Reloading
