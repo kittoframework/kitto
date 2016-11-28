@@ -142,7 +142,7 @@ to your dashboards.
 Hooks are stored in the `hooks/` directory and are structured as follows:
 
 ```elixir
-# File jobs/github.exs
+# File hooks/github.exs
 use Kitto.Hooks.DSL
 
 hook :github do
