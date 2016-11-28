@@ -37,7 +37,8 @@ defmodule Kitto.Job.DSL do
   """
   defmacro job(name, options, contents \\ []) do
     quote do
-      Kitto.Job.register unquote(name),
+      Kitto.Job.register binding[:runner_server],
+                         unquote(name),
                          unquote(options),
                          (__ENV__ |> Map.take([:file, :line])),
                          fn -> unquote(contents[:do]) end

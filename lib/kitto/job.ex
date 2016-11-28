@@ -18,13 +18,13 @@ defmodule Kitto.Job do
   @doc """
   Registers a job to be started as a process by the runner supervisor
   """
-  def register(name, options, definition, job) do
+  def register(server, name, options, definition, job) do
     import Kitto.Time
 
     opts = [interval: options[:every] |> mseconds,
             first_at: options[:first_at] |> mseconds]
 
-    Runner.register(%{name: name, job: job, options: opts, definition: definition})
+    Runner.register server, %{name: name, job: job, options: opts, definition: definition}
   end
 
   @doc """
