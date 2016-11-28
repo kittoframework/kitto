@@ -20,7 +20,21 @@ defmodule Kitto.CodeReloader do
 
   ### Callbacks
 
+  # Linux inotify
   def handle_info({_pid, {:fs, :file_event}, {path, [:modified, _]}}, state) do
+    reload(path, state)
+  end
+
+  # Mac fsevent
+  def handle_info({_pid, {:fs, :file_event}, {path, [_, :modified]}}, state) do
+    reload(path, state)
+  end
+
+  def handle_info(_other, state) do
+    {:noreply, state}
+  end
+
+  defp reload(path, state) do
     with file <- path |> to_string do
       cond do
         file |> job? -> reload(:job, state.opts[:server], file)
@@ -29,10 +43,6 @@ defmodule Kitto.CodeReloader do
       end
     end
 
-    {:noreply, state}
-  end
-
-  def handle_info(_other, state) do
     {:noreply, state}
   end
 
