@@ -8,6 +8,10 @@ import {prettyNumber, prepend} from '../../assets/javascripts/helpers';
 import './graph.scss';
 
 Widget.mount(class Graph extends Widget {
+  static get defaultProps() {
+    return { graphType: 'area' };
+  }
+
   componentDidMount() {
     this.$node = $(ReactDOM.findDOMNode(this));
     this.current = 0;
@@ -25,6 +29,7 @@ Widget.mount(class Graph extends Widget {
       element: this.$node[0],
       width: width,
       height: height,
+      renderer: this.props.graphType,
       series: [{color: '#fff', data: [{ x: 0, y: 0 }]}]
     });
 

@@ -28,5 +28,5 @@ defmodule Kitto.View do
 
   defp render_template(template), do: template |> path |> EEx.eval_file
   defp path(template), do: Path.join templates_path, "#{template}.html.eex"
-  defp templates_path, do: Path.join System.cwd, @templates_dir
+  defp templates_path, do: Path.join Kitto.root, @templates_dir
 end

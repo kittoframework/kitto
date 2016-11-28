@@ -52,6 +52,7 @@
       <div class="widget-convergence"
            data-widget="Graph"
            data-source="convergence"
+           data-graph-type="area"
            data-title="Convergence"></div>
     </li>
   </ul>
