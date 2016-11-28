@@ -17,7 +17,6 @@ defmodule Kitto.HooksTest do
 
   test "loads directory of hook files" do
     Kitto.Hooks.init(:ok)
-    assert Enum.count(Kitto.Hooks.hooks) == 2
     assert Kitto.Hooks.hooks[:hello] != nil
   end
 end

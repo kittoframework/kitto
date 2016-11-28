@@ -2,13 +2,13 @@ defmodule Kitto.Hooks.DSL do
   @moduledoc """
   DSL for building Webhook handlers. Define a new Webhook like follows:
 
-      defmodule MyHook do
-        use Kitto.Hooks.DSL
+      # hooks/hello.exs
+      use Kitto.Hooks.DSL
 
-        hook :hello, do: broadcast! :hello, %{text: "Hello World"}
-      end
+      hook :hello, do: broadcast! :hello, %{text: "Hello World"}
 
-  The `MyHook` hook will generate a route at `/hooks/hello`.
+  The hook will generate a route at `/hooks/hello` based on the first argument
+  of `hook/2`
 
   Hooks act like routes in `Plug.Route` and come complete with the `conn`
   object for accessing request information.
@@ -34,7 +34,10 @@ defmodule Kitto.Hooks.DSL do
   defmacro hook(name, do: block) do
     quote do
       # Append the hook to the list of hooks
-      Kitto.Hooks.register unquote(name), fn(var!(conn)) -> unquote(block) end
+      Kitto.Hooks.register unquote(name), fn(var!(conn)) ->
+        _ = var!(conn)
+        unquote(block)
+      end
     end
   end
 end
