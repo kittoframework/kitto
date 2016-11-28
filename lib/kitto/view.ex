@@ -15,7 +15,7 @@ defmodule Kitto.View do
   @default_layout Application.get_env :kitto, :default_layout, "layout"
 
   @doc """
-  Returns the EEx compiled output of the template specified
+  Returns the EEx compiled output of the layout with template specified
   """
   def render(template, bindings \\ []) do
     @default_layout
@@ -24,13 +24,16 @@ defmodule Kitto.View do
   end
 
   @doc """
+  Returns the EEx compiled output of the template specified
+  """
+  def render_template(template, bindings \\ []) do
+    template |> path |> EEx.eval_file(assigns: bindings)
+  end
+
+  @doc """
   Returns true if the given template exists in the templates directory
   """
   def exists?(template), do: template |> path |> File.exists?
-
-  defp render_template(template, bindings \\ []) do
-    template |> path |> EEx.eval_file(assigns: bindings)
-  end
 
   defp path(template), do: Path.join templates_path, "#{template}.html.eex"
   defp templates_path, do: Path.join Kitto.root, @templates_dir
