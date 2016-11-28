@@ -16,6 +16,23 @@ defmodule Kitto.Router do
   get "/", do: conn |> redirect_to_default_dashboard
   get "dashboards", do: conn |> redirect_to_default_dashboard
 
+  get "dashboards/rotator" do
+    conn = conn |> fetch_query_params
+    query_params = conn.query_params
+    dashboards = String.split(query_params["dashboards"], ",")
+    interval = query_params["interval"] || 60
+
+    if View.exists?("rotator") do
+      conn |> render("rotator", [dashboards: dashboards, interval: interval])
+    else
+      info = "Rotator template is missing.
+              See: https://github.com/kittoframework/kitto/wiki/Cycling-Between-Dashboards
+              for instructions to enable cycling between dashboards."
+
+      send_resp(conn, 404, info)
+    end
+  end
+
   get "dashboards/:id" do
     if View.exists?(id) do
       conn |> render(id)

@@ -1,0 +1,10 @@
+<!--
+This template allows cycling between dashboards
+Read more: https://github.com/kittoframework/kitto/wiki/Cycling-Between-Dashboards
+-->
+
+<div class="rotator" data-interval="<%= @interval %>">
+  <%= for dashboard <- @dashboards do %>
+    <%= Kitto.View.render_template(dashboard) %>
+  <% end %>
+</div>
