@@ -79,7 +79,7 @@ defmodule Kitto.Router do
 
   match _, do: send_resp(conn, 404, "Not Found")
 
-  defp render(conn, template), do: send_resp(conn, 200, View.render(template))
+  defp render(conn, template, bindings \\ []), do: send_resp(conn, 200, View.render(template, bindings))
 
   defp listen_sse(conn, :""), do: listen_sse(conn, nil)
   defp listen_sse(conn, topics) do
