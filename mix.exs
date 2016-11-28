@@ -17,7 +17,7 @@ defmodule Kitto.Mixfile do
        "coveralls.post": :test,
        "coveralls.travis": :test,
        "coveralls.html": :test],
-     name: "kitto",
+     name: "Kitto",
      source_url: "https://github.com/kittoframework/kitto",
      docs: [main: "kitto"]
     ]
