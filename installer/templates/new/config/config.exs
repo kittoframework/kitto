@@ -7,6 +7,9 @@ use Mix.Config
 
 config :kitto, root: Path.dirname(__DIR__), port: 4000
 
+# Use code_reload?: false to disable code reloading in development environment
+# Read More: https://github.com/kittoframework/kitto/wiki/Code-Reloading
+
 # Use ip: {:system, "KITTO_IP"} to have binding ip configurable via env variable
 # Example: `KITTO_IP=0.0.0.0 mix kitto.server` will start the server on 0.0.0.0
 

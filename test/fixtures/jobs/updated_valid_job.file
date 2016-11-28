@@ -1,0 +1,5 @@
+use Kitto.Job.DSL
+
+job :updated_valid, every: :second do
+  broadcast! :text, %{text: "Hello from Kitto"}
+end
