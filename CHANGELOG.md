@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+* Code reloading in development (see: https://github.com/kittoframework/kitto/wiki/Code-Reloading)
+
 ## [0.2.3] - 2016-11-15
 
 ### Added
