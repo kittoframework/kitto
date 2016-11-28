@@ -27,13 +27,37 @@ class Kitto {
     content_width = (widget_base_dimensions[0] + widget_margins[0] * 2) * columns;
 
     $gridster.width(content_width);
-    $('.gridster ul:first').gridster({
+    $('.gridster > ul').gridster({
       widget_margins: widget_margins,
       widget_base_dimensions: widget_base_dimensions
     });
 
     return this;
   }
+
+  static initializeRotator() {
+    let $rotator = $('.rotator');
+    let $dashboards = $rotator.children();
+
+    if (!$rotator) { return this; }
+
+    let current_dashboard_index = 0;
+    let dashboard_count = $dashboards.length;
+    let interval = $rotator.data('interval') * 1000;
+
+    let rotate = () => {
+      $dashboards.hide();
+      $($dashboards[current_dashboard_index]).show();
+
+      current_dashboard_index = (current_dashboard_index + 1) % dashboard_count;
+    };
+
+    rotate();
+    setInterval(rotate, interval);
+
+    return this;
+  }
 }
 
-Kitto.initializeGridster();
+Kitto.initializeGridster()
+     .initializeRotator();
