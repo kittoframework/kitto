@@ -17,8 +17,10 @@ defmodule Kitto.View do
   @doc """
   Returns the EEx compiled output of the template specified
   """
-  def render(template) do
-    @default_layout |> path |> EEx.eval_file([template: render_template(template)])
+  def render(template, assigns \\ []) do
+    @default_layout
+    |> path
+    |> EEx.eval_file(assigns: assigns ++ [template: render_template(template, assigns)])
   end
 
   @doc """
@@ -26,7 +28,10 @@ defmodule Kitto.View do
   """
   def exists?(template), do: template |> path |> File.exists?
 
-  defp render_template(template), do: template |> path |> EEx.eval_file
+  defp render_template(template, assigns \\ []) do
+    template |> path |> EEx.eval_file(assigns: assigns)
+  end
+
   defp path(template), do: Path.join templates_path, "#{template}.html.eex"
   defp templates_path, do: Path.join Kitto.root, @templates_dir
 end
