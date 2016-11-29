@@ -34,6 +34,7 @@ defmodule Kitto.Mixfile do
      {:poison, "~> 3.0"},
      {:fs, github: "kittoframework/fs", tag: "v1.9-kitto-1"},
      {:ex_doc, "~> 0.14", only: :dev},
+     {:httpoison, "~> 0.10.0", only: [:dev, :test]},
      {:credo, "~> 0.5", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},
      {:excoveralls, "~> 0.5", only: :test},
