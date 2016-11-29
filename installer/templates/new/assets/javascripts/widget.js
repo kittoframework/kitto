@@ -11,21 +11,21 @@ class Widget extends React.Component {
   }
 
   static events() {
-    if (!this._events) {
-      this._events = new EventSource(`/events?topics=${this.sources().join()}`);
+    if (this._events) { return this._events; }
 
-      this._events.addEventListener('error', (e) => {
-        let state = e.currentTarget.readyState;
+    this._events = new EventSource(`/events?topics=${this.sources().join()}`);
 
-        if (state === EventSource.CONNECTING || state === EventSource.CLOSED) {
+    this._events.addEventListener('error', (e) => {
+      let state = e.currentTarget.readyState;
 
-          // Restart the dashboard
-          setTimeout((() => window.location.reload()), 5 * 60 * 1000)
-        }
-      });
+      if (state === EventSource.CONNECTING || state === EventSource.CLOSED) {
 
-      this.bindInternalEvents();
-    }
+        // Restart the dashboard
+        setTimeout((() => window.location.reload()), 5 * 60 * 1000)
+      }
+    });
+
+    this.bindInternalEvents();
 
     return this._events;
   }
