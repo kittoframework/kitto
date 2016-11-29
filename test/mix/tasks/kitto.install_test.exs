@@ -3,18 +3,20 @@ defmodule Mix.Tasks.Kitto.InstallTest do
   import Mock
   import Kitto.FileAssertionHelper
 
-  @job_gist_response %{ files:
-    %{"job.ex" => %{filename: "job.ex", language: "Elixir", content: "job"}}
+  @job_gist_response %{
+    files: %{"job.exs" => %{filename: "job.exs", language: "Elixir", content: "job"}}
   }
 
-  @css_gist_response %{ files:
-    %{"number_job.scss" => %{filename: "number_job.scss", language: "SCSS", content: "style"}}
-  }
+  @css_gist_response %{
+    files: %{"number.scss" => %{filename: "number.scss",
+                                language: "SCSS",
+                                content: "style"}}}
 
-  @gist_response %{ files:
-    %{
+  @gist_response %{
+    files: %{
       "README.md" => %{filename: "README.md", language: "Markdown", content: "Title"},
-      "number_job.ex" => %{filename: "number_job.ex", language: "Elixir", content: "job"},
+      "number.ex" => %{filename: "number.ex", language: "Elixir", content: "lib"},
+      "number.exs" => %{filename: "number.exs", language: "Elixir", content: "job"},
       "number.scss" => %{filename: "number.scss", language: "SCSS", content: "style"},
       "number.js" => %{filename: "number.js", language: "JavaScript", content: "js"}
     }
@@ -73,9 +75,13 @@ defmodule Mix.Tasks.Kitto.InstallTest do
         assert_file "widgets/number/README.md", fn contents ->
           assert contents =~ "Title"
         end
-        refute_file "widgets/number/number_job.ex"
+        refute_file "widgets/number/number.exs"
 
-        assert_file "jobs/number_job.ex", fn contents ->
+        assert_file "lib/number.ex", fn contents ->
+          assert contents =~ "lib"
+        end
+
+        assert_file "jobs/number.exs", fn contents ->
           assert contents =~ "job"
         end
       end
@@ -98,9 +104,9 @@ defmodule Mix.Tasks.Kitto.InstallTest do
         assert_file "widgets/overwrite/README.md", fn contents ->
           assert contents =~ "Title"
         end
-        refute_file "widgets/overwrite/number_job.ex"
+        refute_file "widgets/overwrite/number.exs"
 
-        assert_file "jobs/number_job.ex", fn contents ->
+        assert_file "jobs/number.exs", fn contents ->
           assert contents =~ "job"
         end
       end
