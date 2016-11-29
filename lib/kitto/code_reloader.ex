@@ -7,15 +7,29 @@ defmodule Kitto.CodeReloader do
 
   alias Kitto.Runner
 
+  @doc """
+  Starts the code reloader server
+  """
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: opts[:name] || __MODULE__)
   end
 
+  @doc false
   def init(opts) do
-    Application.ensure_all_started(:fs)
-    :fs.subscribe
+    if reload_code? do
+      Application.ensure_all_started(:fs)
+      :fs.subscribe
+    end
 
     {:ok, %{opts: opts}}
+  end
+
+  @doc """
+  Returns true when the code reloader is set to start
+  See: https://github.com/kittoframework/kitto/wiki/Code-Reloading
+  """
+  def reload_code? do
+    Application.get_env(:kitto, :reload_code?, true) && Mix.env == :dev
   end
 
   ### Callbacks

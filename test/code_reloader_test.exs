@@ -14,7 +14,45 @@ defmodule Kitto.CodeReloaderTest do
 
     on_exit fn ->
       Application.delete_env :kitto, :jobs_dir
+      Application.delete_env :kitto, :reload_code?
+      Mix.env(:test)
     end
+  end
+
+  test """
+  #reload_code? returns true when :reload_code? env is not set and Mix env is :dev
+  """ do
+    Application.delete_env :kitto, :reload_code?
+    Mix.env(:dev)
+
+    assert CodeReloader.reload_code? == true
+  end
+
+  test """
+  #reload_code? returns true when :reload_code? env is true and Mix env is :dev
+  """ do
+    Application.put_env :kitto, :reload_code?, true
+    Mix.env(:dev)
+
+    assert CodeReloader.reload_code? == true
+  end
+
+  test """
+  #reload_code? returns false when :reload_code? env is false and Mix env is :dev
+  """ do
+    Application.put_env :kitto, :reload_code?, false
+    Mix.env(:dev)
+
+    assert CodeReloader.reload_code? == false
+  end
+
+  test """
+  #reload_code? returns false when :reload_code? env is true and Mix env is not :dev
+  """ do
+    Application.put_env :kitto, :reload_code?, true
+    Mix.env(:test)
+
+    assert CodeReloader.reload_code? == false
   end
 
   test "#when a job modification event is received on linux, calls Runner.reload_job/1" do
