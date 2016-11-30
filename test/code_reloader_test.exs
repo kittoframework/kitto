@@ -69,6 +69,34 @@ defmodule Kitto.CodeReloaderTest do
     end
   end
 
+  test "#when a job creation event is received on linux, calls Runner.reload_job/1" do
+    self |> Process.register(:mock_server)
+
+    {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
+
+    send reloader, {make_ref, {:fs, :file_event}, {@valid_job, [:created]}}
+
+    receive do
+      message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
+    after
+      100 -> exit({:shutdown, "runner did not receive reload message"})
+    end
+  end
+
+  test "#when a job deletion event is received on linux, calls Runner.stop_job/1" do
+    self |> Process.register(:mock_server)
+
+    {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
+
+    send reloader, {make_ref, {:fs, :file_event}, {@valid_job, [:deleted]}}
+
+    receive do
+      message -> assert message == {:"$gen_cast", {:stop_job, @valid_job}}
+    after
+      100 -> exit({:shutdown, "runner did not receive stop message"})
+    end
+  end
+
   test "#when a job modification event is received on macOS, calls Runner.reload_job/1" do
     self |> Process.register(:mock_server)
 

@@ -35,9 +35,12 @@ defmodule Kitto.CodeReloader do
   ### Callbacks
 
   # Linux inotify
-  def handle_info({_pid, {:fs, :file_event}, {path, [:modified, _]}}, state) do
-    reload(path, state)
-  end
+  def handle_info({_pid, {:fs, :file_event}, {path, event}}, state)
+    when event in [[:modified, :closed], [:created]],
+    do: reload(path, state)
+
+  def handle_info({_pid, {:fs, :file_event}, {path, [:deleted]}}, state),
+    do: stop(path, state)
 
   # Mac fsevent
   def handle_info({_pid, {:fs, :file_event}, {path, [_, :modified]}}, state) do
@@ -48,20 +51,24 @@ defmodule Kitto.CodeReloader do
     {:noreply, state}
   end
 
+  defp stop(path, state) do
+    with file <- path |> to_string do
+      if job?(file), do: Runner.stop_job(state.opts[:server], file)
+    end
+
+    {:noreply, state}
+  end
+
   defp reload(path, state) do
     with file <- path |> to_string do
       cond do
-        file |> job? -> reload(:job, state.opts[:server], file)
+        file |> job? -> Runner.reload_job(state.opts[:server], file)
         file |> lib? -> Mix.Tasks.Compile.Elixir.run ["--ignore-module-conflict"]
         true -> :noop # File not watched.
       end
     end
 
     {:noreply, state}
-  end
-
-  defp reload(:job, server, file) do
-    server |> Process.whereis |> Runner.reload_job(file)
   end
 
   defp jobs_rexp, do: ~r/#{Kitto.Runner.jobs_dir}.+.*exs?$/
