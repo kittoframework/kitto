@@ -17,7 +17,7 @@ defmodule Kitto.Hooks.Router do
       _ -> Notifier.broadcast! String.to_atom(hook_id), params(conn)
     end
 
-    send_resp(conn, 200, "Running hook for #{conn.request_path}")
+    send_resp(conn, 200, "Hook successful.")
   end
 
   match _ do
