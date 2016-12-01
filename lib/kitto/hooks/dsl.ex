@@ -14,6 +14,8 @@ defmodule Kitto.Hooks.DSL do
   object for accessing request information.
   """
 
+  alias Kitto.Hooks
+
   @doc false
   defmacro __using__(_opts) do
     quote do
@@ -34,7 +36,7 @@ defmodule Kitto.Hooks.DSL do
   defmacro hook(name, do: block) do
     quote do
       # Append the hook to the list of hooks
-      Kitto.Hooks.register unquote(name), fn(var!(conn)) ->
+      Hooks.register unquote(name), fn(var!(conn)) ->
         _ = var!(conn)
         unquote(block)
       end

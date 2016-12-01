@@ -13,24 +13,53 @@ defmodule Kitto.Hooks do
       end
   """
 
+  use GenServer
+
   def start_link do
-    Agent.start_link(fn -> MapSet.new end, name: :hook_registrar)
+    GenServer.start_link(__MODULE__, :ok, name: :hook_registry)
   end
 
   def init(:ok) do
     load_hooks
+    {:ok, %{}}
   end
 
+  @doc """
+  Lookups a hook from the registry
+  """
+  def lookup(hook) do
+    GenServer.call(:hook_registry, {:lookup, hook})
+  end
+
+  @doc """
+  Registers a new hook into the registry
+  """
   def register(name, block) do
-    hook = {name, block}
-    Agent.update :hook_registrar, &MapSet.put(&1, hook)
+    GenServer.cast(:hook_registry, {:register, name, block})
   end
 
-  def hooks do
-    Agent.get(:hook_registrar, fn set -> Enum.into(set, []) end)
+  ### Callbacks
+
+  def handle_call({:lookup, hook}, from, hooks) when is_atom(hook) do
+    handle_call({:lookup, Atom.to_string(hook)}, from, hooks)
   end
 
-  defp load_hooks, do: hook_files |> Enum.each(&Code.load_file/1)
+  def handle_call({:lookup, hook}, _from, hooks) do
+    {:reply, Map.fetch(hooks, hook), hooks}
+  end
+
+
+  def handle_cast({:register, hook, block}, hooks) when is_atom(hook) do
+    handle_cast({:register, Atom.to_string(hook), block}, hooks)
+  end
+
+  def handle_cast({:register, hook, block}, hooks) do
+    {:noreply, Map.put(hooks, hook, block)}
+  end
+
+  defp load_hooks do
+    hook_files |> Enum.each(&Code.load_file/1)
+  end
   defp hook_files do
     [hook_dir, "**/*.{ex,exs}"] |> Path.join |> Path.wildcard
   end

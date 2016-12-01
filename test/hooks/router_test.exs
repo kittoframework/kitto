@@ -7,23 +7,6 @@ defmodule Kitto.Hooks.RouterTest do
 
   @opts Kitto.Hooks.Router.init([])
 
-  setup do
-    reset_registrar = fn ->
-      Process.whereis(:hook_registrar)
-      |> Agent.update(fn (_) -> MapSet.new end)
-    end
-    reset_registrar.()
-
-    Application.put_env :kitto, :hook_dir, "test/fixtures/hooks"
-
-    Kitto.Hooks.init(:ok)
-
-    on_exit fn ->
-      reset_registrar.()
-      Application.delete_env :kitto, :hook_dir
-    end
-  end
-
   test "it routes to a hook when defined" do
     conn = conn :post, "/hello", ""
     topic = :hello
@@ -51,7 +34,8 @@ defmodule Kitto.Hooks.RouterTest do
   test "it routes to a general hook when none found" do
     topic = :some_hook
     body = %{value: 42}
-    conn = conn :post, "/some_hook", Poison.encode!(body)
+    conn = conn(:post, "/some_hook", Poison.encode!(body))
+    |> put_req_header("content-type", "application/json")
 
     with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
       Kitto.Hooks.Router.call(conn, @opts)

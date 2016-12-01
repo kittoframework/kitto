@@ -6,16 +6,15 @@ defmodule Kitto.Hooks.Router do
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
+  plug Plug.Parsers, parsers: [:urlencoded, :json], json_decoder: Poison
+
   plug :match
   plug :dispatch
 
   match "/:hook_id" do
-    if hook?(hook_id) do
-      hook(hook_id).(conn)
-    else
-      {:ok, body, _} = read_body conn
-      data = body |> Poison.decode!
-      Notifier.broadcast! String.to_atom(hook_id), data
+    case Hooks.lookup(hook_id) do
+      {:ok, hook} -> hook.(conn)
+      _ -> Notifier.broadcast! String.to_atom(hook_id), params(conn)
     end
 
     send_resp(conn, 200, "Running hook for #{conn.request_path}")
@@ -25,6 +24,7 @@ defmodule Kitto.Hooks.Router do
     send_resp(conn, 404, "No handler found for request.")
   end
 
-  defp hook(hook_id), do: Hooks.hooks[String.to_atom(hook_id)]
-  defp hook?(hook_id), do: !!hook(hook_id)
+  def params(conn) do
+    if Enum.empty?(conn.body_params), do: conn.query_params, else: conn.body_params
+  end
 end
