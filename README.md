@@ -133,6 +133,17 @@ end
 The above will spawn a supervised process which will emit a [server-sent
 event](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) with the name `random` every second.
 
+Jobs can also run commands on the server. Data broadcast using commands is in
+the form `{exit_code: integer, stdout: String.t}`. For example the following
+job will broadcast a `kitto_last_commit` event with the results of the `curl`
+statement:
+
+```elixir
+job :kitto_last_commit,
+    every: {5, :minutes},
+    command: "curl https://api.github.com/repos/kittoframework/kitto/commits\?page\=1\&per_page\=1"
+```
+
 ## Widgets
 
 Widgets live in `widgets/` are compiled using
