@@ -54,6 +54,17 @@ defmodule Kitto.Job.DSL do
     broadcast events using the jobs name.
   """
   defmacro job(name, options, do: block) do
+    fix_broadcast = fn
+      {:broadcast!, meta, args} ->
+        if Enum.count(args) == 1 do
+          {:broadcast!, meta, [name] ++ args}
+        else
+          {:broadcast!, meta, args}
+        end
+      node -> node
+    end
+    block = Macro.prewalk(block, fix_broadcast)
+
     quote do
       Job.register binding[:runner_server],
                    unquote(name),
