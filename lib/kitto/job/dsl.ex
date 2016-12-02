@@ -61,7 +61,7 @@ defmodule Kitto.Job.DSL do
         else
           {:broadcast!, meta, args}
         end
-      node -> node
+      ast_node -> ast_node
     end
     block = Macro.prewalk(block, fix_broadcast)
 
