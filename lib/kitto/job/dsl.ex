@@ -53,17 +53,25 @@ defmodule Kitto.Job.DSL do
     * `:command` - A command to be run on the server which will automatically
     broadcast events using the jobs name.
   """
-  defmacro job(name, options, do: block) do
-    quote do
-      Job.register binding[:runner_server],
-                   unquote(name),
-                   unquote(options),
-                   (__ENV__ |> Map.take([:file, :line])),
-                   fn -> unquote(block) end
+  defmacro job(name, options, contents \\ []) do
+    if options[:command] do
+      _job(:shell, name, options)
+    else
+      _job(:elixir, name, options, contents)
     end
   end
 
-  defmacro job(name, options) do
+  defp _job(:elixir, name, options, contents) do
+    quote do
+      Job.register binding[:runner_server],
+                   unquote(name),
+                   unquote(options |> Keyword.delete(:do)),
+                   (__ENV__ |> Map.take([:file, :line])),
+                   fn -> unquote(options[:do] || contents[:do]) end
+    end
+  end
+
+  defp _job(:shell, name, options) do
     quote do
       command = unquote(options)[:command]
       block = fn ->
@@ -72,6 +80,7 @@ defmodule Kitto.Job.DSL do
 
         Notifier.broadcast!(unquote(name), %{stdout: stdout, exit_code: exit_code})
       end
+
       Job.register binding[:runner_server],
                    unquote(name),
                    unquote(options),
