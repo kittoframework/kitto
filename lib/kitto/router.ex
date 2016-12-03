@@ -1,5 +1,6 @@
 defmodule Kitto.Router do
   use Plug.Router
+  use Plug.ErrorHandler
 
   alias Kitto.{View, Notifier}
 
@@ -78,6 +79,10 @@ defmodule Kitto.Router do
   end
 
   match _, do: render_error(conn, 404, "Not Found")
+
+  def handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}) do
+    render_error(conn, 500, "Something went wrong")
+  end
 
   defp render(conn, template), do: send_resp(conn, 200, View.render(template))
 
