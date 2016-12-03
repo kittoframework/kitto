@@ -18,6 +18,7 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/Procfile",                            "Procfile"},
     {:text, "new/elixir_buildpack.config",             "elixir_buildpack.config"},
     {:eex,  "new/lib/application_name.ex",             "lib/application_name.ex"},
+    {:text, "new/dashboards/error.html.eex",           "dashboards/error.html.eex"},
     {:text, "new/dashboards/layout.html.eex",          "dashboards/layout.html.eex"},
     {:text, "new/dashboards/sample.html.eex",          "dashboards/sample.html.eex"},
     {:text, "new/dashboards/jobs.html.eex",            "dashboards/jobs.html.eex"},
