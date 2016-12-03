@@ -20,7 +20,7 @@ defmodule Kitto.Router do
     if View.exists?(id) do
       conn |> render(id)
     else
-      send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
+      render_error(conn, 404, "Dashboard \"#{id}\" does not exist")
     end
   end
 
@@ -64,7 +64,7 @@ defmodule Kitto.Router do
     if Mix.env == :dev do
       conn = conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
-      conn |> send_resp(404, "Not Found") |> halt
+      conn |> render_error(404, "Not Found") |> halt
     end
   end
 
@@ -77,9 +77,11 @@ defmodule Kitto.Router do
     |> send_cached_events
   end
 
-  match _, do: send_resp(conn, 404, "Not Found")
+  match _, do: render_error(conn, 404, "Not Found")
 
   defp render(conn, template), do: send_resp(conn, 200, View.render(template))
+
+  defp render_error(conn, code, message), do: send_resp(conn, code, View.render_error(code, message))
 
   defp listen_sse(conn, :""), do: listen_sse(conn, nil)
   defp listen_sse(conn, topics) do

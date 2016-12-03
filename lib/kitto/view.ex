@@ -22,6 +22,13 @@ defmodule Kitto.View do
   end
 
   @doc """
+  Returns the EEx compiled output of the error template
+  """
+  def render_error(code, message) do
+    "error" |> path |> EEx.eval_file([code: code, message: message])
+  end
+
+  @doc """
   Returns true if the given template exists in the templates directory
   """
   def exists?(template), do: template |> path |> File.exists?
