@@ -33,10 +33,17 @@ defmodule Kitto.Runner do
   end
 
   @doc """
-  Reloads all jobs defined in the given fil
+  Reloads all jobs defined in the given file
   """
   def reload_job(server, file) do
     GenServer.cast(server, {:reload_job, file})
+  end
+
+  @doc """
+  Stops all jobs defined in the given file
+  """
+  def stop_job(server, file) do
+    GenServer.cast(server, {:stop_job, file})
   end
 
   @doc """
@@ -74,7 +81,7 @@ defmodule Kitto.Runner do
   def handle_cast({:reload_job, file}, state) do
     Logger.info "Reloading job file: #{file}"
 
-    jobs = stop_job(state, file)
+    jobs = stop_jobs(state, file)
 
     server = self
     spawn fn ->
@@ -86,6 +93,12 @@ defmodule Kitto.Runner do
     end
 
     {:noreply, %{state | jobs: jobs}}
+  end
+
+  def handle_cast({:stop_job, file}, state) do
+    Logger.info "Stoppping jobs in file: #{file}"
+
+    {:noreply, %{state | jobs: stop_jobs(state, file)}}
   end
 
   defp jobs_in_file(jobs, file) do
@@ -107,7 +120,7 @@ defmodule Kitto.Runner do
     end
   end
 
-  defp stop_job(state, file) do
+  defp stop_jobs(state, file) do
     state.jobs
     |> jobs_in_file(file)
     |> Enum.reduce(state.jobs, fn (job, jobs) ->

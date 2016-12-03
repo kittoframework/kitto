@@ -3,6 +3,9 @@ defmodule Kitto.Job.DSL do
   A DSL to define jobs populating the widgets with data.
   """
 
+  alias Kitto.Job
+  alias Kitto.Notifier
+
   @doc false
   defmacro __using__(_opts) do
     quote do
@@ -14,8 +17,13 @@ defmodule Kitto.Job.DSL do
   @doc """
   Main API to define jobs.
 
-  It accepts an expression representing data retrieval and any transformations
-  required to broadcast events to the widgets.
+  Jobs can either be defined with a block or a command. When using a block, the
+  expression represents data retrieval and any transformations required to
+  broadcast events to the widgets. With command, the stdout and exit code of
+  the command will be broadcasted to the widgets using the jobs name as the
+  data source.
+
+  Data broadcast using commands is in the form `{exit_code: integer, stdout: String.t}`
 
   ## Examples
 
@@ -29,19 +37,46 @@ defmodule Kitto.Job.DSL do
 
       job :twitter, do: Twitter.stream("#elixir", &(broadcast!(:twitter, &1))
 
+      job :echo, every: :minute, command: "echo hello"
+
+      job :kitto_last_commit,
+          every: {5, :minutes},
+          command: "curl https://api.github.com/repos/kittoframework/kitto/commits\?page\=1\&per_page\=1"
+
+
   ## Options
     * `:every` - Sets the interval on which the job will be performed. When it's not
     specified, the job will be called once (suitable for streaming resources).
 
     * `:first_at` - A timeout after which to perform the job for the first time
+
+    * `:command` - A command to be run on the server which will automatically
+    broadcast events using the jobs name.
   """
-  defmacro job(name, options, contents \\ []) do
+  defmacro job(name, options, do: block) do
     quote do
-      Kitto.Job.register binding[:runner_server],
-                         unquote(name),
-                         unquote(options),
-                         (__ENV__ |> Map.take([:file, :line])),
-                         fn -> unquote(contents[:do]) end
+      Job.register binding[:runner_server],
+                   unquote(name),
+                   unquote(options),
+                   (__ENV__ |> Map.take([:file, :line])),
+                   fn -> unquote(block) end
+    end
+  end
+
+  defmacro job(name, options) do
+    quote do
+      command = unquote(options)[:command]
+      block = fn ->
+        [sh | arguments] = command |> String.split
+        {stdout, exit_code} = System.cmd(sh, arguments)
+
+        Notifier.broadcast!(unquote(name), %{stdout: stdout, exit_code: exit_code})
+      end
+      Job.register binding[:runner_server],
+                   unquote(name),
+                   unquote(options),
+                   (__ENV__ |> Map.take([:file, :line])),
+                   block
     end
   end
 end

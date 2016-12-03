@@ -77,7 +77,7 @@ defmodule Kitto do
   defp port(_), do: @defaults.port
 
   defp children(:dev) do
-    case Application.get_env(:kitto, :reload_code?, true) do
+    case Kitto.CodeReloader.reload_code? do
       true -> children(:all) ++ [worker(Kitto.CodeReloader, [[server: :runner]])]
       false -> children(:all)
     end

@@ -80,4 +80,20 @@ defmodule Kitto.RunnerTest do
       end
     end
   end
+
+  test "#stop_job stops all jobs defined in the reloaded file" do
+    capture_log fn ->
+      {:ok, runner} = Runner.start_link(name: :job_runner, supervisor_name: :runner_sup)
+
+      wait_for(:runner_sup)
+      job = Process.whereis(:valid)
+      Process.monitor(job)
+
+      runner |> Runner.stop_job(@valid_job)
+
+      receive do
+        {:DOWN, _, _, ^job, _} -> :ok
+      end
+    end
+  end
 end
