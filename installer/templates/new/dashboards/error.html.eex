@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= code %> - <%= message %></title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet" type="text/css">
+    <style>
+      html {
+        background-color: #222;
+        color: #fff;
+        font-family: 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+      .error {
+        background-color: #ec663c;
+        margin: 4em auto;
+        max-width: 30em;
+        padding: 4em 1em;
+        text-align: center;
+      }
+      .code {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 2em;
+        font-weight: 400;
+        margin: 0 0 .33em;
+      }
+      .message {
+        font-size: 1.5em;
+        font-weight: 600;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="error">
+      <h1 class="code"><%= code %></h1>
+      <h2 class="message"><%= message %></h2>
+    </div>
+  </body>
+</html>
