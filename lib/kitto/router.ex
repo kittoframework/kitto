@@ -6,6 +6,8 @@ defmodule Kitto.Router do
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
+  use Plug.ErrorHandler
+
   plug :match
   plug Kitto.Plugs.Authentication
   if Mix.env == :prod do
@@ -37,7 +39,7 @@ defmodule Kitto.Router do
     if View.exists?(id) do
       conn |> render(id)
     else
-      send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
+      render_error(conn, 404, "Dashboard \"#{id}\" does not exist")
     end
   end
 
@@ -81,7 +83,7 @@ defmodule Kitto.Router do
     if Mix.env == :dev do
       conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
-      conn |> send_resp(404, "Not Found") |> halt
+      conn |> render_error(404, "Not Found") |> halt
     end
   end
 
@@ -94,10 +96,16 @@ defmodule Kitto.Router do
     |> send_cached_events
   end
 
-  match _, do: send_resp(conn, 404, "Not Found")
+  match _, do: render_error(conn, 404, "Not Found")
+
+  def handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}),
+    do: render_error(conn, 500, "Something went wrong")
 
   defp render(conn, template, bindings \\ []),
     do: send_resp(conn, 200, View.render(template, bindings))
+
+  defp render_error(conn, code, message),
+    do: send_resp(conn, code, View.render_error(code, message))
 
   defp listen_sse(conn, :""), do: listen_sse(conn, nil)
   defp listen_sse(conn, topics) do
