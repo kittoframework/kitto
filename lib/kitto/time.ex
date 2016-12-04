@@ -13,7 +13,7 @@ defmodule Kitto.Time do
   """
   def mseconds({n, :milliseconds}), do: n
 
-  def mseconds({n, duration}) when duration in [:second, :minute, :hour, :day] do
+  def mseconds({_n, duration}) when duration in [:second, :minute, :hour, :day] do
     apply __MODULE__, :mseconds, [duration]
   end
 
