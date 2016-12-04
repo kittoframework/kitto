@@ -86,6 +86,7 @@ defmodule Mix.Tasks.Kitto.New do
       [] -> Mix.Task.run "help", ["kitto.new"]
       [path|_] ->
         app = Path.basename(Path.expand(path))
+        check_application_name!(app)
         mod = Macro.camelize(app)
 
         run(app, mod, path, opts)
@@ -157,6 +158,14 @@ defmodule Mix.Tasks.Kitto.New do
         $ npm install
     """
     nil
+  end
+
+  defp check_application_name!(app_name) do
+    unless app_name =~ ~r/^[a-z][\w_]*$/ do
+      Mix.raise "Application name must start with a letter and have only " <>
+                "lowercase letters, numbers and underscore, " <>
+                "received: #{inspect app_name}"
+    end
   end
 
   ### Helpers
