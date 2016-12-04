@@ -9,7 +9,7 @@ defmodule Kitto.Router do
   plug :match
   plug Kitto.Plugs.Authentication
   if Mix.env == :prod do
-    plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"
+    plug Plug.Static, at: "assets", gzip: true, from: Path.join [Kitto.root, "public", "assets"]
   end
   plug :dispatch
 
