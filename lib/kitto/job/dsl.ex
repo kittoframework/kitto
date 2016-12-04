@@ -62,12 +62,17 @@ defmodule Kitto.Job.DSL do
   end
 
   defp _job(:elixir, name, options, contents) do
+    block = Macro.prewalk (options[:do] || contents[:do]), fn
+      {:broadcast!, meta, args = [_]} -> {:broadcast!, meta, [name] ++ args}
+      ast_node -> ast_node
+    end
+
     quote do
       Job.register binding[:runner_server],
                    unquote(name),
                    unquote(options |> Keyword.delete(:do)),
                    (__ENV__ |> Map.take([:file, :line])),
-                   fn -> unquote(options[:do] || contents[:do]) end
+                   fn -> unquote(block) end
     end
   end
 
