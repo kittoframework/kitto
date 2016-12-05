@@ -9,7 +9,7 @@ defmodule Kitto.Router do
   plug :match
   plug Kitto.Plugs.Authentication
   if Mix.env == :prod do
-    plug Plug.Static, at: "assets", gzip: true, from: Path.join "public", "assets"
+    plug Plug.Static, at: "assets", gzip: true, from: Path.join [Kitto.root, "public", "assets"]
   end
   plug :dispatch
 
@@ -64,7 +64,7 @@ defmodule Kitto.Router do
 
   get "assets/*asset" do
     if Mix.env == :dev do
-      conn = conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
+      conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
       conn |> send_resp(404, "Not Found") |> halt
     end
