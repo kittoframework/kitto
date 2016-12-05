@@ -10,23 +10,34 @@ defmodule Kitto.Registry do
 
   alias Kitto.Registry.SourceType
 
+  @name :registry
+
+  @doc false
   def start_link do
-    GenServer.start_link(__MODULE__, :ok, name: :registry)
+    GenServer.start_link(__MODULE__, :ok, name: @name)
   end
+
+  ###
+  # Client API
+  ###
 
   @doc """
   Creates a new source type
   """
-  def create(server, name) do
-    GenServer.cast(server, {:create, name})
+  def create(source_type) do
+    GenServer.cast(@name, {:create, source_type})
   end
 
   @doc """
   Looks up a source type in the registry
   """
-  def lookup(server, name) do
-    GenServer.call(server, {:lookup, name})
+  def lookup(source_type) do
+    GenServer.call(@name, {:lookup, source_type})
   end
+
+  ###
+  # Server
+  ###
 
   @doc false
   def init(:ok) do

@@ -3,12 +3,14 @@ defmodule Kitto.DSL do
   Kitto's DSL for defining jobs and hooks to populate widgets with data.
   """
 
-  alias Kitto.Notifier
-
   @doc false
-  defmacro __using__(_opts) do
+  defmacro __using__(opts) do
     quote do
-      import Notifier, only: [broadcast!: 2]
+      import Kitto.DSL
+      import Kitto.Notifier, only: [broadcast!: 2]
+      if unquote(opts)[:type] == :hook do
+        import Plug.Conn
+      end
     end
   end
 

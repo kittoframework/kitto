@@ -6,11 +6,12 @@ defmodule Kitto.RegistryTest do
     {:ok, registry: registry}
   end
 
-  test "creates source types", %{registry: registry} do
-    assert Kitto.Registry.lookup(registry, "jobs") == :error
+  test "creates source types" do
+    type = "foo"
+    assert Kitto.Registry.lookup(type) == :error
 
-    Kitto.Registry.create(registry, "jobs")
-    assert {:ok, source_type} = Kitto.Registry.lookup(registry, "jobs")
+    Kitto.Registry.create(type)
+    assert {:ok, source_type} = Kitto.Registry.lookup(type)
 
     assert Process.alive? source_type
   end
