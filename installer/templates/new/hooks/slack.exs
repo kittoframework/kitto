@@ -8,10 +8,6 @@
 #    Slash Commands
 # 2. Add a new slash command with whatever you'd like to call it
 # 3. In the setting for the URL use http://[my.kitto.dashboard]/hooks/slack
-#
-# As with most webhooks, your Kitto API will need to be publicly accessible
-# to Slack. You can build verification using the `token` in the URL parameters
-# as a shared private key between you and Slack.
 
 use Kitto.Hooks.DSL
 
