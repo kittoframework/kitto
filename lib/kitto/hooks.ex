@@ -1,15 +1,16 @@
 defmodule Kitto.Hooks do
   @moduledoc """
   Kitto Hooks enable an alternative to Jobs for feeding data into dashboards.
-  Hooks enable remote services to push data into Kitto using webhooks.
 
   Just like jobs, hooks are loaded at runtime from the `hooks/` directory at
   the root of the application. Hooks can be defined as follows:
 
       use Kitto.Hooks.DSL
+
       hook :hello do
         {:ok, body, _} = read_body conn
-        broadcast! :hello, body |> Poison.decode!
+
+        broadcast! body |> Poison.decode!
       end
   """
 
@@ -21,6 +22,7 @@ defmodule Kitto.Hooks do
 
   def init(:ok) do
     load_hooks
+
     {:ok, %{}}
   end
 
@@ -47,7 +49,6 @@ defmodule Kitto.Hooks do
   def handle_call({:lookup, hook}, _from, hooks) do
     {:reply, Map.fetch(hooks, hook), hooks}
   end
-
 
   def handle_cast({:register, hook, block}, hooks) when is_atom(hook) do
     handle_cast({:register, Atom.to_string(hook), block}, hooks)
