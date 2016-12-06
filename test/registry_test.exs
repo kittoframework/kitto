@@ -28,7 +28,7 @@ defmodule Kitto.RegistryTest do
   describe "Registering jobs" do
     test "can register jobs", %{registry: registry} do
       pre_size = Enum.count Registry.jobs(registry)
-      Registry.register(registry, :job, :hello, %{}, fn() -> true end)
+      Registry.register(registry, :job, :hello, {%{}, fn() -> true end})
 
       {_options, block, _context} = Registry.job(registry, :hello)
 
@@ -40,7 +40,7 @@ defmodule Kitto.RegistryTest do
   describe "Registering hooks" do
     test "can register hooks", %{registry: registry} do
       pre_size = Enum.count Registry.hooks(registry)
-      Registry.register(registry, :hook, :hello, %{}, fn() -> true end)
+      Registry.register(registry, :hook, :hello, {%{}, fn() -> true end})
 
       {_options, block, _context} = Registry.hook(registry, :hello)
 

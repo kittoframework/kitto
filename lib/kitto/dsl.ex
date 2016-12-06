@@ -80,14 +80,15 @@ defmodule Kitto.DSL do
   end
 
   defp register(type, name, options, contents) do
-    block = prewalk_block(options[:do] || contents[:do], name)
+    block = (options[:do] || contents[:do])
+    |> prewalk_block(name)
     |> handler_builder(type)
     quote do
+      definition = {unquote((options |> Keyword.delete(:do))), unquote(block)}
       Registry.register binding[:registry_server],
                         unquote(type),
                         unquote(name),
-                        unquote((options |> Keyword.delete(:do))),
-                        unquote(block),
+                        definition
                         (__ENV__ |> Map.take([:file, :line]))
     end
   end

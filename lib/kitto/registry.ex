@@ -36,14 +36,14 @@ defmodule Kitto.Registry do
   @doc """
   Registers a new job or hook into the registry
   """
-  def register(server, source_type, name, options, block, context \\ [])
+  def register(server, source_type, name, definition, context \\ [])
 
-  def register(server, :job, name, options, block, context) do
+  def register(server, :job, name, {options, block}, context) do
     {:ok, jobs} = lookup(server, :jobs)
     SourceType.put(jobs, name, options, block, context)
   end
 
-  def register(server, :hook, name, options, block, context) do
+  def register(server, :hook, name, {options, block}, context) do
     {:ok, hooks} = lookup(server, :hooks)
     SourceType.put(hooks, name, options, block, context)
   end
