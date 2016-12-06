@@ -1,16 +1,22 @@
 defmodule Kitto.DSLTest do
   use ExUnit.Case, async: true
 
+  setup do
+    {:ok, registry} = Kitto.Registry.start_link(name: :test_registry)
+    on_exit fn -> Process.exit(registry, :kill) end
+
+    {:ok, registry: registry}
+  end
+
   describe "jobs with blocks" do
-    test "can define a job" do
-      # pre_size = Enum.count Kitto.Registry.jobs
-      defmodule JobWithBlock do
+    test "can define a job", %{registry: registry} do
+      pre_size = Enum.count Kitto.Registry.jobs(registry)
+      Code.eval_string """
         use Kitto.DSL
+        job :hello_world, every: {5, :seconds}, do: IO.puts("Hello")
+      """, [registry_server: registry]
 
-        job :hello_world, every: {5, :seconds}, do: true
-      end
-
-      # assert Kitto.Registry.jobs == pre_size + 1
+      assert Enum.count(Kitto.Registry.jobs(registry)) == pre_size + 1
     end
   end
 
@@ -18,13 +24,14 @@ defmodule Kitto.DSLTest do
   end
 
   describe "hooks" do
-
-    test "includes Plug.Conn" do
-      defmodule TestHook do
+    test "can define a hook", %{registry: registry} do
+      pre_size = Enum.count Kitto.Registry.hooks(registry)
+      Code.eval_string """
         use Kitto.DSL, type: :hook
+        hook :hello_world, do: IO.puts("Hello")
+      """, [registry_server: registry]
 
-        hook :hello_world, do: true
-      end
+      assert Enum.count(Kitto.Registry.hooks(registry)) == pre_size + 1
     end
   end
 end

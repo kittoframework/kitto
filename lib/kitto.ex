@@ -86,7 +86,6 @@ defmodule Kitto do
   defp children(_env) do
     [supervisor(__MODULE__, [], function: :start_server),
      supervisor(Kitto.Notifier, []),
-     worker(Kitto.Hooks, []),
      worker(Kitto.StatsServer, []),
      worker(Kitto.Runner, [[name: :runner]])]
   end

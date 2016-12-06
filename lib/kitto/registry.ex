@@ -10,11 +10,9 @@ defmodule Kitto.Registry do
 
   alias Kitto.Registry.SourceType
 
-  @name :registry
-
   @doc false
-  def start_link do
-    GenServer.start_link(__MODULE__, :ok, name: @name)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, :ok, name: opts[:name] || __MODULE__)
   end
 
   ###
@@ -24,15 +22,50 @@ defmodule Kitto.Registry do
   @doc """
   Creates a new source type
   """
-  def create(source_type) do
-    GenServer.cast(@name, {:create, source_type})
+  def create(server, source_type) do
+    GenServer.cast(server, {:create, source_type})
   end
 
   @doc """
   Looks up a source type in the registry
   """
-  def lookup(source_type) do
-    GenServer.call(@name, {:lookup, source_type})
+  def lookup(server, source_type) do
+    GenServer.call(server, {:lookup, source_type})
+  end
+
+  @doc """
+  Registers a new job or hook into the registry
+  """
+  def register(server, source_type, name, options, block, context \\ [])
+
+  def register(server, :job, name, options, block, context) do
+    {:ok, jobs} = lookup(server, :jobs)
+    SourceType.put(jobs, name, options, block, context)
+  end
+
+  def register(server, :hook, name, options, block, context) do
+    {:ok, hooks} = lookup(server, :hooks)
+    SourceType.put(hooks, name, options, block, context)
+  end
+
+  @doc "Gets a list of all jobs from the registry"
+  def jobs(server), do: data_sources(server, :jobs)
+  @doc "Gets a list of all hooks from the registry"
+  def hooks(server), do: data_sources(server, :hooks)
+
+  @doc "Get's a specific job from the registry based on its name"
+  def job(server, name), do: data_source(server, :jobs, name)
+  @doc "Get's a speicifc hook from the registry based on its name"
+  def hook(server, name), do: data_source(server, :hooks, name)
+
+  defp data_sources(server, source_type_key) do
+    {:ok, source_type} = lookup(server, source_type_key)
+    SourceType.get(source_type)
+  end
+
+  defp data_source(server, source_type_name, data_source_name) do
+    {:ok, source_type} = lookup(server, source_type_name)
+    SourceType.get(source_type, data_source_name)
   end
 
   ###
@@ -41,7 +74,10 @@ defmodule Kitto.Registry do
 
   @doc false
   def init(:ok) do
-    {:ok, %{}}
+    {:ok, jobs} = SourceType.start_link
+    {:ok, hooks} = SourceType.start_link
+
+    {:ok, %{jobs: jobs, hooks: hooks}}
   end
 
   @doc false

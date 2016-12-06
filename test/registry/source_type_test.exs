@@ -12,8 +12,9 @@ defmodule Kitto.Registry.SourceTypeTest do
     key = "hello_world"
 
     assert Enum.empty? SourceType.get(source_type)
-    SourceType.put source_type, key, block: fn() -> true end
+    SourceType.put source_type, key, %{}, fn() -> true end
     assert !Enum.empty? SourceType.get(source_type)
-    assert SourceType.get(source_type, key)[:block].()
+    {_definition, block, _context} = SourceType.get source_type, key
+    assert block.()
   end
 end

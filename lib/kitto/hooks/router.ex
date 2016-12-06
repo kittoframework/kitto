@@ -1,20 +1,20 @@
 defmodule Kitto.Hooks.Router do
   use Plug.Router
 
-  alias Kitto.{Notifier, Hooks}
+  alias Kitto.{Notifier, Registry}
 
   if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
 
-  plug Plug.Parsers, parsers: [:urlencoded, :json], json_decoder: Poison
+  plug Plug.Parsers, parsers: [:urlencoded, :json, :multipart], json_decoder: Poison
 
   plug :match
   plug :dispatch
 
   match "/:hook_id" do
-    case Hooks.lookup(hook_id) do
-      {:ok, hook} -> hook.(conn)
-      _ -> Notifier.broadcast! String.to_atom(hook_id), params(conn)
+    case Registry.hook(conn.private.registry, hook_id) do
+      {_options, block, _context} -> block.(conn)
+      _ -> Notifier.broadcast! hook_id, params(conn)
     end
 
     send_resp(conn, 200, "Hook successful.")

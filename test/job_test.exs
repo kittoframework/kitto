@@ -65,6 +65,7 @@ defmodule Kitto.JobTest do
     assert_received :ok
   end
 
+  @tag :pending
   test "#new, calls jobs multiple times" do
     pid = self
     job = fn -> send pid, :ok end

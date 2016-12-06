@@ -5,42 +5,70 @@ defmodule Kitto.Hooks.RouterTest do
   import Mock
   import Kitto.TestHelper, only: [mock_broadcast: 2]
 
-  @opts Kitto.Hooks.Router.init([])
+  alias Kitto.{Registry, Notifier}
+  alias Kitto.Hooks.Router
 
-  test "it routes to a hook when defined" do
-    conn = conn :post, "/hello", ""
-    topic = :hello
-    body = %{text: "Hello World"}
+  @opts []
 
-    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
-      Kitto.Hooks.Router.call(conn, @opts)
+  setup do
+    {:ok, registry} = Registry.start_link(name: :test_hook_registry)
+    on_exit fn -> Process.exit(registry, :kill) end
 
-      assert_receive :ok
+    {:ok, registry: registry}
+  end
+
+  describe "when hook not defined" do
+    test "broadcasts request params", %{registry: registry} do
+      topic = "some_hook"
+      params = %{value: 42}
+
+      conn = conn(:post, "/some_hook", params)
+      |> put_private(:registry, registry)
+
+      with_mock Notifier, [broadcast!: mock_broadcast(topic, params)] do
+        Router.call(conn, @opts)
+
+        assert_receive :ok
+      end
     end
   end
 
-  test "it passes conn object to hook" do
-    body = %{text: "Hello from ExUnit"}
-    topic = :hello_with_params
-    conn = conn :post, "/hello_with_params", Poison.encode!(body)
+  describe "when hook defined" do
+    test "routes to a hook", %{registry: registry} do
+      Code.eval_string """
+        use Kitto.DSL, type: :hook
+        hook :hello, do: broadcast! %{text: "Hello World"}
+      """, [registry_server: registry]
 
-    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
-      Kitto.Hooks.Router.call(conn, @opts)
+      topic = "hello"
+      params = %{text: "Hello World"}
 
-      assert_receive :ok
+      conn = conn(:get, "/hello", "")
+      |> put_private(:registry, registry)
+
+      with_mock Notifier, [broadcast!: mock_broadcast(topic, params)] do
+        Router.call(conn, @opts)
+
+        assert_receive :ok
+      end
     end
-  end
 
-  test "it routes to a general hook when none found" do
-    topic = :some_hook
-    body = %{value: 42}
-    conn = conn(:post, "/some_hook", Poison.encode!(body))
-    |> put_req_header("content-type", "application/json")
+    test "it passes conn object to hook", %{registry: registry} do
+      Code.eval_string """
+        use Kitto.DSL, type: :hook
+        hook :hello, do: broadcast! conn.body_params
+      """, [registry_server: registry]
 
-    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
-      Kitto.Hooks.Router.call(conn, @opts)
+      topic = "hello"
+      params = %{text: "Hello from ExUnit"}
+      conn = conn(:post, "/hello", params)
+      |> put_private(:registry, registry)
 
-      assert_receive :ok
+      with_mock Notifier, [broadcast!: mock_broadcast(topic, params)] do
+        Router.call(conn, @opts)
+
+        assert_receive :ok
+      end
     end
   end
 end

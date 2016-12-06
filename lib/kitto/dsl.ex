@@ -3,6 +3,8 @@ defmodule Kitto.DSL do
   Kitto's DSL for defining jobs and hooks to populate widgets with data.
   """
 
+  alias Kitto.Registry
+
   @doc false
   defmacro __using__(opts) do
     quote do
@@ -23,7 +25,7 @@ defmodule Kitto.DSL do
   the command will be broadcasted to the widgets using the jobs name as the
   data source.
 
-  Data broadcast using commands is in the form `{exit_code: integer, stdout: String.t}`
+  Data broadcast using commands is in the form`{exit_code: integer, stdout: String.t}`
 
   ## Examples
 
@@ -32,10 +34,10 @@ defmodule Kitto.DSL do
       job :jenkins, every: :minute do
         jobs = Jenkins.jobs |> Enum.map(fn (%{"job" => job}) -> %{job: job.status} end)
 
-        broadcast! :jenkins, %{jobs: jobs}
+        broadcast! %{jobs: jobs}
       end
 
-      job :twitter, do: Twitter.stream("#elixir", &(broadcast!(:twitter, &1))
+      job :twitter, do: Twitter.stream("#elixir", &(broadcast! &1)
 
       job :echo, every: :minute, command: "echo hello"
 
@@ -54,6 +56,7 @@ defmodule Kitto.DSL do
     broadcast events using the jobs name.
   """
   defmacro job(name, options, contents \\ []) do
+    register(:job, name, options, contents)
   end
 
   @doc """
@@ -64,7 +67,7 @@ defmodule Kitto.DSL do
       # hooks/hello.exs
       use Kitto.Hooks.DSL
 
-      hook :hello, do: broadcast! :hello, %{text: "Hello World"}
+      hook :hello, do: broadcast! %{text: "Hello World"}
 
   The hook will generate a route at `/hooks/hello` based on the first argument
   of `hook/2`
@@ -72,6 +75,42 @@ defmodule Kitto.DSL do
   Hooks act like routes in `Plug.Route` and come complete with the `conn`
   object for accessing request information.
   """
-  defmacro hook(name, do: block) do
+  defmacro hook(name, options, contents \\ []) do
+    register(:hook, name |> to_string, options, contents)
+  end
+
+  defp register(type, name, options, contents) do
+    block = prewalk_block(options[:do] || contents[:do], name)
+    |> handler_builder(type)
+    quote do
+      Registry.register binding[:registry_server],
+                        unquote(type),
+                        unquote(name),
+                        unquote((options |> Keyword.delete(:do))),
+                        unquote(block),
+                        (__ENV__ |> Map.take([:file, :line]))
+    end
+  end
+
+  defp prewalk_block(ast, name) do
+    Macro.prewalk ast, fn
+      {:broadcast!, meta, args = [_]} -> {:broadcast!, meta, [name] ++ args}
+      ast_node -> ast_node
+    end
+  end
+
+  defp handler_builder(block, :hook) do
+    quote do
+      fn(var!(conn)) ->
+        _ = var!(conn)
+        unquote(block)
+      end
+    end
+  end
+
+  defp handler_builder(block, _type) do
+    quote do
+      fn -> unquote(block) end
+    end
   end
 end

@@ -21,7 +21,7 @@ defmodule Kitto.Registry.SourceType do
   @doc """
   Puts a data source into the registry
   """
-  def put(source_type, key, value) do
-    Agent.update(source_type, &Map.put(&1, key, value))
+  def put(source_type, key, options, block, context \\ %{}) do
+    Agent.update source_type, &Map.put(&1, key, {options, block, context})
   end
 end
