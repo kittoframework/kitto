@@ -36,15 +36,22 @@ Widget.mount(class Number extends Widget {
       return '';
     }
   }
+  changeRate() {
+    if (this.props.changerate == "off") { return; }
+
+    return (
+      <p className="change-rate">
+        {this.arrow()}<span>{this.difference()}</span>
+      </p>
+    );
+  }
   render() {
     return (
       <div className={this.props.className}>
         <h1 className="title">{this.props.title}</h1>
         <h2 className="value"> {this.decorateValue(this.state.value)}</h2>
         <p className="more-info">{this.props.moreinfo}</p>
-        <p className="change-rate">
-          {this.arrow()}<span>{this.difference()}</span>
-        </p>
+        {this.changeRate()}
         <p className="updated-at">{updatedAt(this.state.updated_at)}</p>
       </div>
     );
