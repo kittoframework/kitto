@@ -19,7 +19,7 @@ defmodule Kitto.Mixfile do
        "coveralls.html": :test],
      name: "Kitto",
      source_url: "https://github.com/kittoframework/kitto",
-     docs: [main: "kitto"]
+     docs: [main: "Kitto"]
     ]
   end
 
