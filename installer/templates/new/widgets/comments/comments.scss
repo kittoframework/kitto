@@ -1,0 +1,26 @@
+// ----------------------------------------------------------------------------
+// Sass declarations
+// ----------------------------------------------------------------------------
+$background-color:  #eb9c3c;
+
+$title-color:       rgba(255, 255, 255, 0.7);
+$moreinfo-color:    rgba(255, 255, 255, 0.7);
+
+// ----------------------------------------------------------------------------
+// Widget-Comments styles
+// ----------------------------------------------------------------------------
+.widget-comments {
+  background-color: $background-color;
+
+  .comment-container {
+    h3 {
+      img {
+        border: 1px solid $title-color;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .title { color: $title-color; }
+  .more-info, .updated-at { color: $moreinfo-color; }
+}
