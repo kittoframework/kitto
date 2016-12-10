@@ -40,6 +40,7 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/jobs/buzzwords.exs",                  "jobs/buzzwords.exs"},
     {:text, "new/jobs/random.exs",                     "jobs/random.exs"},
     {:text, "new/jobs/stats.exs",                      "jobs/stats.exs"},
+    {:text, "new/hooks/slack.exs",                     "hooks/slack.exs"},
     {:keep, "new/assets/images",                       "assets/images/"},
     {:keep, "new/assets/fonts",                        "assets/fonts/"},
     {:text, "new/assets/javascripts/application.js",   "assets/javascripts/application.js"},
