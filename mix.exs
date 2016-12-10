@@ -32,7 +32,7 @@ defmodule Kitto.Mixfile do
     [{:cowboy, "~> 1.0.0"},
      {:plug, "~> 1.2"},
      {:poison, "~> 3.0"},
-     {:fs, github: "kittoframework/fs", tag: "v1.9-kitto-1"},
+     {:fs, "~> 2.11.0"},
      {:httpoison, "~> 0.10.0"},
      {:ex_doc, "~> 0.14", only: :dev},
      {:credo, "~> 0.5", only: [:dev, :test]},

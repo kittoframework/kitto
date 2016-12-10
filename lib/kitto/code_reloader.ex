@@ -17,8 +17,8 @@ defmodule Kitto.CodeReloader do
   @doc false
   def init(opts) do
     if reload_code? do
-      Application.ensure_all_started(:fs)
-      :fs.subscribe
+      :fs.start_link(:default_fs)
+      :fs.subscribe(:default_fs)
     end
 
     {:ok, %{opts: opts}}
