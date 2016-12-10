@@ -1,0 +1,5 @@
+<rotator data-interval="<%= @interval %>">
+  <%= for dashboard <- @dashboards do %>
+    <%= Kitto.View.render_template(dashboard) %>
+  <% end %>
+</rotator>
