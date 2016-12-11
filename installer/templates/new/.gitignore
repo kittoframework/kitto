@@ -33,3 +33,4 @@ public/*
 !public/assets
 public/assets/*
 !public/assets/favicon.*
+!public/assets/images
