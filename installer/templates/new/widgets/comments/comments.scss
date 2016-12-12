@@ -3,8 +3,8 @@
 // ----------------------------------------------------------------------------
 $background-color:  #eb9c3c;
 
-$title-color:       rgba(255, 255, 255, 0.7);
-$moreinfo-color:    rgba(255, 255, 255, 0.7);
+$title-color:       rgba(255, 255, 255, .7);
+$moreinfo-color:    rgba(255, 255, 255, .7);
 
 // ----------------------------------------------------------------------------
 // Widget-Comments styles
@@ -15,12 +15,15 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   .comment-container {
     h3 {
       img {
+        margin-right: .5rem;
         border: 1px solid $title-color;
-        margin-right: 0.5rem;
       }
     }
   }
 
   .title { color: $title-color; }
-  .more-info, .updated-at { color: $moreinfo-color; }
+  .more-info,
+  .updated-at {
+    color: $moreinfo-color;
+  }
 }
