@@ -3,16 +3,20 @@ defmodule Kitto.Router do
 
   alias Kitto.{View, Notifier}
 
-  if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
+  if Application.get_env(:kitto, :debug), do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
-
   use Plug.ErrorHandler
 
   plug :match
   plug Kitto.Plugs.Authentication
-  if Mix.env == :prod do
-    plug Plug.Static, at: "assets", gzip: true, from: Path.join [Kitto.root, "public", "assets"]
+
+  if Application.get_env(:kitto, :serve_assets?, true) do
+    plug Plug.Static,
+         at: "assets",
+         gzip: true,
+         from: Path.join [Kitto.root, "public", "assets"]
   end
+
   plug :dispatch
 
   get "/", do: conn |> redirect_to_default_dashboard
