@@ -14,7 +14,7 @@ defmodule Kitto.RouterTest do
 
     assert conn.state == :sent
     assert conn.status == 404
-    assert conn.resp_body == "Not Found"
+    assert conn.resp_body == "<div class=\"error\">404 - Not Found</div>\n"
   end
 
   test "GET / with :default_dashboard left unconfigured redirects to dashboards/sample" do
@@ -110,7 +110,7 @@ defmodule Kitto.RouterTest do
 
     assert conn.state == :sent
     assert conn.status == 404
-    assert conn.resp_body == "Dashboard \"#{dashboard}\" does not exist"
+    assert conn.resp_body == "<div class=\"error\">404 - Dashboard \"#{dashboard}\" does not exist</div>\n"
   end
 
   test "GET /dashboards/:id when dashboard exists responds with 200 OK" do
@@ -379,6 +379,15 @@ defmodule Kitto.RouterTest do
 
       assert_receive :ok
     end
+  end
+
+  test "handle_errors" do
+    conn = conn(:get, "/")
+    conn = Kitto.Router.handle_errors(conn, %{kind: nil, reason: nil, stack: nil})
+
+    assert conn.state == :sent
+    assert conn.status == 500
+    assert conn.resp_body == "<div class=\"error\">500 - Something went wrong</div>\n"
   end
 
   def mock_broadcast(expected_topic, expected_body) do
