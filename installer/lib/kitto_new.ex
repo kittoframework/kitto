@@ -21,7 +21,7 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/dashboards/error.html.eex",            "dashboards/error.html.eex"},
     {:text, "new/dashboards/layout.html.eex",           "dashboards/layout.html.eex"},
     {:text, "new/dashboards/sample.html.eex",           "dashboards/sample.html.eex"},
-    {:text, "new/dashboards/rotator.html.eex",          "dashboard/rotator.html.eex"},
+    {:text, "new/dashboards/rotator.html.eex",          "dashboards/rotator.html.eex"},
     {:text, "new/dashboards/jobs.html.eex",             "dashboards/jobs.html.eex"},
     {:text, "new/widgets/clock/clock.js",               "widgets/clock/clock.js"},
     {:text, "new/widgets/clock/clock.scss",             "widgets/clock/clock.scss"},
