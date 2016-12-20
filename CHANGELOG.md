@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.3.1] - 2016-12-20
+
+### Fixed
+
+* Code Reloader failure in macOS, see (#65)
+
 ## [0.3.0] - 2016-12-08
 
 ### Added
