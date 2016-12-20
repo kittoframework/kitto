@@ -220,6 +220,10 @@ docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 
 Please read the detailed [instructions][wiki-heroku] in the wiki.
 
+### Upgrading
+
+Please read the [upgrading guide][upgrading-guide] in the wiki.
+
 ### Contributing
 #### Run the Tests
 
@@ -255,3 +259,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [wiki]: https://github.com/kittoframework/kitto/wiki
 [wiki-heroku]: https://github.com/kittoframework/kitto/wiki/Deploying-to-Heroku
 [code-reloading]: https://github.com/kittoframework/kitto/wiki/Code-Reloading
+[upgrading-guide]: https://github.com/kittoframework/kitto/wiki/Upgrading-Guide
