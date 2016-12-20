@@ -1,0 +1,16 @@
+import React from 'react';
+import Widget from '../../assets/javascripts/widget';
+
+import './<%= name %>.scss';
+
+Widget.mount(class <%= class %> extends Widget {
+  render() {
+    return (
+      <div className={this.props.className}>
+        <div className="title">{this.props.title}</h1>
+
+        <p className="more-info">{this.props.moreinfo}</p>
+      </div>
+    );
+  }
+});
