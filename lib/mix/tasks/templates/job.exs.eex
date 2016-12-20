@@ -1,0 +1,5 @@
+use Kitto.Job.DSL
+
+job :<%= name %>, {5, :seconds} do
+  broadcast! :<%= name %>, %{}
+end
