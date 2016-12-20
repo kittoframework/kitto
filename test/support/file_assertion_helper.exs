@@ -4,6 +4,7 @@ defmodule Kitto.FileAssertionHelper do
   https://github.com/phoenixframework/phoenix/blob/master/installer/test/mix_helper.exs
   """
   import ExUnit.Assertions
+  import ExUnit.CaptureIO
 
   def assert_file(file) do
     assert File.regular?(file), "Expected #{file} to exist, but does not"
@@ -32,5 +33,15 @@ defmodule Kitto.FileAssertionHelper do
     File.rm_rf! path
     File.mkdir_p! path
     File.cd! path, function
+  end
+
+  def in_project(app, path, fun) do
+    %{name: name, file: file} = Mix.Project.pop
+
+    try do
+      capture_io :stderr, fn -> Mix.Project.in_project(app, path, [], fun) end
+    after
+      Mix.Project.push(name, file)
+    end
   end
 end
