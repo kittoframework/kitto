@@ -1,4 +1,6 @@
-# Kitto
+![kitto-logo](http://i.imgur.com/GE38c22.png)
+
+---------------------------------------------
 
 [![Build Status](https://travis-ci.org/kittoframework/kitto.svg?branch=master)](https://travis-ci.org/kittoframework/kitto)
 [![Package Version](https://img.shields.io/hexpm/v/kitto.svg)](https://hex.pm/packages/kitto)
@@ -9,10 +11,9 @@
 
 Kitto is a framework to help you create dashboards, written in [Elixir][elixir] / [React][react].
 
+## Demo
 
 ![demo](http://i.imgur.com/YgZibXU.png)
-
-## Demo
 
 + [Sample Dashboard](http://kitto.io/dashboards/sample)
 + [Elixir Dashboard](http://kitto.io/dashboards/elixir)
