@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.3.2] - 2016-12-22
+
+### Fixed
+
+* Heroku static asset serving bug (see: #77)
+* Kitto server not starting when asset watcher bin is missing
+
 ## [0.3.1] - 2016-12-20
 
 ### Fixed
