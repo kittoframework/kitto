@@ -1,5 +1,5 @@
 use Kitto.Job.DSL
 
-job :<%= name %>, {5, :seconds} do
+job :<%= name %>, every: {5, :seconds} do
   broadcast! :<%= name %>, %{}
 end

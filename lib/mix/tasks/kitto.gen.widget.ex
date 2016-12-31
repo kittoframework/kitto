@@ -16,22 +16,21 @@ defmodule Mix.Tasks.Kitto.Gen.Widget do
       # `widgets/this_widget/this_widget.scss`
   """
 
+  @doc false
   def run(argv) do
     case List.first(argv) do
       nil ->
-        IO.puts """
-        No widget name provided.
-
+        Mix.shell.error """
         Usage:
 
             mix kitto.gen.widget this_widget
         """
-        exit :no_widget
+        Mix.raise "No widget name provided"
       widget ->
         widget_dir = Path.join("widgets", widget)
         create_directory widget_dir
         create_file Path.join(widget_dir, "#{widget}.scss"), EEx.eval_file(scss, [name: widget])
-        create_file Path.join(widget_dir, "#{widget}.js"), EEx.eval_file(scss, [name: widget, class: classify(widget)])
+        create_file Path.join(widget_dir, "#{widget}.js"), EEx.eval_file(javascript, [name: widget, class: classify(widget)])
     end
   end
 

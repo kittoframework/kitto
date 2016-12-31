@@ -15,17 +15,16 @@ defmodule Mix.Tasks.Kitto.Gen.Job do
       # generates `jobs/some_job.exs`
   """
 
+  @doc false
   def run(argv) do
     case List.first(argv) do
       nil ->
-        IO.puts """
-        No job name provided.
-
+        Mix.shell.error """
         Usage:
 
             mix kitto.gen.job text
         """
-        exit :no_job
+        Mix.raise "No job name provided"
       job ->
         create_file Path.join("jobs", "#{job}.exs"), EEx.eval_file(@template, [name: job])
     end

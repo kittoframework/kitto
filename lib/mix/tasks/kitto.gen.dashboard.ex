@@ -15,16 +15,16 @@ defmodule Mix.Tasks.Kitto.Gen.Dashboard do
       # generates `dashboards/all_the_data.html.eex`
   """
 
+  @doc false
   def run(argv) do
     case List.first(argv) do
       nil ->
-        IO.puts """
-        No dashboard name provided.
+        Mix.shell.error """
         Usage:
 
             mix kitto.gen.dashboard sample
         """
-        exit :no_dashboard
+        Mix.raise "No dashboard name provided"
       dashboard ->
         create_file Path.join("dashboards", "#{dashboard}.html.eex"), File.read!(@template)
     end
