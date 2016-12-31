@@ -19,7 +19,7 @@ defmodule Mix.Tasks.Kitto.Server do
   The `--no-halt` flag is automatically added.
   """
   def run(args) do
-    if Mix.env == :dev && watch_assets?, do: spawn_link(&start_watcher/0)
+    if Mix.env == :dev && watch_assets?, do: spawn(&start_watcher/0)
 
     Mix.Task.run "run", run_args() ++ args
   end
@@ -39,8 +39,8 @@ defmodule Mix.Tasks.Kitto.Server do
 
   defp validate_watcher do
     unless watcher_exists? do
-      Logger.error "Could not start watcher because #{watcher_bin} could not" <>
-                   "be found. Your dashboard server is running, but assets won't" <>
+      Logger.error "Could not start watcher because #{watcher_bin} could not " <>
+                   "be found. Your dashboard server is running, but assets won't " <>
                    "be compiled."
 
       exit(:shutdown)

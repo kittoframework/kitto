@@ -5,6 +5,7 @@ For bug reports please fill the following info:
 
 ### Environment
 
+* Kitto version:
 * Elixir / Hex version (mix hex.info):
 * Node / NPM version (node -v) (npm -v):
 * Operating system:

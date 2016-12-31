@@ -3,24 +3,52 @@ defmodule Kitto.Router do
 
   alias Kitto.{View, Notifier}
 
-  if Mix.env == :dev, do: use Plug.Debugger, otp_app: :kitto
+  if Application.get_env(:kitto, :debug), do: use Plug.Debugger, otp_app: :kitto
   unless Mix.env == :test, do: plug Plug.Logger
+  use Plug.ErrorHandler
 
   plug :match
   plug Kitto.Plugs.Authentication
-  if Mix.env == :prod do
-    plug Plug.Static, at: "assets", gzip: true, from: Path.join [Kitto.root, "public", "assets"]
+
+  @app_dir (case Application.get_env(:kitto, :otp_app) do
+    nil -> ""
+    app -> Path.join("apps", app |> to_string)
+  end)
+
+  if Application.get_env(:kitto, :serve_assets?, true) do
+    plug Plug.Static,
+         at: "assets",
+         gzip: true,
+         from: Path.join [@app_dir, "public", "assets"]
   end
+
   plug :dispatch
 
   get "/", do: conn |> redirect_to_default_dashboard
   get "dashboards", do: conn |> redirect_to_default_dashboard
 
+  get "dashboards/rotator" do
+    conn = conn |> fetch_query_params
+    query_params = conn.query_params
+    dashboards = String.split(query_params["dashboards"], ",")
+    interval = query_params["interval"] || 60
+
+    if View.exists?("rotator") do
+      conn |> render("rotator", [dashboards: dashboards, interval: interval])
+    else
+      info = "Rotator template is missing.
+              See: https://github.com/kittoframework/kitto/wiki/Cycling-Between-Dashboards
+              for instructions to enable cycling between dashboards."
+
+      send_resp(conn, 404, info)
+    end
+  end
+
   get "dashboards/:id" do
     if View.exists?(id) do
       conn |> render(id)
     else
-      send_resp(conn, 404, "Dashboard \"#{id}\" does not exist")
+      render_error(conn, 404, "Dashboard \"#{id}\" does not exist")
     end
   end
 
@@ -66,7 +94,7 @@ defmodule Kitto.Router do
     if Mix.env == :dev do
       conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
     else
-      conn |> send_resp(404, "Not Found") |> halt
+      conn |> render_error(404, "Not Found") |> halt
     end
   end
 
@@ -79,9 +107,16 @@ defmodule Kitto.Router do
     |> send_cached_events
   end
 
-  match _, do: send_resp(conn, 404, "Not Found")
+  match _, do: render_error(conn, 404, "Not Found")
 
-  defp render(conn, template), do: send_resp(conn, 200, View.render(template))
+  def handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}),
+    do: render_error(conn, 500, "Something went wrong")
+
+  defp render(conn, template, bindings \\ []),
+    do: send_resp(conn, 200, View.render(template, bindings))
+
+  defp render_error(conn, code, message),
+    do: send_resp(conn, code, View.render_error(code, message))
 
   defp listen_sse(conn, :""), do: listen_sse(conn, nil)
   defp listen_sse(conn, topics) do

@@ -3,7 +3,7 @@ defmodule Kitto.Mixfile do
 
   def project do
     [app: :kitto,
-     version: "0.2.3",
+     version: "0.3.2",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -19,7 +19,7 @@ defmodule Kitto.Mixfile do
        "coveralls.html": :test],
      name: "Kitto",
      source_url: "https://github.com/kittoframework/kitto",
-     docs: [main: "kitto"]
+     docs: [main: "Kitto"]
     ]
   end
 
@@ -30,9 +30,9 @@ defmodule Kitto.Mixfile do
 
   defp deps do
     [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 1.2"},
+     {:plug, "~> 1.3"},
      {:poison, "~> 3.0"},
-     {:fs, github: "kittoframework/fs", tag: "v1.9-kitto-1"},
+     {:fs, "~> 2.12.0"},
      {:httpoison, "~> 0.10.0"},
      {:ex_doc, "~> 0.14", only: :dev},
      {:credo, "~> 0.5", only: [:dev, :test]},

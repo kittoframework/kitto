@@ -73,13 +73,15 @@ defmodule Kitto.StatsServerTest do
   test "#measure when a job fails does not increment :total_running_time", context do
     Kitto.StatsServer.measure(context.successful_job)
 
-    running_time = Kitto.StatsServer.stats.dummy_job.total_running_time
+    expected_running_time = Kitto.StatsServer.stats.dummy_job.total_running_time
 
     assert_raise Kitto.Job.Error, fn ->
       Kitto.StatsServer.measure(context.failing_job)
     end
 
-    assert Kitto.StatsServer.stats.dummy_job.total_running_time == running_time
+    actual_running_time = Kitto.StatsServer.stats.dummy_job.total_running_time
+
+    assert_in_delta actual_running_time, expected_running_time, 0.1
   end
 
   test "#measure when a job fails, message contains job definition location", context do

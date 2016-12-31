@@ -4,9 +4,49 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.3.2] - 2016-12-22
+
+### Fixed
+
+* Heroku static asset serving bug (see: #77)
+* Kitto server not starting when asset watcher bin is missing
+
+## [0.3.1] - 2016-12-20
+
+### Fixed
+
+* Code Reloader failure in macOS, see (#65)
+
+## [0.3.0] - 2016-12-08
+
 ### Added
 
+* `:command` option to job DSL
+
+Example:
+
+```elixir
+job :kitto_last_commit,
+    every: {5, :minutes},
+    command: "curl https://api.github.com/repos/kittoframework/kitto/commits\?page\=1\&per_page\=1"
+```
+
+Broadcasts JSON in the form `{ "exit_code": "an integer", "stdout": "a string" }`
+
+* Gist installer gist task
+(see: https://github.com/kittoframework/kitto/wiki/Widget-and-Job-Directory#install-widgetsjob-from-a-gist)
 * Code reloading in development (see: https://github.com/kittoframework/kitto/wiki/Code-Reloading)
+* Job Syntax Validation. When a job contains syntax errors, it is not loaded.
+* SSE Events filtering (a7777618)
+* [installer] Heroku deployment files (see: https://github.com/kittoframework/kitto/wiki/Deploying-to-Heroku)
+* Widget data JSON API (6b8b476c)
+* Remote dashboard reloading command (62bd4f90)
+
+### Changed
+
+* Calls to `broadcast/1` inside a job are rewritten to `Kitto.Notifier.broadcast/2`
+* Installer checks for app name validity
+* The graph type of the graph widget is now configurable (9eeaf5ff)
 
 ## [0.2.3] - 2016-11-15
 

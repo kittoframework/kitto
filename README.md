@@ -1,4 +1,6 @@
-# Kitto
+![kitto-logo](http://i.imgur.com/GE38c22.png)
+
+---------------------------------------------
 
 [![Build Status](https://travis-ci.org/kittoframework/kitto.svg?branch=master)](https://travis-ci.org/kittoframework/kitto)
 [![Package Version](https://img.shields.io/hexpm/v/kitto.svg)](https://hex.pm/packages/kitto)
@@ -9,10 +11,9 @@
 
 Kitto is a framework to help you create dashboards, written in [Elixir][elixir] / [React][react].
 
+## Demo
 
 ![demo](http://i.imgur.com/YgZibXU.png)
-
-## Demo
 
 + [Sample Dashboard](http://kitto.io/dashboards/sample)
 + [Elixir Dashboard](http://kitto.io/dashboards/elixir)
@@ -40,7 +41,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.2.3.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.3.2.ez
 ```
 
 ## Requirements
@@ -242,6 +243,10 @@ docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 
 Please read the detailed [instructions][wiki-heroku] in the wiki.
 
+### Upgrading
+
+Please read the [upgrading guide][upgrading-guide] in the wiki.
+
 ### Contributing
 #### Run the Tests
 
@@ -277,3 +282,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [wiki]: https://github.com/kittoframework/kitto/wiki
 [wiki-heroku]: https://github.com/kittoframework/kitto/wiki/Deploying-to-Heroku
 [code-reloading]: https://github.com/kittoframework/kitto/wiki/Code-Reloading
+[upgrading-guide]: https://github.com/kittoframework/kitto/wiki/Upgrading-Guide
