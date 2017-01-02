@@ -5,6 +5,7 @@ $background-color:  #ec663c;
 
 $title-color:       rgba(255, 255, 255, 0.7);
 $moreinfo-color:    rgba(255, 255, 255, 0.7);
+$updatedat-color:   rgba(255, 255, 255, 0.3);
 
 // ----------------------------------------------------------------------------
 // Widget-text styles
@@ -22,11 +23,11 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   }
 
   .updated-at {
-    color: rgba(255, 255, 255, 0.7);
+    color: $updatedat-color;
   }
 
-
-  &.large h3 {
-    font-size: 65px;
+  & h3 {
+    font-size: 25px;
   }
 }
+
