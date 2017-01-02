@@ -5,7 +5,7 @@ $background-color:  #ec663c;
 
 $title-color:       rgba(255, 255, 255, 0.7);
 $moreinfo-color:    rgba(255, 255, 255, 0.7);
-$updatedat-color:   rgba(255, 255, 255, 0.3);
+$updated-at-color:   rgba(0, 0, 0, 0.3);
 
 // ----------------------------------------------------------------------------
 // Widget-text styles
@@ -23,7 +23,7 @@ $updatedat-color:   rgba(255, 255, 255, 0.3);
   }
 
   .updated-at {
-    color: $updatedat-color;
+    color: $updated-at-color;
   }
 
   & h3 {
