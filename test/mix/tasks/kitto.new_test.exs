@@ -1,4 +1,6 @@
+Code.compiler_options(ignore_module_conflict: true)
 Code.require_file "../../../installer/lib/kitto_new.ex", __DIR__
+Code.compiler_options(ignore_module_conflict: false)
 
 defmodule Mix.Tasks.Kitto.NewTest do
   use ExUnit.Case, async: false
