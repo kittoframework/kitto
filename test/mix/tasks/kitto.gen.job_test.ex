@@ -14,7 +14,7 @@ defmodule Mix.Tasks.Kitto.Gen.JobTest do
   end
 
   test "creates job" do
-    assert_creates_file "jobs/my_job.exs", fn() -> Mix.Tasks.Kitto.Gen.Job.run(["my_job"]) end
-    assert_creates_file ~r/my_job.exs/, fn() -> Mix.Tasks.Kitto.Gen.Job.run(["my_job"]) end
+    assert_creates_file "jobs/my_job.exs", fn -> Mix.Tasks.Kitto.Gen.Job.run(["my_job"]) end
+    assert_creates_file ~r/my_job.exs/, fn -> Mix.Tasks.Kitto.Gen.Job.run(["my_job"]) end
   end
 end

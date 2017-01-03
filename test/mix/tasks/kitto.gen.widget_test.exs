@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Kitto.Gen.WidgetTest do
   import Kitto.MixGeneratorHelper
 
   setup do
-    runner = fn() -> Mix.Tasks.Kitto.Gen.Widget.run(["my_widget"]) end
+    runner = fn -> Mix.Tasks.Kitto.Gen.Widget.run(["my_widget"]) end
     Mix.Task.clear
     {:ok, [runner: runner]}
   end
@@ -14,11 +14,11 @@ defmodule Mix.Tasks.Kitto.Gen.WidgetTest do
     end
   end
 
-  test "creates widget directory", %{runner: runner} do
-    assert_creates_directory ~r/my_widget/, runner
-  end
-
   test "creates widget js", %{runner: runner} do
     assert_creates_file ~r/my_widget\.js/, runner
+  end
+
+  test "creates widget scss", %{runner: runner} do
+    assert_creates_file ~r/my_widget\.scss/, runner
   end
 end

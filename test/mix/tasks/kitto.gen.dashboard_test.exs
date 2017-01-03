@@ -14,7 +14,7 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
   end
 
   test "creates dashboard" do
-    assert_creates_file ~r/my_dash.html.eex/, fn() ->
+    assert_creates_file ~r/my_dash.html.eex/, fn ->
       Mix.Tasks.Kitto.Gen.Dashboard.run(["my_dash"])
     end
   end
