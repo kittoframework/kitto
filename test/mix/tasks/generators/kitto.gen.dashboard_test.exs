@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
 
   setup do
     on_exit fn ->
-      File.rm_rf! Path.join(tmp_path, "my_widget")
+      File.rm_rf! Path.join(tmp_path, "my_dash.html.eex")
     end
     Mix.Task.clear
     :ok
