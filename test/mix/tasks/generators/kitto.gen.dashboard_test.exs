@@ -1,8 +1,11 @@
 defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
   use ExUnit.Case, async: false
-  import Kitto.MixGeneratorHelper
+  import Kitto.FileAssertionHelper
 
   setup do
+    on_exit fn ->
+      File.rm_rf! Path.join(tmp_path, "my_widget")
+    end
     Mix.Task.clear
     :ok
   end
@@ -14,8 +17,7 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
   end
 
   test "creates dashboard" do
-    assert_creates_file ~r/my_dash.html.eex/, fn ->
-      Mix.Tasks.Kitto.Gen.Dashboard.run(["my_dash"])
-    end
+    Mix.Tasks.Kitto.Gen.Dashboard.run(["--path", tmp_path, "my_dash"])
+    assert_file Path.join(tmp_path, "my_dash.html.eex")
   end
 end

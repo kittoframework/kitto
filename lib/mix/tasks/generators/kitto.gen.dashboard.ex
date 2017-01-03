@@ -1,6 +1,7 @@
 defmodule Mix.Tasks.Kitto.Gen.Dashboard do
   use Mix.Task
   import Mix.Generator
+  import Kitto.Generator
 
   @shortdoc "Generates a new empty dashboard template"
 
@@ -17,7 +18,8 @@ defmodule Mix.Tasks.Kitto.Gen.Dashboard do
 
   @doc false
   def run(argv) do
-    case List.first(argv) do
+    {opts, args, _} = parse_options(argv)
+    case List.first(args) do
       nil ->
         Mix.shell.error """
         Usage:
@@ -26,7 +28,8 @@ defmodule Mix.Tasks.Kitto.Gen.Dashboard do
         """
         Mix.raise "No dashboard name provided"
       dashboard ->
-        create_file Path.join("dashboards", "#{dashboard}.html.eex"), File.read!(@template)
+        path = Path.join(opts[:path] || "dashboards", "#{dashboard}.html.eex")
+        create_file path, File.read!(@template)
     end
   end
 end

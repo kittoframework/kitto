@@ -1,6 +1,7 @@
 defmodule Mix.Tasks.Kitto.Gen.Job do
   use Mix.Task
   import Mix.Generator
+  import Kitto.Generator
 
   @shortdoc "Generates a new job"
 
@@ -17,7 +18,8 @@ defmodule Mix.Tasks.Kitto.Gen.Job do
 
   @doc false
   def run(argv) do
-    case List.first(argv) do
+    {opts, args, _} = parse_options(argv)
+    case List.first(args) do
       nil ->
         Mix.shell.error """
         Usage:
@@ -26,7 +28,8 @@ defmodule Mix.Tasks.Kitto.Gen.Job do
         """
         Mix.raise "No job name provided"
       job ->
-        create_file Path.join("jobs", "#{job}.exs"), EEx.eval_file(@template, [name: job])
+        path = Path.join(opts[:path] || "jobs", "#{job}.exs")
+        create_file path, EEx.eval_file(@template, [name: job])
     end
   end
 end
