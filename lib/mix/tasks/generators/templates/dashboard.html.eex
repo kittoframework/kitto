@@ -1,0 +1,12 @@
+<div class="gridster">
+  <ul>
+    <li data-row="1" data-col="2" data-sizex="2" data-sizey="1">
+      <div class="widget-welcome"
+           data-widget="Text"
+           data-source="text"
+           data-title="Hello"
+           data-text="This is your shiny new dashboard."
+           data-moreinfo="Protip: You can drag the widgets around!"></div>
+    </li>
+  </ul>
+</div>

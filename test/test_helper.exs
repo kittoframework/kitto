@@ -31,6 +31,7 @@ defmodule Kitto.TestHelper do
 end
 
 Code.require_file(Path.join("support", "file_assertion_helper.exs"), __DIR__)
+Code.require_file(Path.join("support", "mix_generator_helper.exs"), __DIR__)
 
 Mix.shell(Mix.Shell.Process)
 ExUnit.configure(exclude: [pending: true])
