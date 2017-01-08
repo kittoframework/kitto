@@ -54,8 +54,8 @@ mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_
 * `Node`: 4.3.1
 * `npm`: 1.4
 
-It may may work in versions other than the above, but it won't have been
-thoroughly tested (travis matrix builds are planned to be added).
+It may may anadvertedly work in versions other than the above, but it won't have been
+thoroughly tested (see [.travis.yml][.travis.yml] for the defined build matrix).
 
 You may also use the official [Docker image](https://github.com/kittoframework/kitto#using-docker).
 
@@ -261,3 +261,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [wiki-heroku]: https://github.com/kittoframework/kitto/wiki/Deploying-to-Heroku
 [code-reloading]: https://github.com/kittoframework/kitto/wiki/Code-Reloading
 [upgrading-guide]: https://github.com/kittoframework/kitto/wiki/Upgrading-Guide
+[.travis.yml]: https://github.com/kittoframework/kitto/blob/master/.travis.yml
