@@ -15,10 +15,10 @@ Kitto is a framework to help you create dashboards, written in [Elixir][elixir] 
 
 ![demo](http://i.imgur.com/YgZibXU.png)
 
-+ [Sample Dashboard](http://kitto.io/dashboards/sample)
-+ [Elixir Dashboard](http://kitto.io/dashboards/elixir)
-+ [Jobs Dashboard](http://kitto.io/dashboards/jobs)
-+ [1080 Dashboard](http://kitto.io/dashboards/sample1080) (optimized for 1080 screens)
++ [Sample Dashboard](https://kitto.io/dashboards/sample)
++ [Elixir Dashboard](https://kitto.io/dashboards/elixir)
++ [Jobs Dashboard](https://kitto.io/dashboards/jobs)
++ [1080 Dashboard](https://kitto.io/dashboards/sample1080) (optimized for 1080 screens)
 
 The source for the demo dashboards can be found at: [kittoframework/demo](https://github.com/kittoframework/demo).
 
