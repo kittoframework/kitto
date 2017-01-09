@@ -3,8 +3,9 @@ defmodule Kitto.StatsServer do
   Module responsible for keeping stats about jobs.
   """
 
-  import Agent, only: [start_link: 2, update: 2, get: 2]
+  use GenServer
 
+  @server __MODULE__
   @default_stats %{
     times_triggered: 0,
     times_completed: 0,
@@ -14,60 +15,73 @@ defmodule Kitto.StatsServer do
   }
 
   @doc false
-  def start_link, do: start_link(fn -> %{} end, name: :stats_server)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: opts[:name] || __MODULE__)
+  end
+
+  @doc false
+  def init(_), do: {:ok, %{}}
 
   @doc """
   Executes the given function and keeps stats about it in the provided key
   """
   def measure(job) do
-    job.name |> initialize_stats
-    job.name |> update_trigger_count
+    job.name |> initialize_stats |> update_trigger_count
     job |> measure_call
   end
 
   @doc """
   Returns the current stats
   """
-  def stats, do: server |> get(&(&1))
+  def stats, do: GenServer.call(@server, :stats)
 
-  defp initialize_stats(name) do
-    server |> update(fn (metrics) ->
-      Map.merge(metrics, %{name => Map.get(metrics, name, @default_stats)})
-    end)
+  @doc """
+  Resets the current stats
+  """
+  def reset, do: GenServer.cast(@server, :reset)
+
+  ### Callbacks
+
+  def handle_call(:stats, _from, state), do: {:reply, state, state}
+  def handle_call({:initialize_stats, name}, _from, state) do
+    {:reply, name, Map.merge(state, %{name => Map.get(state, name, @default_stats)})}
+  end
+  def handle_call({:update_trigger_count, name}, _from, state) do
+    old_stats = state[name]
+    new_stats = %{name => %{old_stats | times_triggered: old_stats[:times_triggered] + 1}}
+
+    {:reply, name, Map.merge(state, new_stats)}
   end
 
-  defp update_trigger_count(name) do
-    server |> update(fn (metrics) ->
-      new_stats = metrics[name]
+  def handle_cast(:reset, state), do: {:noreply, %{}}
+  def handle_cast({:measure_call, job, run}, state) do
+    current_stats = state[job.name]
 
-      metrics |> Map.merge(%{name => %{new_stats |
-        times_triggered: new_stats[:times_triggered] + 1}})
-    end)
+    new_stats = case run do
+      {:ok, time_took} ->
+        times_completed = current_stats[:times_completed] + 1
+        total_running_time = current_stats[:total_running_time] + time_took
+
+        %{current_stats |
+          times_completed: times_completed,
+          total_running_time: total_running_time
+        } |> Map.merge(%{avg_time_took: total_running_time / times_completed})
+      {:error, _} -> %{current_stats | failures: current_stats[:failures] + 1}
+    end
+
+    {:noreply, Map.merge(state, %{job.name => new_stats})}
   end
 
+  defp initialize_stats(name), do: GenServer.call(@server, {:initialize_stats, name})
+  defp update_trigger_count(name),
+    do: GenServer.call(@server, {:update_trigger_count, name})
   defp measure_call(job) do
     run = timed_call(job.job)
 
-    server |> update(fn (metrics) ->
-      new_stats = metrics[job.name]
-
-      new_stats = case run do
-        {:ok, time_took} ->
-          new_times_completed = new_stats[:times_completed] + 1
-          new_total_running_time = new_stats[:total_running_time] + time_took
-
-          %{new_stats |
-             times_completed: new_times_completed,
-             total_running_time: new_total_running_time}
-           |> Map.merge(%{avg_time_took: new_total_running_time / new_times_completed})
-        {:error, _} -> %{new_stats | failures: new_stats[:failures] + 1}
-      end
-
-      metrics |> Map.merge(%{job.name => new_stats})
-    end)
-
     if elem(run, 0) == :error do
       raise Kitto.Job.Error, %{exception: elem(run, 1), job: job}
+    else
+      GenServer.cast(@server, {:measure_call, job, run})
     end
   end
 
@@ -78,6 +92,4 @@ defmodule Kitto.StatsServer do
       e -> {:error, e}
     end
   end
-
-  defp server, do: Process.whereis(:stats_server)
 end
