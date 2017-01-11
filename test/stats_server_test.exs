@@ -3,9 +3,23 @@ defmodule Kitto.StatsServerTest do
 
   alias Kitto.StatsServer
 
+  defmodule BackoffMock do
+    @behaviour Kitto.Backoff
+
+    def succeed(_), do: send self, {:ok, :mocked}
+    def fail(_), do: send self, {:ok, :mocked}
+    def backoff!(_), do: send self, {:ok, :mocked}
+  end
+
   setup do
+    Application.put_env :kitto, :backoff_module, Kitto.StatsServerTest.BackoffMock
     definition = %{file: "jobs/dummy.exs", line: 1}
     job = %{name: :dummy_job, options: %{}, definition: definition, job: fn -> :ok end}
+
+    on_exit fn ->
+      Application.delete_env :kitto, :backoff_module
+      Application.delete_env :kitto, :job_backoff_enabled?
+    end
 
     %{
       successful_job: job,
@@ -118,5 +132,41 @@ defmodule Kitto.StatsServerTest do
     assert_raise Kitto.Job.Error,
                  ~r/Stacktrace: .*? anonymous fn/,
                  fn -> StatsServer.measure(job) end
+  end
+
+  describe "when :job_backoff_enabled? is set to false" do
+    setup [:disable_job_backoff]
+
+    test "#measure does not apply backoffs", context do
+      StatsServer.measure(context.successful_job)
+
+      refute_received {:ok, :mocked}
+    end
+  end
+
+  describe "when :job_backoff_enabled? is set to true" do
+    setup [:enable_job_backoff]
+
+    test "#measure applies backoffs", context do
+      StatsServer.measure(context.successful_job)
+
+      assert_received {:ok, :mocked}
+    end
+  end
+
+  describe "when :job_backoff_enabled? is not set" do
+    test "#measure applies backoffs", context do
+      StatsServer.measure(context.successful_job)
+
+      assert_received {:ok, :mocked}
+    end
+  end
+
+  defp disable_job_backoff(_context) do
+    Application.put_env :kitto, :job_backoff_enabled?, false
+  end
+
+  defp enable_job_backoff(_context) do
+    Application.put_env :kitto, :job_backoff_enabled?, true
   end
 end

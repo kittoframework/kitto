@@ -53,12 +53,13 @@ defmodule Kitto.StatsServer do
     {:reply, name, Map.merge(state, new_stats)}
   end
 
-  def handle_cast(:reset, state), do: {:noreply, %{}}
+  def handle_cast(:reset, _state), do: {:noreply, %{}}
   def handle_cast({:measure_call, job, run}, state) do
     current_stats = state[job.name]
 
     new_stats = case run do
       {:ok, time_took} ->
+        backoff_module.succeed(job.name)
         times_completed = current_stats[:times_completed] + 1
         total_running_time = current_stats[:total_running_time] + time_took
 
@@ -66,7 +67,9 @@ defmodule Kitto.StatsServer do
           times_completed: times_completed,
           total_running_time: total_running_time
         } |> Map.merge(%{avg_time_took: total_running_time / times_completed})
-      {:error, _} -> %{current_stats | failures: current_stats[:failures] + 1}
+      {:error, _} ->
+        backoff_module.fail(job.name)
+        %{current_stats | failures: current_stats[:failures] + 1}
     end
 
     {:noreply, Map.merge(state, %{job.name => new_stats})}
@@ -76,12 +79,14 @@ defmodule Kitto.StatsServer do
   defp update_trigger_count(name),
     do: GenServer.call(@server, {:update_trigger_count, name})
   defp measure_call(job) do
+    if backoff_enabled?, do: backoff_module.backoff!(job.name)
+
     run = timed_call(job.job)
+
+    GenServer.cast(@server, {:measure_call, job, run})
 
     if elem(run, 0) == :error do
       raise Kitto.Job.Error, %{exception: elem(run, 1), job: job}
-    else
-      GenServer.cast(@server, {:measure_call, job, run})
     end
   end
 
@@ -91,5 +96,11 @@ defmodule Kitto.StatsServer do
     rescue
       e -> {:error, e}
     end
+  end
+
+  defp backoff_enabled?, do: Application.get_env :kitto, :job_backoff_enabled?, true
+
+  defp backoff_module do
+    Application.get_env :kitto, :backoff_module, Kitto.BackoffServer
   end
 end
