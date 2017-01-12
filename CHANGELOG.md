@@ -4,6 +4,39 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.4.0] - 2016-01-12
+
+### Added
+
+* Exponential back-off support for failing jobs (b20064a)
+
+* Widget generator task
+
+  ```shell
+  mix kitto.gen.widget weather
+  # Generates:
+  #   * widgets/weather/weather.js
+  #   * widgets/weather/weather.scss
+  ```
+
+* Job generator task
+
+  ```shell
+  mix kitto.gen.job weather
+  # Generates: jobs/weather.exs
+  ```
+
+* Dashboard generator task
+
+  ```shell
+  mix kitto.gen.dashboard weather
+  # Generates: dashboards/weather.html.eex
+  ```
+
+### Changed
+
+* Warning and danger widget colors are swapped in new generated dashboards
+
 ## [0.3.2] - 2016-12-22
 
 ### Fixed
