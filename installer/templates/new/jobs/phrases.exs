@@ -1,7 +1,7 @@
 use Kitto.Job.DSL
 
-job :text, every: {4, :seconds} do
+job :phrases, every: {4, :seconds} do
   phrases = ["This is your shiny new dashboard", "Built on the Kitto Framework"]
 
-  broadcast! :phrases, %{text: (phrases |> Enum.shuffle |> Enum.take(1))}
+  broadcast! %{text: (phrases |> Enum.shuffle |> Enum.take(1))}
 end
