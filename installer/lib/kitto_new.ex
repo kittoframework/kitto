@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Kitto.New do
     {:text, "new/widgets/text/text.scss",               "widgets/text/text.scss"},
     {:text, "new/widgets/time_took/time_took.js",       "widgets/time_took/time_took.js"},
     {:text, "new/widgets/time_took/time_took.scss",     "widgets/time_took/time_took.scss"},
-    {:text, "new/jobs/text.exs",                        "jobs/text.exs"},
+    {:text, "new/jobs/phrases.exs",                     "jobs/phrases.exs"},
     {:text, "new/jobs/convergence.exs",                 "jobs/convergence.exs"},
     {:text, "new/jobs/buzzwords.exs",                   "jobs/buzzwords.exs"},
     {:text, "new/jobs/random.exs",                      "jobs/random.exs"},
