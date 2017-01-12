@@ -34,6 +34,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 * Easy to deploy using the provided Docker images, or Heroku
 * Can serve assets in production
 * Keeps stats about defined jobs and comes with a dashboard to monitor them
+* Can apply exponential back-offs to failing jobs
 * [Reloads][code-reloading] code upon change in development
 
 ## Installation
