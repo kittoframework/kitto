@@ -19,5 +19,5 @@ end
 points = &(&1 |> Kitto.Jobs.Convergence.points)
 
 job :convergence, every: {2, :seconds} do
-  broadcast! :convergence, %{points: convergence |> points.()}
+  broadcast! %{points: convergence |> points.()}
 end

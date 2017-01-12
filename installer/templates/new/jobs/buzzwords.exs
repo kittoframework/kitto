@@ -7,5 +7,5 @@ job :buzzwords, every: :second do
           |> Enum.map(fn (w) -> %{ label: w, value: random.() } end)
           |> Enum.shuffle
 
-  broadcast! :buzzwords, %{items: list}
+  broadcast! %{items: list}
 end

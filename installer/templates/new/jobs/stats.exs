@@ -8,7 +8,7 @@ job :job_failures, every: :second do
   |> Enum.sort(fn (a, b) -> a[:value] > b[:value] end)
   |> Enum.take(15)
 
-  broadcast! :job_failures, %{items: failures}
+  broadcast! %{items: failures}
 end
 
 job :job_avg_time, every: {500, :milliseconds} do
@@ -21,7 +21,7 @@ job :job_avg_time, every: {500, :milliseconds} do
   |> Enum.sort(fn (a, b) -> a[:value] > b[:value] end)
   |> Enum.take(15)
 
-  broadcast! :job_avg_time_took, %{items: metrics}
+  broadcast! %{items: metrics}
 end
 
 job :jobs_running, every: {200, :milliseconds} do
@@ -31,7 +31,7 @@ job :jobs_running, every: {200, :milliseconds} do
   end)
   |> length
 
-  broadcast! :jobs_running, %{value: stats}
+  broadcast! %{value: stats}
 end
 
 job :footprint, every: :second do
@@ -45,5 +45,5 @@ job :uptime, every: :second do
   hours = ((:erlang.statistics(:wall_clock) |> elem(0)) / 1000 / 60.0 / 60.0)
   |> Float.round(3)
 
-  broadcast! :uptime, %{value: hours}
+  broadcast! %{value: hours}
 end
