@@ -239,7 +239,7 @@ Have a question?
 
 * See [elixirforum/kitto](https://elixirforum.com/t/kitto-a-framework-for-interactive-dashboards)
 * Open an [issue](https://github.com/kittoframework/kitto/issues/new)
-* Ask in [elixir-lang.slack.com/#kitto](https://elixir-lang.slack.com/messages/kitto/)
+* Ask in [gitter.im/kittoframework](https://gitter.im/kittoframework/Lobby)
 
 ### Inspiration
 
