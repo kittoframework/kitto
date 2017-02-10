@@ -146,6 +146,28 @@ job :kitto_last_commit,
     command: "curl https://api.github.com/repos/kittoframework/kitto/commits\?page\=1\&per_page\=1"
 ```
 
+## Hooks
+
+If, instead of polling for new data from a data source, you want to act on data
+as it changes, hooks are a useful feature for implementing webhooks to feed data
+to your dashboards.
+
+Hooks are stored in the `hooks/` directory and are structured as follows:
+
+```elixir
+# File hooks/github.exs
+use Kitto.Hooks.DSL
+
+hook :github do
+  {:ok, body, _} = read_body conn
+  commits = GitHub.parse_commits_from_hook(body)
+  broadcast! :github_commits, %{commits: commits}
+end
+```
+
+The hook generates a route using the atom in the `hook/2` method. The hook above
+will listen at `/hooks/github` on any HTTP method.
+
 ## Widgets
 
 Widgets live in `widgets/` are compiled using

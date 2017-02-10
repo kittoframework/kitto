@@ -40,6 +40,7 @@ defmodule Kitto do
         Kitto config :root is nil.
         It should normally be set to Path.dirname(__DIR__) in config/config.exs
         """ |> Logger.error
+
         exit(:shutdown)
     end
   end

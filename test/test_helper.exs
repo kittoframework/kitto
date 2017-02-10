@@ -1,6 +1,18 @@
 defmodule Kitto.TestHelper do
   def atomify_map(map) do
-    for {key, value} <- map, into: %{}, do: {String.to_atom(key), value}
+    for {key, value} <- map, into: %{} do
+      {if(is_atom(key), do: key, else: String.to_atom(key)), value}
+    end
+  end
+
+  def mock_broadcast(expected_topic, expected_body) do
+    fn (topic, body) ->
+      if topic == expected_topic && atomify_map(body) == expected_body do
+        send self, :ok
+      else
+        send self, :error
+      end
+    end
   end
 
   def wait_for(name, interval \\ 100, timeout \\ 1000) do
