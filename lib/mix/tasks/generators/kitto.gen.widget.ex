@@ -31,8 +31,10 @@ defmodule Mix.Tasks.Kitto.Gen.Widget do
       widget ->
         widget_dir = Path.join(opts[:path] || "widgets", widget)
         create_directory widget_dir
-        create_file Path.join(widget_dir, "#{widget}.scss"), EEx.eval_file(scss, [name: widget])
-        create_file Path.join(widget_dir, "#{widget}.js"), EEx.eval_file(javascript, [name: widget, class: classify(widget)])
+        create_file Path.join(widget_dir, "#{widget}.scss"), EEx.eval_file(scss(), [name: widget])
+        create_file Path.join(widget_dir, "#{widget}.js"), EEx.eval_file(
+          javascript(), [name: widget, class: classify(widget)]
+        )
     end
   end
 

@@ -56,11 +56,11 @@ defmodule Kitto.CodeReloaderTest do
   end
 
   test "#when a job modification event is received on linux, calls Runner.reload_job/1" do
-    self |> Process.register(:mock_server)
+    self() |> Process.register(:mock_server)
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref, {:fs, :file_event}, {@valid_job, [:modified, :closed]}}
+    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:modified, :closed]}}
 
     receive do
       message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -70,11 +70,11 @@ defmodule Kitto.CodeReloaderTest do
   end
 
   test "#when a job creation event is received on linux, calls Runner.reload_job/1" do
-    self |> Process.register(:mock_server)
+    self() |> Process.register(:mock_server)
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref, {:fs, :file_event}, {@valid_job, [:created]}}
+    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:created]}}
 
     receive do
       message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -84,11 +84,11 @@ defmodule Kitto.CodeReloaderTest do
   end
 
   test "#when a job deletion event is received on linux, calls Runner.stop_job/1" do
-    self |> Process.register(:mock_server)
+    self() |> Process.register(:mock_server)
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref, {:fs, :file_event}, {@valid_job, [:deleted]}}
+    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:deleted]}}
 
     receive do
       message -> assert message == {:"$gen_cast", {:stop_job, @valid_job}}
@@ -98,11 +98,11 @@ defmodule Kitto.CodeReloaderTest do
   end
 
   test "#when a job modification event is received on macOS, calls Runner.reload_job/1" do
-    self |> Process.register(:mock_server)
+    self() |> Process.register(:mock_server)
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref, {:fs, :file_event}, {@valid_job, [:inodemetamod, :modified]}}
+    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:inodemetamod, :modified]}}
 
     receive do
       message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -112,13 +112,13 @@ defmodule Kitto.CodeReloaderTest do
   end
 
   test "#when a lib modification file event is received, calls elixir compilation task" do
-    test_pid = self
+    test_pid = self()
     mock_run = fn (_) -> send test_pid, :compiled end
 
     with_mock Mix.Tasks.Compile.Elixir, [run: mock_run] do
       {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-      send reloader, {make_ref, {:fs, :file_event}, {@lib_file, [:modified, :closed]}}
+      send reloader, {make_ref(), {:fs, :file_event}, {@lib_file, [:modified, :closed]}}
 
       receive do
         :compiled -> :ok

@@ -59,7 +59,7 @@ defmodule Kitto.StatsServer do
 
     new_stats = case run do
       {:ok, time_took} ->
-        backoff_module.succeed(job.name)
+        backoff_module().succeed(job.name)
         times_completed = current_stats[:times_completed] + 1
         total_running_time = current_stats[:total_running_time] + time_took
 
@@ -68,7 +68,7 @@ defmodule Kitto.StatsServer do
           total_running_time: total_running_time
         } |> Map.merge(%{avg_time_took: total_running_time / times_completed})
       {:error, _} ->
-        backoff_module.fail(job.name)
+        backoff_module().fail(job.name)
         %{current_stats | failures: current_stats[:failures] + 1}
     end
 
@@ -79,7 +79,7 @@ defmodule Kitto.StatsServer do
   defp update_trigger_count(name),
     do: GenServer.call(@server, {:update_trigger_count, name})
   defp measure_call(job) do
-    if backoff_enabled?, do: backoff_module.backoff!(job.name)
+    if backoff_enabled?(), do: backoff_module().backoff!(job.name)
 
     run = timed_call(job.job)
 

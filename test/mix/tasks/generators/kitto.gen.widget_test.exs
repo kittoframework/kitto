@@ -4,10 +4,10 @@ defmodule Mix.Tasks.Kitto.Gen.WidgetTest do
 
   setup do
     runner = fn ->
-      Mix.Tasks.Kitto.Gen.Widget.run(["--path", tmp_path, "my_widget"])
+      Mix.Tasks.Kitto.Gen.Widget.run(["--path", tmp_path(), "my_widget"])
     end
     on_exit fn ->
-      File.rm_rf! Path.join(tmp_path, "my_widget")
+      File.rm_rf! Path.join(tmp_path(), "my_widget")
     end
     Mix.Task.clear
     {:ok, [runner: runner]}
@@ -21,7 +21,7 @@ defmodule Mix.Tasks.Kitto.Gen.WidgetTest do
 
   test "creates widget", %{runner: runner} do
     runner.()
-    assert_file Path.join(tmp_path, "my_widget/my_widget.js")
-    assert_file Path.join(tmp_path, "my_widget/my_widget.scss")
+    assert_file Path.join(tmp_path(), "my_widget/my_widget.js")
+    assert_file Path.join(tmp_path(), "my_widget/my_widget.scss")
   end
 end

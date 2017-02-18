@@ -45,11 +45,11 @@ defmodule Kitto.Plugs.Authentication do
   end
 
   defp authentication_required?(conn) do
-    !!auth_token && conn.private[:authenticated]
+    !!auth_token() && conn.private[:authenticated]
   end
 
   defp authenticated?(conn) do
-    auth_token == conn
+    auth_token() == conn
       |> get_req_header("authentication")
       |> List.first
       |> to_string

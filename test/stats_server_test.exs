@@ -6,9 +6,9 @@ defmodule Kitto.StatsServerTest do
   defmodule BackoffMock do
     @behaviour Kitto.Backoff
 
-    def succeed(_), do: send self, {:ok, :mocked}
-    def fail(_), do: send self, {:ok, :mocked}
-    def backoff!(_), do: send self, {:ok, :mocked}
+    def succeed(_), do: send self(), {:ok, :mocked}
+    def fail(_), do: send self(), {:ok, :mocked}
+    def backoff!(_), do: send self(), {:ok, :mocked}
   end
 
   setup do

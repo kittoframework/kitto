@@ -25,8 +25,8 @@ defmodule Kitto do
   end
 
   def start_server do
-    Logger.info "Starting Kitto server, listening on #{ip_human(ip)}:#{port}"
-    {:ok, _pid} = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip, port: port)
+    Logger.info "Starting Kitto server, listening on #{ip_human(ip())}:#{port()}"
+    {:ok, _pid} = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip(), port: port())
   end
 
   @doc """

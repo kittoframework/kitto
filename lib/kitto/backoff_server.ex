@@ -39,9 +39,9 @@ defmodule Kitto.BackoffServer do
   """
   def fail(name) do
     case get(name) do
-      nil -> set(name, min(minval, maxval))
-      0   -> set(name, min(minval, maxval))
-      val -> set(name, min(val <<< 1, maxval))
+      nil -> set(name, min(minval(), maxval()))
+      0   -> set(name, min(minval(), maxval()))
+      val -> set(name, min(val <<< 1, maxval()))
     end
   end
 

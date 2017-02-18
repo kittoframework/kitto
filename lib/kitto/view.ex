@@ -42,6 +42,6 @@ defmodule Kitto.View do
   """
   def exists?(template), do: template |> path |> File.exists?
 
-  defp path(template), do: Path.join templates_path, "#{template}.html.eex"
+  defp path(template), do: Path.join templates_path(), "#{template}.html.eex"
   defp templates_path, do: Path.join Kitto.root, @templates_dir
 end

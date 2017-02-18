@@ -118,7 +118,7 @@ defmodule Mix.Tasks.Kitto.New do
       extra   = if mix?, do: [], else: ["$ mix deps.get"]
 
       print_mix_info(path, extra)
-      if !webpack?, do: print_webpack_info
+      if !webpack?, do: print_webpack_info()
     end)
   end
 
