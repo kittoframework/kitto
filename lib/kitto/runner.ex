@@ -19,7 +19,7 @@ defmodule Kitto.Runner do
 
   @doc false
   def init(opts) do
-    server = self
+    server = self()
     spawn fn -> load_jobs(server) end
 
     {:ok, %{opts: opts, jobs: [], supervisor: nil}}
@@ -83,7 +83,7 @@ defmodule Kitto.Runner do
 
     jobs = stop_jobs(state, file)
 
-    server = self
+    server = self()
     spawn fn ->
       load_job(server, file)
       server
@@ -131,10 +131,10 @@ defmodule Kitto.Runner do
   end
 
   defp load_jobs(pid) do
-    job_files |> Enum.each(&(load_job(pid, &1)))
+    job_files() |> Enum.each(&(load_job(pid, &1)))
 
     GenServer.cast pid, {:jobs_loaded}
   end
 
-  defp job_files, do: Path.wildcard(Path.join(jobs_dir, "/**/*.{ex,exs}"))
+  defp job_files, do: Path.wildcard(Path.join(jobs_dir(), "/**/*.{ex,exs}"))
 end

@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
 
   setup do
     on_exit fn ->
-      File.rm_rf! Path.join(tmp_path, "my_dash.html.eex")
+      File.rm_rf! Path.join(tmp_path(), "my_dash.html.eex")
     end
     Mix.Task.clear
     :ok
@@ -17,7 +17,7 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
   end
 
   test "creates dashboard" do
-    Mix.Tasks.Kitto.Gen.Dashboard.run(["--path", tmp_path, "my_dash"])
-    assert_file Path.join(tmp_path, "my_dash.html.eex")
+    Mix.Tasks.Kitto.Gen.Dashboard.run(["--path", tmp_path(), "my_dash"])
+    assert_file Path.join(tmp_path(), "my_dash.html.eex")
   end
 end

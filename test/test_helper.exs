@@ -4,7 +4,7 @@ defmodule Kitto.TestHelper do
   end
 
   def wait_for(name, interval \\ 100, timeout \\ 1000) do
-    pid = self
+    pid = self()
     spawn_link(fn -> await_process(pid, name, interval) end)
 
     receive do

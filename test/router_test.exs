@@ -393,9 +393,9 @@ defmodule Kitto.RouterTest do
   def mock_broadcast(expected_topic, expected_body) do
     fn (topic, body) ->
       if topic == expected_topic && atomify_map(body) == expected_body do
-        send self, :ok
+        send self(), :ok
       else
-        send self, :error
+        send self(), :error
       end
     end
   end

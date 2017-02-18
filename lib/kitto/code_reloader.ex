@@ -16,7 +16,7 @@ defmodule Kitto.CodeReloader do
 
   @doc false
   def init(opts) do
-    if reload_code? do
+    if reload_code?() do
       :fs.start_link(:default_fs)
       :fs.subscribe(:default_fs)
     end
@@ -74,6 +74,6 @@ defmodule Kitto.CodeReloader do
   defp jobs_rexp, do: ~r/#{Kitto.Runner.jobs_dir}.+.*exs?$/
   defp lib_rexp, do: ~r/#{Kitto.root}\/lib.+.*ex$/
 
-  defp lib?(path), do: String.match?(path, lib_rexp)
-  defp job?(path), do: path |> String.match?(jobs_rexp)
+  defp lib?(path), do: String.match?(path, lib_rexp())
+  defp job?(path), do: path |> String.match?(jobs_rexp())
 end

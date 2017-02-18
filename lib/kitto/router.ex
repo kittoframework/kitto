@@ -90,7 +90,7 @@ defmodule Kitto.Router do
 
   get "assets/*asset" do
     if Mix.env == :dev do
-      conn |> redirect_to("#{development_assets_url}#{asset |> Enum.join("/")}")
+      conn |> redirect_to("#{development_assets_url()}#{asset |> Enum.join("/")}")
     else
       conn |> render_error(404, "Not Found") |> halt
     end
@@ -157,7 +157,7 @@ defmodule Kitto.Router do
   end
 
   defp redirect_to_default_dashboard(conn) do
-    conn |> redirect_to("/dashboards/" <> default_dashboard)
+    conn |> redirect_to("/dashboards/" <> default_dashboard())
   end
 
   defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")

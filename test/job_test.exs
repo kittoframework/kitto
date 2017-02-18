@@ -2,7 +2,7 @@ defmodule Kitto.JobTest do
   use ExUnit.Case, async: true
 
   test "#new calls the given job after the given interval" do
-    pid = self
+    pid = self()
     job = fn -> send pid, :ok end
     interval = 100
 
@@ -15,7 +15,7 @@ defmodule Kitto.JobTest do
   end
 
   test "#new does not call the given job before interval" do
-    pid = self
+    pid = self()
     job = fn -> send pid, :ok end
     interval = 100
 
@@ -27,7 +27,7 @@ defmodule Kitto.JobTest do
   end
 
   test "#new, with first_at option, calls job after first_at seconds" do
-    pid = self
+    pid = self()
     job = fn -> send pid, :ok end
     first_at = 100
 
@@ -41,7 +41,7 @@ defmodule Kitto.JobTest do
   end
 
   test "#new, with first_at option, does not call job before first_at" do
-    pid = self
+    pid = self()
     job = fn -> send pid, :ok end
     first_at = 100
 
@@ -53,7 +53,7 @@ defmodule Kitto.JobTest do
   end
 
   test "#new, with first_at unspecified, calls job immediately" do
-    pid = self
+    pid = self()
     job = fn -> send pid, :ok end
 
     spawn(Kitto.Job, :new, [%{name: :dummy_job,
@@ -66,7 +66,7 @@ defmodule Kitto.JobTest do
   end
 
   test "#new, calls jobs multiple times" do
-    pid = self
+    pid = self()
     job = fn -> send pid, :ok end
     interval = 100
     times = 3

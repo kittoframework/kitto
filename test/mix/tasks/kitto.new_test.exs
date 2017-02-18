@@ -50,7 +50,7 @@ defmodule Mix.Tasks.Kitto.NewTest do
         Mix.Tasks.Kitto.New.run(["photo_dashboard"])
       end
 
-      path = Path.join(tmp_path, "bootstrap/photo_dashboard")
+      path = Path.join(tmp_path(), "bootstrap/photo_dashboard")
       in_project :photo_dashboard, path, fn _ ->
         Mix.Task.clear
         Mix.Task.run "compile", ["--no-deps-check"]
