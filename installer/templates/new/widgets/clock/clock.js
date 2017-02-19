@@ -1,9 +1,9 @@
 import React from 'react';
-import Widget from '../../assets/javascripts/widget';
+import {Widget} from 'kitto';
 
 import './clock.scss';
 
-Widget.mount(class Clock extends Widget {
+class Clock extends Widget {
   constructor(props) {
     super(props);
     this.state = Clock.dateTime()
@@ -32,4 +32,7 @@ Widget.mount(class Clock extends Widget {
       date: today.toDateString(),
     }
   }
-});
+};
+
+Widget.mount(Clock);
+export default Clock;

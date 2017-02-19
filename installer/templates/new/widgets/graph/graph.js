@@ -2,12 +2,11 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import 'd3';
 import 'rickshaw';
-import Widget from '../../assets/javascripts/widget';
-import {prettyNumber, prepend} from '../../assets/javascripts/helpers';
+import {Kitto, Widget} from 'kitto';
 
 import './graph.scss';
 
-Widget.mount(class Graph extends Widget {
+class Graph extends Widget {
   static get defaultProps() {
     return { graphType: 'area' };
   }
@@ -20,7 +19,8 @@ Widget.mount(class Graph extends Widget {
   renderGraph() {
     let container = this.$node.parent();
     let $gridster = $('.gridster');
-    let widget_base_dimensions = $gridster.data('widget_base_dimensions');
+    let config = Kitto.config();
+    let widget_base_dimensions = config.widget_base_dimensions;
     let width = (widget_base_dimensions[0] *
                  container.data('sizex')) + 5 * 2 * (container.data('sizex') - 1);
     let height = (widget_base_dimensions[1] * container.data('sizey'));
@@ -44,7 +44,7 @@ Widget.mount(class Graph extends Widget {
     this.graph.render();
   }
   currentValue() {
-    return prettyNumber(prepend(this.current));
+    return this.prettyNumber(this.prepend(this.current));
   }
   render() {
     return (
@@ -55,4 +55,7 @@ Widget.mount(class Graph extends Widget {
       </div>
     );
   }
-});
+};
+
+Widget.mount(Graph);
+export default Graph;

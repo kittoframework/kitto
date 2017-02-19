@@ -1,12 +1,11 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import Knob from 'jquery-knob';
-import Widget from '../../assets/javascripts/widget';
-import {updatedAt} from '../../assets/javascripts/helpers';
+import {Widget} from 'kitto';
 
 import './meter.scss';
 
-Widget.mount(class Meter extends Widget {
+class Meter extends Widget {
   componentDidMount() {
     this.state = { value: 0 };
     this.$node = $(ReactDOM.findDOMNode(this));
@@ -31,8 +30,11 @@ Widget.mount(class Meter extends Widget {
                data-angleoffset="-125"
                data-anglearc="250"
                data-width="200"/>
-        <p className="updated-at">{updatedAt(this.state.updated_at)}</p>
+        <p className="updated-at">{this.updatedAt(this.state.updated_at)}</p>
       </div>
     );
   }
-});
+};
+
+Widget.mount(Meter);
+export default Meter;
