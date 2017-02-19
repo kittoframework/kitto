@@ -7,7 +7,7 @@
       <div class="widget-list widget-job time-took"
         data-unordered="true"
         data-widget="List"
-        data-source="job_avg_time_took"
+        data-source="job_avg_time"
         data-title="Average Time Took"></div>
     </li>
 
