@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
+import Helpers from './helpers';
 
 class Widget extends React.Component {
   constructor(props) {
@@ -68,5 +69,7 @@ class Widget extends React.Component {
     });
   }
 }
+
+for (var k in Helpers) { Widget.prototype[k] = Helpers[k]; }
 
 export default Widget;

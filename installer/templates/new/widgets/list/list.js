@@ -1,6 +1,5 @@
 import React from 'react';
-import Widget from '../../assets/javascripts/widget';
-import {updatedAt,truncate} from '../../assets/javascripts/helpers';
+import {Widget, Helpers} from 'kitto';
 
 import './list.scss';
 
@@ -9,10 +8,10 @@ class ListItem extends React.Component {
     return (
       <li>
         <span className="label">
-          {truncate(this.props.label, this.props.labelLength || 80)}
+          {Helpers.truncate(this.props.label, this.props.labelLength || 80)}
         </span>
         <span className="value">
-          {truncate(this.props.value, this.props.valueLength)}
+          {Helpers.truncate(this.props.value, this.props.valueLength)}
         </span>
       </li>
     );
@@ -41,10 +40,11 @@ export class List extends Widget {
           {this.renderList(this.renderItems(this.state.items || []))}
         </ul>
         <p className="more-info">{this.props.moreinfo}</p>
-        <p className="updated-at">{updatedAt(this.state.updated_at)}</p>
+        <p className="updated-at">{this.updatedAt(this.state.updated_at)}</p>
       </div>
     );
   }
 };
 
 Widget.mount(List);
+export default List;

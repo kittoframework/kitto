@@ -1,11 +1,11 @@
 import React from 'react';
-import Widget from '../../assets/javascripts/widget';
+import {Widget} from 'kitto';
 
 import './image.scss';
 
 const placeholder = '/assets/images/placeholder.png';
 
-Widget.mount(class Image extends Widget {
+class Image extends Widget {
   image() {
     return {
       backgroundImage: `url(${this.state.image || placeholder})`
@@ -16,4 +16,7 @@ Widget.mount(class Image extends Widget {
       <div style={this.image()} className={this.props.className}></div>
     );
   }
-});
+};
+
+Widget.mount(Image);
+export default Image;

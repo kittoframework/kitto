@@ -1,13 +1,9 @@
 import React from 'react';
-import Widget from '../../assets/javascripts/widget';
-import {updatedAt,
-        append,
-        prepend,
-        shortenedNumber} from '../../assets/javascripts/helpers';
+import {Widget} from 'kitto';
 
 import './number.scss';
 
-Widget.mount(class Number extends Widget {
+class Number extends Widget {
   constructor(props) {
     super(props);
 
@@ -18,8 +14,9 @@ Widget.mount(class Number extends Widget {
     this.lastValue = this.state.value;
   }
   decorateValue(value) {
-    return append(prepend(shortenedNumber(this.state.value), this.props.prefix),
-                  this.props.suffix);
+    let number = this.shortenedNumber(this.state.value);
+
+    return this.append(this.prepend(number, this.props.prefix), this.props.suffix);
   }
   arrow() {
     if (this.state.value > this.lastValue) {
@@ -52,8 +49,11 @@ Widget.mount(class Number extends Widget {
         <h2 className="value"> {this.decorateValue(this.state.value)}</h2>
         <p className="more-info">{this.props.moreinfo}</p>
         {this.changeRate()}
-        <p className="updated-at">{updatedAt(this.state.updated_at)}</p>
+        <p className="updated-at">{this.updatedAt(this.state.updated_at)}</p>
       </div>
     );
   }
-});
+};
+
+Widget.mount(Number);
+export default Number;

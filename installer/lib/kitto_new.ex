@@ -47,8 +47,6 @@ defmodule Mix.Tasks.Kitto.New do
     {:keep, "new/assets/images",                        "assets/images/"},
     {:keep, "new/assets/fonts",                         "assets/fonts/"},
     {:text, "new/assets/javascripts/application.js",    "assets/javascripts/application.js"},
-    {:text, "new/assets/javascripts/helpers.js",        "assets/javascripts/helpers.js"},
-    {:text, "new/assets/javascripts/widget.js",         "assets/javascripts/widget.js"},
     {:text, "new/assets/stylesheets/application.scss",  "assets/stylesheets/application.scss"},
     {:keep, "new/public/assets",                        "public/assets"},
     {:text, "new/public/assets/favicon.ico",            "public/assets/favicon.ico"},
