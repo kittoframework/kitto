@@ -1,0 +1,18 @@
+{
+  "name": "kitto",
+  "version": "0.5.0",
+  "description": "Kitto core library",
+  "license": "MIT",
+  "main": "./priv/static/kitto.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kittoframework/kitto.git"
+  },
+  "author": "Dimitris Zorbas <dimitrisplusplus@gmail.com>",
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "package.json",
+    "priv"
+  ]
+}
