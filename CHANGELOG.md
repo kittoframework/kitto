@@ -4,7 +4,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-## [0.4.0] - 2016-01-12
+## [0.5.0] - 2017-02-19
+
+### Changed
+
+* The core Kitto JavaScript library is now packaged (#39, #72)
+  Read: [upgrading-guide](https://github.com/kittoframework/kitto/wiki/Upgrading-Guide#050)
+
+### Fixed
+
+* Typo in jobs generated dashboard setting invalid invalid source for 
+"average time took" widget
+
+* Compilation warnings for Elixir v1.4
+
+## [0.4.0] - 2017-01-12
 
 ### Added
 
