@@ -45,7 +45,7 @@ defmodule Kitto.Mixfile do
 
   defp package do
     [
-      files: ["lib", "priv", "mix.exs", "*.md"],
+      files: ["lib", "priv", "mix.exs", "package.json", "*.md"],
       maintainers: ["Dimitris Zorbas"],
       licenses: ["MIT"],
       links: %{github: "https://github.com/kittoframework/kitto"}
