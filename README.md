@@ -42,7 +42,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.5.0.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.5.1.ez
 ```
 
 ## Requirements
@@ -251,7 +251,7 @@ The [road to Erlang / Elixir](https://www.google.gr/maps/place/Erlanger+Rd,+Lond
 
 # LICENSE
 
-Copyright (c) 2016 Dimitris Zorbas, MIT License.
+Copyright (c) 2017 Dimitris Zorbas, MIT License.
 See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.txt) for further details.
 
 [elixir]: http://elixir-lang.org

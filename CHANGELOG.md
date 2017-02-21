@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.5.1] - 2017-02-21
+
+### Fixed
+
+* Added missing package.json to mix.exs
+
 ## [0.5.0] - 2017-02-19
 
 ### Changed
