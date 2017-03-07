@@ -30,7 +30,7 @@ defmodule Kitto.Mixfile do
 
   defp deps do
     [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 1.3"},
+     {:plug, "~> 1.3.2"},
      {:poison, "~> 3.0"},
      {:fs, "~> 2.12.0"},
      {:httpoison, "~> 0.10.0"},
