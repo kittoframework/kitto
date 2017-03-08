@@ -63,12 +63,12 @@ defmodule Kitto.Runner do
   @doc """
   Returns the directory where the job scripts are located
   """
-  def jobs_dir, do: Application.get_env(:kitto, :jobs_dir, "jobs") |> dir
+  def jobs_dir, do: dir Application.get_env(:kitto, :jobs_dir, "jobs")
 
   @doc """
   Returns the directory where the hook scripts are located
   """
-  def hooks_dir, do: Application.get_env(:kitto, :hooks_dir, "hooks") |> dir
+  def hooks_dir, do: dir Application.get_env(:kitto, :hooks_dir, "hooks")
 
   ### Callbacks
 
