@@ -24,7 +24,7 @@ defmodule Kitto.Job do
     opts = [interval: options[:every] |> mseconds,
             first_at: options[:first_at] |> mseconds]
 
-    Runner.register server, %{name: name, job: job, options: opts, definition: definition}
+    Runner.register server, {:job, %{name: name, job: job, options: opts, definition: definition}}
   end
 
   @doc """

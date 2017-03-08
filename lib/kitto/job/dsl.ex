@@ -68,7 +68,7 @@ defmodule Kitto.Job.DSL do
     end
 
     quote do
-      Job.register binding[:runner_server],
+      Job.register binding()[:runner_server],
                    unquote(name),
                    unquote(options |> Keyword.delete(:do)),
                    (__ENV__ |> Map.take([:file, :line])),
