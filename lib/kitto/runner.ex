@@ -135,12 +135,9 @@ defmodule Kitto.Runner do
     Kitto.Runner.JobSupervisor.start_job(supervisor, job)
   end
 
-  defp load_job(pid, file) do
-    case file |> Validator.valid? do
-      true -> file |> Workspace.load_file(pid)
-      false -> Logger.warn "Job: #{file} contains syntax error(s) and will not be loaded"
-    end
-  end
+  defp load_job(pid, file), do: load_file(pid, file, "Job")
+
+  defp load_hook(pid, file), do: load_file(pid, file, "Hook")
 
   defp stop_jobs(state, file) do
     state.jobs
@@ -158,17 +155,17 @@ defmodule Kitto.Runner do
     GenServer.cast pid, {:jobs_loaded}
   end
 
-  defp load_hook(pid, file) do
-    case file |> Validator.valid? do
-      true -> file |> Workspace.load_file(pid)
-      false -> Logger.warn "Hook: #{file} contains syntax errors(s) and will not be loaded"
-    end
-  end
-
   defp load_hooks(pid) do
     hook_files() |> Enum.each(&(load_hook(pid, &1)))
 
     GenServer.cast pid, {:hooks_loaded}
+  end
+
+  def load_file(pid, file, type) do
+    case file |> Validator.valid? do
+      true -> file |> Workspace.load_file(pid)
+      false -> Logger.warn "#{type}: #{file} contains syntax error(s) and will not be loaded"
+    end
   end
 
   defp job_files, do: jobs_dir() |> files

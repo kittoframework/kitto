@@ -58,7 +58,7 @@ defmodule Kitto.RunnerTest do
                                            supervisor_name: :runner_sup)
 
         wait_for(:runner_sup)
-      end) =~ "syntax error(s) and will not be loaded"
+      end) =~ "invalid_job.exs contains syntax error(s) and will not be loaded"
     end
 
     test "#reload stops and starts jobs defined in the reloaded file" do
@@ -126,6 +126,15 @@ defmodule Kitto.RunnerTest do
 
         assert Enum.map(hooks, &(&1.name)) == [:valid]
       end)
+    end
+
+    test "logs warning for hooks with syntax errors" do
+      assert capture_log(fn ->
+        {:ok, _runner} = Runner.start_link(name: :job_runner,
+                                           supervisor_name: :runner_sup)
+
+        wait_for(:runner_sup)
+      end) =~ "invalid_hook.exs contains syntax error(s) and will not be loaded"
     end
   end
 end
