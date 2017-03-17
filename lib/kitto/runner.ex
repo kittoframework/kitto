@@ -23,7 +23,7 @@ defmodule Kitto.Runner do
     spawn fn -> load_jobs(server) end
     spawn fn -> load_hooks(server) end
 
-    {:ok, %{opts: opts, jobs: [], hooks: [], supervisor: nil}}
+    {:ok, %{opts: opts, jobs: [], hooks: %{}, supervisor: nil}}
   end
 
   @doc """
@@ -61,6 +61,13 @@ defmodule Kitto.Runner do
   end
 
   @doc """
+  Gets a specific hook from the registry
+  """
+  def hook(server, id) do
+    GenServer.call(server, {:hook, id})
+  end
+
+  @doc """
   Returns the directory where the job scripts are located
   """
   def jobs_dir, do: dir Application.get_env(:kitto, :jobs_dir, "jobs")
@@ -76,12 +83,14 @@ defmodule Kitto.Runner do
 
   def handle_call({:hooks}, _from, state), do: {:reply, state.hooks, state}
 
+  def handle_call({:hook, id}, _from, state), do: {:reply, state.hooks[to_string(id)], state}
+
   def handle_call({:register_job, job}, _from, state) do
     {:reply, job, %{state | jobs: state.jobs ++ [job]}}
   end
 
   def handle_call({:register_hook, hook}, _from, state) do
-    {:reply, hook, %{state | hooks: state.hooks ++ [hook]}}
+    {:reply, hook, %{state | hooks: Map.put(state.hooks, hook[:name], hook)}}
   end
 
   @doc false

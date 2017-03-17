@@ -113,7 +113,7 @@ defmodule Kitto.RunnerTest do
       hook = %{name: :dummy}
 
       runner |> Runner.register({:hook, hook})
-      assert runner |> Runner.hooks == [hook]
+      assert runner |> Runner.hooks == %{dummy: hook}
     end
 
     test "loads only valid hooks" do
@@ -122,9 +122,7 @@ defmodule Kitto.RunnerTest do
                                           supervisor_name: :runner_sup)
         wait_for(:runner_sup)
 
-        hooks = runner |> Runner.hooks
-
-        assert Enum.map(hooks, &(&1.name)) == [:valid]
+        assert Map.keys(runner |> Runner.hooks) == ["valid"]
       end)
     end
 

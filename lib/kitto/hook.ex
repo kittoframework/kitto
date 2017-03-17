@@ -6,6 +6,6 @@ defmodule Kitto.Hook do
   alias Kitto.Runner
 
   def register(server, name, options, definition, hook) do
-    Runner.register server, {:hook, %{name: name, hook: hook, options: options, definition: definition}}
+    Runner.register server, {:hook, %{name: to_string(name), hook: hook, options: options, definition: definition}}
   end
 end
