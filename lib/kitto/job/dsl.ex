@@ -68,7 +68,7 @@ defmodule Kitto.Job.DSL do
     end
 
     quote do
-      Job.register binding[:runner_server],
+      Job.register binding()[:runner_server],
                    unquote(name),
                    unquote(options |> Keyword.delete(:do)),
                    (__ENV__ |> Map.take([:file, :line])),
@@ -86,7 +86,7 @@ defmodule Kitto.Job.DSL do
         Notifier.broadcast!(unquote(name), %{stdout: stdout, exit_code: exit_code})
       end
 
-      Job.register binding[:runner_server],
+      Job.register binding()[:runner_server],
                    unquote(name),
                    unquote(options),
                    (__ENV__ |> Map.take([:file, :line])),
