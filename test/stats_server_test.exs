@@ -6,9 +6,9 @@ defmodule Kitto.StatsServerTest do
   defmodule BackoffMock do
     @behaviour Kitto.Backoff
 
-    def succeed(_), do: send self(), {:ok, :mocked}
-    def fail(_), do: send self(), {:ok, :mocked}
-    def backoff!(_), do: send self(), {:ok, :mocked}
+    def succeed(_), do: {:ok, :success}
+    def fail(_), do: {:ok, :fail}
+    def backoff!(_), do: send self(), {:ok, :backoff}
   end
 
   setup do
@@ -140,7 +140,7 @@ defmodule Kitto.StatsServerTest do
     test "#measure does not apply backoffs", context do
       StatsServer.measure(context.successful_job)
 
-      refute_received {:ok, :mocked}
+      refute_received {:ok, :backoff}
     end
   end
 
@@ -150,7 +150,7 @@ defmodule Kitto.StatsServerTest do
     test "#measure applies backoffs", context do
       StatsServer.measure(context.successful_job)
 
-      assert_received {:ok, :mocked}
+      assert_received {:ok, :backoff}
     end
   end
 
@@ -158,7 +158,7 @@ defmodule Kitto.StatsServerTest do
     test "#measure applies backoffs", context do
       StatsServer.measure(context.successful_job)
 
-      assert_received {:ok, :mocked}
+      assert_received {:ok, :backoff}
     end
   end
 
