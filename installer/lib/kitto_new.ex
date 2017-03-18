@@ -2,7 +2,6 @@ defmodule Mix.Tasks.Kitto.New do
   use Mix.Task
   import Mix.Generator
 
-  @kitto Path.expand("../..", __DIR__)
   @version Mix.Project.config[:version]
   @shortdoc "Creates a new Kitto v#{@version} application"
 
@@ -96,12 +95,10 @@ defmodule Mix.Tasks.Kitto.New do
     end
   end
 
-  def run(app, mod, path, opts) do
-    kitto_path = kitto_path(path, Keyword.get(opts, :dev, false))
-
+  def run(app, mod, path, _opts) do
     binding = [application_name: app,
                application_module: mod,
-               kitto_dep: kitto_dep(kitto_path)]
+               kitto_dep: kitto_dep(kitto_path(path, false))]
 
     copy_from path, binding, @new
 
