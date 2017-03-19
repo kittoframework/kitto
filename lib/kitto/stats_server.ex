@@ -16,7 +16,7 @@ defmodule Kitto.StatsServer do
 
   @doc false
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: opts[:name] || __MODULE__)
+    GenServer.start_link(@server, opts, name: opts[:name] || @server)
   end
 
   @doc false
@@ -25,20 +25,24 @@ defmodule Kitto.StatsServer do
   @doc """
   Executes the given function and keeps stats about it in the provided key
   """
-  def measure(job) do
-    job.name |> initialize_stats |> update_trigger_count
-    job |> measure_call
+  def measure(job), do: measure(@server, job)
+  def measure(server, job) do
+    server |> initialize_stats(job.name)
+    server |> update_trigger_count(job.name)
+    server |> measure_call(job)
   end
 
   @doc """
   Returns the current stats
   """
-  def stats, do: GenServer.call(@server, :stats)
+  def stats, do: stats(@server)
+  def stats(server), do: GenServer.call(server, :stats)
 
   @doc """
   Resets the current stats
   """
-  def reset, do: GenServer.cast(@server, :reset)
+  def reset, do: reset(@server)
+  def reset(server), do: GenServer.cast(server, :reset)
 
   ### Callbacks
 
@@ -75,15 +79,16 @@ defmodule Kitto.StatsServer do
     {:noreply, Map.merge(state, %{job.name => new_stats})}
   end
 
-  defp initialize_stats(name), do: GenServer.call(@server, {:initialize_stats, name})
-  defp update_trigger_count(name),
-    do: GenServer.call(@server, {:update_trigger_count, name})
-  defp measure_call(job) do
+  defp initialize_stats(server, name), do: GenServer.call(server, {:initialize_stats, name})
+
+  defp update_trigger_count(server, name),
+    do: GenServer.call(server, {:update_trigger_count, name})
+  defp measure_call(server, job) do
     if backoff_enabled?(), do: backoff_module().backoff!(job.name)
 
     run = timed_call(job.job)
 
-    GenServer.cast(@server, {:measure_call, job, run})
+    GenServer.cast(server, {:measure_call, job, run})
 
     if elem(run, 0) == :error do
       raise Kitto.Job.Error, %{exception: elem(run, 1), job: job}
