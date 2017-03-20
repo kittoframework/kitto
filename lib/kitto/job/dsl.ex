@@ -54,6 +54,7 @@ defmodule Kitto.Job.DSL do
     broadcast events using the jobs name.
   """
   defmacro job(name, options, contents \\ []) do
+    name = if is_atom(name), do: name, else: String.to_atom(name)
     if options[:command] do
       _job(:shell, name, options)
     else
