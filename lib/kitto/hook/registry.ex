@@ -17,9 +17,6 @@ defmodule Kitto.Hook.Registry do
 
   @doc false
   def init(opts) do
-    pid = self()
-    spawn fn -> load_hooks(pid) end
-
     {:ok, %{opts: opts, hooks: %{}}}
   end
 
@@ -39,7 +36,7 @@ defmodule Kitto.Hook.Registry do
 
   def handle_call({:hooks}, _from, state), do: {:reply, state.hooks, state}
 
-  defp load_hooks(pid), do: hook_files() |> Enum.each(&(load_hook(pid, &1)))
+  def load_hooks(pid), do: hook_files() |> Enum.each(&(load_hook(pid, &1)))
 
   defp load_hook(pid, file) do
     case Validator.valid?(file) do
@@ -49,7 +46,9 @@ defmodule Kitto.Hook.Registry do
   end
 
   defp hook_files do
-    [Kitto.root(), hooks_dir(), "/**/*.{ex,exs}"] |> Path.join |> Path.wildcard
+    [Kitto.root(), hooks_dir(), "/**/*.{ex,exs}"]
+    |> Path.join
+    |> Path.wildcard
   end
 
   defp hooks_dir, do: Application.get_env(:kitto, :hooks_dir, "hooks")

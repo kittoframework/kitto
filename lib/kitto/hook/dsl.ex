@@ -14,8 +14,8 @@ defmodule Kitto.Hook.DSL do
     end
   end
 
-  defmacro hook(name, options, contents \\ []) do
-    block = Macro.prewalk (options[:do] || contents[:do]), fn
+  defmacro hook(name, contents \\ []) do
+    block = Macro.prewalk contents[:do], fn
       {:broadcast!, meta, args = [_]} -> {:broadcast!, meta, [name] ++ args}
       ast_node -> ast_node
     end
@@ -23,7 +23,6 @@ defmodule Kitto.Hook.DSL do
     quote do
       Hook.register binding()[:runner_server],
                     unquote(name),
-                    unquote(options |> Keyword.delete(:do)),
                     (__ENV__ |> Map.take([:file, :line])),
                     fn -> unquote(block) end
     end

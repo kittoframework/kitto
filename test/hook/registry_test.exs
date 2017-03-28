@@ -1,5 +1,5 @@
 defmodule Kitto.Hook.RegistryTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias Kitto.Hook.Registry
 
@@ -16,13 +16,15 @@ defmodule Kitto.Hook.RegistryTest do
       hook = %{name: "my_test_hook"}
 
       assert {:ok, _} = Registry.register(registry, hook)
+      assert (registry |> Registry.hooks |> Map.keys) == ["my_test_hook"]
     end
 
     test "loads from the hooks directory" do
       Application.put_env(:kitto, :hooks_dir, @hooks_dir)
       {:ok, registry} = Registry.start_link(name: :test_hook_loader_registry)
+      Registry.load_hooks(registry)
 
-      assert (registry |> Registry.hooks |> Map.keys) == [:valid]
+      assert (registry |> Registry.hooks |> Map.keys) == ["valid"]
     end
   end
 end
