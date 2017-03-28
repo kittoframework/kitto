@@ -55,7 +55,7 @@ mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_
 * `Node`: 4.3.1
 * `npm`: 1.4
 
-It may may inadvertently work in versions other than the above, but it won't have been
+It may inadvertently work in versions other than the above, but it won't have been
 thoroughly tested (see [.travis.yml][.travis.yml] for the defined build matrix).
 
 You may also use the official [Docker image](https://github.com/kittoframework/kitto#using-docker).
