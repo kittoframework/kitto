@@ -124,7 +124,7 @@ a few sample jobs in the directory `jobs/`.
 A job file is structured as follows:
 
 ```elixir
-# File jobs/random.ex
+# File jobs/random.exs
 use Kitto.Job.DSL
 
 job :random, every: :second do
