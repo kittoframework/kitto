@@ -12,7 +12,10 @@ defmodule Kitto.Hook.Registry do
   Starts the registry supervision tree
   """
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: opts[:name] || __MODULE__)
+    response = GenServer.start_link(__MODULE__, opts, name: opts[:name] || __MODULE__)
+    {:ok, server} = response
+    __MODULE__.load_hooks(server)
+    response
   end
 
   @doc false
