@@ -48,7 +48,7 @@ defmodule Kitto.Router do
     if View.exists?(id) do
       conn |> render(id)
     else
-      render_error(conn, 404, "Dashboard \"#{id}\" does not exist")
+      render_error(conn, 404, "Dashboard does not exist")
     end
   end
 
