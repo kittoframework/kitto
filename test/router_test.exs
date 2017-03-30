@@ -110,7 +110,7 @@ defmodule Kitto.RouterTest do
 
     assert conn.state == :sent
     assert conn.status == 404
-    assert conn.resp_body == "<div class=\"error\">404 - Dashboard \"#{dashboard}\" does not exist</div>\n"
+    assert conn.resp_body == "<div class=\"error\">404 - Dashboard does not exist</div>\n"
   end
 
   test "GET /dashboards/:id when dashboard exists responds with 200 OK" do
