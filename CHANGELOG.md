@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.5.2] - 2017-03-30
+
+### Fixed
+
+* Prevent DoS due to Atom creation for event topic subscription (5323717)
+* Prevent XSS in 404 page (63570c0)
+* Prevent directory traversal for dashboard templates (#103)
+
 ## [0.5.1] - 2017-02-21
 
 ### Fixed
