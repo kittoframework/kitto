@@ -40,8 +40,15 @@ defmodule Kitto.View do
   @doc """
   Returns true if the given template exists in the templates directory
   """
-  def exists?(template), do: template |> path |> File.exists?
+  def exists?(template) do
+    file = template |> path
+    File.exists?(file) && !(invalid_path?(template |> Path.split))
+  end
 
-  defp path(template), do: Path.join templates_path(), "#{template}.html.eex"
+  defp path(template), do: Path.join(templates_path(), "#{template}.html.eex")
   defp templates_path, do: Path.join Kitto.root, @templates_dir
+
+  defp invalid_path?([h|_]) when h in [".", "..", ""], do: true
+  defp invalid_path?([h|t]), do: String.contains?(h, ["/", "\\", ":", "\0"]) or invalid_path?(t)
+  defp invalid_path?([]), do: false
 end
