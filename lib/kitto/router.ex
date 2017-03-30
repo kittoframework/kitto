@@ -120,7 +120,7 @@ defmodule Kitto.Router do
   defp listen_sse(conn, topics) do
     receive do
       {:broadcast, {topic, data}} ->
-        res = case is_nil(topics) || topic in topics do
+        res = case is_nil(topics) || to_string(topic) in topics do
           true -> send_event(conn, topic, data)
           false -> conn
         end
@@ -175,9 +175,8 @@ defmodule Kitto.Router do
   defp subscribed_topics(conn) do
     case Plug.Conn.fetch_query_params(conn).query_params
          |> Map.get("topics", "")
-         |> String.split(",")
-         |> Enum.map(&String.to_atom/1) do
-      [:""] -> nil
+         |> String.split(",") do
+      [""] -> nil
       topics -> MapSet.new(topics)
     end
   end
