@@ -35,7 +35,7 @@ defmodule Kitto.Mixfile do
      {:plug, "~> 1.3.2"},
      {:poison, "~> 3.0"},
      {:fs, "~> 2.12.0"},
-     {:httpoison, "~> 0.10.0"},
+     {:httpoison, "~> 0.11.1"},
      {:ex_doc, "~> 0.14", only: :dev},
      {:credo, "~> 0.5", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},
