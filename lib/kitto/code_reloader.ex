@@ -43,6 +43,10 @@ defmodule Kitto.CodeReloader do
     do: stop(path, state)
 
   # Mac fsevent
+  def handle_info({_pid, {:fs, :file_event}, {path, [_, _, :modified, _]}}, state) do
+    reload(path, state)
+  end
+
   def handle_info({_pid, {:fs, :file_event}, {path, [_, :modified]}}, state) do
     reload(path, state)
   end
