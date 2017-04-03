@@ -21,7 +21,7 @@ defmodule Kitto do
   def start(_type, _args) do
     opts = [strategy: :one_for_one, name: Kitto.Supervisor]
 
-    Supervisor.start_link(children(Mix.env), opts)
+    Supervisor.start_link(children(), opts)
   end
 
   def start_server do
@@ -75,14 +75,15 @@ defmodule Kitto do
   defp port(p) when is_integer(p), do: p
   defp port(_), do: @defaults.port
 
-  defp children(:dev) do
+
+  defp children do
     case Kitto.CodeReloader.reload_code? do
-      true -> children(:all) ++ [worker(Kitto.CodeReloader, [[server: :runner]])]
-      false -> children(:all)
+      true -> children(:prod) ++ [worker(Kitto.CodeReloader, [[server: :runner]])]
+      false -> children(:prod)
     end
   end
 
-  defp children(_env) do
+  defp children(:prod) do
     [supervisor(__MODULE__, [], function: :start_server),
      supervisor(Kitto.Notifier, []),
      worker(Kitto.BackoffServer, [[]]),
