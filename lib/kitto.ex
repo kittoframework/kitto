@@ -45,6 +45,11 @@ defmodule Kitto do
   end
 
   @doc """
+  Returns true when the asset development server is set to be watching for changes
+  """
+  def watch_assets?, do: Application.get_env :kitto, :watch_assets?, true
+
+  @doc """
   Returns the binding ip of the assets watcher server
   """
   def asset_server_host, do: Application.get_env :kitto, :assets_host, "127.0.0.1"

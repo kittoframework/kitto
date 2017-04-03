@@ -89,7 +89,7 @@ defmodule Kitto.Router do
   end
 
   get "assets/*asset" do
-    if Mix.env == :dev do
+    if Kitto.watch_assets? do
       conn |> redirect_to("#{development_assets_url()}#{asset |> Enum.join("/")}")
     else
       conn |> render_error(404, "Not Found") |> halt
