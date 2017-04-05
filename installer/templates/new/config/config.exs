@@ -37,3 +37,6 @@ config :logger, :console,
 # secure.
 #
 # config :kitto, :auth_token: "asecret"
+
+# Load environment specific configuration
+import_config "#{Mix.env}.exs"
