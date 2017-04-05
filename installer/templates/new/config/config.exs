@@ -22,6 +22,9 @@ config :kitto, root: Path.dirname(__DIR__), port: 4000
 # Change the binding port of the asset watcher server
 # config :kitto, assets_port: 8080
 
+# Use serve_assets?: true to enable serving static assets
+# config :kitto, serve_assets?: true
+#
 # Use default_dashboard: "your-dashboard" to specify the dashboard to be served
 # when the root path is requested.
 
