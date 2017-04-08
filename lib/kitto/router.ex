@@ -10,16 +10,11 @@ defmodule Kitto.Router do
   plug :match
   plug Kitto.Plugs.Authentication
 
-  @app_dir (case Application.get_env(:kitto, :otp_app) do
-    nil -> ""
-    app -> Path.join("apps", app |> to_string)
-  end)
-
   if Application.get_env(:kitto, :serve_assets?, true) do
     plug Plug.Static,
          at: "assets",
          gzip: true,
-         from: Path.join [@app_dir, "public", "assets"]
+         from: Application.get_env(:kitto, :otp_app)
   end
 
   plug :dispatch
