@@ -49,5 +49,6 @@ release :<%= application_name %> do
     :poison,
     :eex
   ]
+  set plugins: [Kitto.CompileAssetsTask]
 end
 
