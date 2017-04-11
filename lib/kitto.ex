@@ -34,7 +34,7 @@ defmodule Kitto do
   """
   def root do
     case Application.get_env(:kitto, :root) do
-      :otp_app -> Application.get_env(:kitto, :otp_app) |> Application.app_dir
+      :otp_app -> Application.app_dir(Application.get_env(:kitto, :otp_app))
       path when is_bitstring(path) -> path
       nil ->
         """
