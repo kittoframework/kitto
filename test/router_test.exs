@@ -7,6 +7,12 @@ defmodule Kitto.RouterTest do
 
   @opts Kitto.Router.init([])
 
+  setup do
+    on_exit fn ->
+      Application.delete_env :kitto, :watch_assets?
+    end
+  end
+
   test "GET with unrecognized request path responds with 404 Not Found" do
     conn = conn(:get, "/nope")
 
@@ -271,6 +277,41 @@ defmodule Kitto.RouterTest do
     parsed_body = Poison.decode!(conn.resp_body)
 
     assert atomify_map(parsed_body) == cached_event
+  end
+
+  describe "asset forwarding" do
+    test "when :watch_assets? is not set, it redirects to the asset builder url" do
+      path = "assets/application.js"
+      conn = conn(:get, path) |> Kitto.Router.call(@opts)
+      asset_builder_url = "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/"
+
+      assert conn.state == :sent
+      assert conn.status == 301
+
+      assert ((conn |> get_resp_header("location")) |> hd) == asset_builder_url <> path
+    end
+
+    test "when :watch_assets? is set to true, it redirects to the asset builder url" do
+      Application.put_env :kitto, :watch_assets?, true
+
+      path = "assets/application.js"
+      conn = conn(:get, path) |> Kitto.Router.call(@opts)
+      asset_builder_url = "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/"
+
+      assert conn.state == :sent
+      assert conn.status == 301
+
+      assert ((conn |> get_resp_header("location")) |> hd) == asset_builder_url <> path
+    end
+
+    test "when :watch_assets? is set to false, it responds with 404" do
+      Application.put_env :kitto, :watch_assets?, false
+
+      conn = conn(:get, "assets/application.js") |> Kitto.Router.call(@opts)
+
+      assert conn.state == :sent
+      assert conn.status == 404
+    end
   end
 
   test "POST /widgets/:id responds with 204 No Content" do

@@ -8,7 +8,11 @@ defmodule Mix.Tasks.Kitto.New do
   # File mappings
   @lint {Credo.Check.Readability.MaxLineLength, false}
   @new [
-    {:text, "new/config/config.exs",                    "config/config.exs"},
+    {:eex,  "new/config/config.exs",                    "config/config.exs"},
+    {:text, "new/config/dev.exs",                       "config/dev.exs"},
+    {:text, "new/config/prod.exs",                      "config/prod.exs"},
+    {:eex,  "new/rel/config.exs",                       "rel/config.exs"},
+    {:text, "new/rel/plugins/compile_assets_task.exs",  "rel/plugins/compile_assets_task.exs"},
     {:eex,  "new/mix.exs",                              "mix.exs"},
     {:eex,  "new/README.md",                            "README.md"},
     {:text, "new/.gitignore",                           ".gitignore"},

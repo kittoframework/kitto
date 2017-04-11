@@ -5,7 +5,7 @@
 # is restricted to this project.
 use Mix.Config
 
-config :kitto, root: Path.dirname(__DIR__), port: 4000
+config :kitto, root: Path.dirname(__DIR__), port: 4000, otp_app: :<%= application_name %>
 
 # Use reload_code?: false to disable code reloading in development environment
 # Read More: https://github.com/kittoframework/kitto/wiki/Code-Reloading
@@ -37,3 +37,6 @@ config :logger, :console,
 # secure.
 #
 # config :kitto, :auth_token: "asecret"
+
+# Load environment specific configuration
+import_config "#{Mix.env}.exs"

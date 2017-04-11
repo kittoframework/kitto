@@ -19,7 +19,7 @@ defmodule Mix.Tasks.Kitto.Server do
   The `--no-halt` flag is automatically added.
   """
   def run(args) do
-    if Mix.env == :dev && watch_assets?(), do: spawn(&start_watcher/0)
+    if Kitto.watch_assets?(), do: spawn(&start_watcher/0)
 
     Mix.Task.run "run", run_args() ++ args
   end
@@ -47,7 +47,6 @@ defmodule Mix.Tasks.Kitto.Server do
     end
   end
 
-  defp watch_assets?, do: Application.get_env :kitto, :watch_assets?, true
   defp watcher_exists?, do: File.exists? watcher_bin()
 
   defp watcher, do: Application.get_env(:kitto, :watcher, @watchers[:webpack])

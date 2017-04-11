@@ -28,9 +28,7 @@ defmodule Kitto.CodeReloader do
   Returns true when the code reloader is set to start
   See: https://github.com/kittoframework/kitto/wiki/Code-Reloading
   """
-  def reload_code? do
-    Application.get_env(:kitto, :reload_code?, true) && Mix.env == :dev
-  end
+  def reload_code?, do: Application.get_env(:kitto, :reload_code?, true)
 
   ### Callbacks
 
