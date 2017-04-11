@@ -50,5 +50,10 @@ release :<%= application_name %> do
     :eex
   ]
   set plugins: [Kitto.CompileAssetsTask]
+  set overlays: [
+    {:copy, "priv", "lib/<%%= release_name %>-<%%= release_version %>/priv"},
+    {:copy, "dashboards", "lib/<%%= release_name %>-<%%= release_version %>/dashboards"},
+    {:copy, "jobs", "lib/<%%= release_name %>-<%%= release_version %>/jobs"}
+  ]
 end
 
