@@ -70,7 +70,22 @@ defmodule Mix.Tasks.Kitto.New do
   end
 
   @moduledoc """
-  Kitto installer. Generates a scaffolding to build a new dashboard upon.
+  Creates a new Kitto dashboard.
+
+  It expects the path of the project as argument.
+
+      mix kitto.new PATH [--edge]
+
+  A project at the given PATH will be created. The application name and module
+  name will be retrieved from the path.
+
+  ## Options
+
+  * `--edge` - use the `master` branch of Kitto as your dashboard's dependency
+
+  ## Examples
+
+      mix kitto.new hello_world
 
   See: https://github.com/kittoframework/demo
   """
@@ -81,7 +96,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   def run(argv) do
     {opts, argv} =
-      case OptionParser.parse(argv) do
+      case OptionParser.parse(argv, switches: [edge: :boolean]) do
         {opts, argv, []} ->
           {opts, argv}
         {_opts, _argv, [switch | _]} ->
@@ -99,10 +114,10 @@ defmodule Mix.Tasks.Kitto.New do
     end
   end
 
-  def run(app, mod, path, _opts) do
+  def run(app, mod, path, opts) do
     binding = [application_name: app,
                application_module: mod,
-               kitto_dep: kitto_dep(kitto_path(path, false))]
+               kitto_dep: kitto_dep(opts[:edge])]
 
     copy_from path, binding, @new
 
@@ -196,12 +211,8 @@ defmodule Mix.Tasks.Kitto.New do
     :os.cmd(String.to_char_list(cmd))
   end
 
-  defp kitto_dep("deps/kitto"), do: ~s[{:kitto, "~> #{@version}"}]
-  defp kitto_dep(path), do: ~s[{:kitto, path: #{inspect path}, override: true}]
-
-  defp kitto_path(_path, false) do
-    "deps/kitto"
-  end
+  defp kitto_dep(true), do: ~s[{:kitto, github: "kittoframework/kitto", branch: "master"}]
+  defp kitto_dep(_), do: ~s[{:kitto, "~> #{@version}"}]
 
   ### Template helpers
 
