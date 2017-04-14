@@ -4,6 +4,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   @version Mix.Project.config[:version]
   @shortdoc "Creates a new Kitto v#{@version} application"
+  @repo "https://github.com/kittoframework/kitto"
 
   # File mappings
   @lint {Credo.Check.Readability.MaxLineLength, false}
@@ -74,7 +75,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   It expects the path of the project as argument.
 
-      mix kitto.new PATH [--edge]
+      mix kitto.new PATH [--edge] [--dev KITTO_PATH]
 
   A project at the given PATH will be created. The application name and module
   name will be retrieved from the path.
@@ -82,10 +83,20 @@ defmodule Mix.Tasks.Kitto.New do
   ## Options
 
   * `--edge` - use the `master` branch of Kitto as your dashboard's dependency
+  * `--dev` - use a local copy of Kitto as your dashboard's dependency
 
   ## Examples
 
+      # Create a new Kitto dashboard
       mix kitto.new hello_world
+
+      # Create a new Kitto dashboard using the master branch to get the latest
+      # Kitto features
+      mix kitto.new hello_world --edge
+
+      # Create a new Kitto dashboard using a local copy at ./kitto to test
+      # development code in Kitto core
+      mix kitto.new hello_world --dev ./kitto
 
   See: https://github.com/kittoframework/demo
   """
@@ -96,7 +107,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   def run(argv) do
     {opts, argv} =
-      case OptionParser.parse(argv, switches: [edge: :boolean]) do
+      case OptionParser.parse(argv, switches: [edge: :boolean, dev: :string]) do
         {opts, argv, []} ->
           {opts, argv}
         {_opts, _argv, [switch | _]} ->
@@ -117,7 +128,8 @@ defmodule Mix.Tasks.Kitto.New do
   def run(app, mod, path, opts) do
     binding = [application_name: app,
                application_module: mod,
-               kitto_dep: kitto_dep(opts[:edge])]
+               kitto_dep: kitto_dep(opts),
+               npm_kitto_dep: npm_kitto_dep(opts[:dev])]
 
     copy_from path, binding, @new
 
@@ -211,8 +223,29 @@ defmodule Mix.Tasks.Kitto.New do
     :os.cmd(String.to_char_list(cmd))
   end
 
-  defp kitto_dep(true), do: ~s[{:kitto, github: "kittoframework/kitto", branch: "master"}]
-  defp kitto_dep(_), do: ~s[{:kitto, "~> #{@version}"}]
+  defp kitto_dep(opts) do
+    cond do
+      opts[:edge] -> ~s[{:kitto, github: "kittoframework/kitto", branch: "master"}]
+      opts[:dev] -> ~s[{:kitto, path: "#{kitto_path(opts[:dev])}"}]
+      true -> ~s[{:kitto, "~> #{@version}"}]
+    end
+  end
+
+  defp npm_kitto_dep(path) when is_bitstring(path), do: kitto_path(path)
+  defp npm_kitto_dep(_), do: "deps/kitto"
+
+  defp kitto_path(path) do
+    {:ok, cwd} = File.cwd()
+    path = Path.join([cwd, path])
+
+    if File.exists?(path) do
+      path
+    else
+      install? = Mix.shell.yes?("\nKitto not found. Do you want to clone it?")
+      maybe_cmd("git clone #{@repo}", true, install?)
+      path
+    end
+  end
 
   ### Template helpers
 
