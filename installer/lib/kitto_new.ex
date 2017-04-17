@@ -75,20 +75,24 @@ defmodule Mix.Tasks.Kitto.New do
 
   It expects the path of the project as argument.
 
-      mix kitto.new PATH [--edge] [--dev KITTO_PATH]
+      mix kitto.new PATH [--edge] [--dev KITTO_PATH] [--app APP_NAME]
 
   A project at the given PATH will be created. The application name and module
-  name will be retrieved from the path.
+  name will be retrieved from the path, unless otherwise provided.
 
   ## Options
 
   * `--edge` - use the `master` branch of Kitto as your dashboard's dependency
   * `--dev` - use a local copy of Kitto as your dashboard's dependency
+  * `--app` - name of the OTP application and base module
 
   ## Examples
 
       # Create a new Kitto dashboard
       mix kitto.new hello_world
+
+      # Create a new Kitto dashboard named `Foo` in `./hello_world`
+      mix kitto.new hello_world --app foo
 
       # Create a new Kitto dashboard using the master branch to get the latest
       # Kitto features
@@ -107,7 +111,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   def run(argv) do
     {opts, argv} =
-      case OptionParser.parse(argv, switches: [edge: :boolean, dev: :string]) do
+      case OptionParser.parse(argv, switches: [edge: :boolean, dev: :string, app: :string]) do
         {opts, argv, []} ->
           {opts, argv}
         {_opts, _argv, [switch | _]} ->
@@ -117,7 +121,7 @@ defmodule Mix.Tasks.Kitto.New do
     case argv do
       [] -> Mix.Task.run "help", ["kitto.new"]
       [path|_] ->
-        app = Path.basename(Path.expand(path))
+        app = (opts[:app] || Path.basename(Path.expand(path))) |> String.downcase
         check_application_name!(app)
         mod = Macro.camelize(app)
 
