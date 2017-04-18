@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.6.0] - 2017-04-18
+
+### Added
+
+* Add {edge, dev, app} kitto.new options (see: https://github.com/kittoframework/kitto/blob/v0.6.0/installer/lib/kitto_new.ex#L83)
+
 ## [0.6.0-rc0] - 2017-04-11
 
 ### Added

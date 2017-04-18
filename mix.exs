@@ -1,7 +1,7 @@
 defmodule Kitto.Mixfile do
   use Mix.Project
 
-  @version "0.6.0-rc0"
+  @version "0.6.0"
 
   def project do
     [app: :kitto,
