@@ -31,9 +31,10 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 * Uses a modern asset tool-chain, [Webpack][webpack]
 * Allows streaming SSE to numerous clients concurrently with low
   memory/CPU footprint
-* Easy to deploy using the provided Docker images, or Heroku
+* Easy to deploy using the provided Docker images, Heroku ([guide][wiki-heroku])
+  or [Distillery][distillery] ([guide][wiki-distillery])
 * Can serve assets in production
-* Keeps stats about defined jobs and comes with a dashboard to monitor them
+* Keeps stats about defined jobs and comes with a dashboard to monitor them ([demo][demo-jobs])
 * Can apply exponential back-offs to failing jobs
 * [Reloads][code-reloading] code upon change in development
 
@@ -218,6 +219,7 @@ Spawn a container of the image
 ```shell
 docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 ```
+
 #### Heroku
 
 Please read the detailed [instructions][wiki-heroku] in the wiki.
@@ -231,6 +233,12 @@ Please read the [upgrading guide][upgrading-guide] in the wiki.
 
 ```shell
 mix test
+```
+
+#### Run the Linter
+
+```shell
+mix credo
 ```
 
 ### Support
@@ -263,3 +271,7 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [code-reloading]: https://github.com/kittoframework/kitto/wiki/Code-Reloading
 [upgrading-guide]: https://github.com/kittoframework/kitto/wiki/Upgrading-Guide
 [.travis.yml]: https://github.com/kittoframework/kitto/blob/master/.travis.yml
+[distillery]: https://github.com/bitwalker/distillery
+[wiki-heroku]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku
+[wiki-distillery]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Distillery
+[demo-jobs]: https://kitto.io/dashboards/jobs
