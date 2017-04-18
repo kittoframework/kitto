@@ -121,7 +121,7 @@ defmodule Mix.Tasks.Kitto.New do
     case argv do
       [] -> Mix.Task.run "help", ["kitto.new"]
       [path|_] ->
-        app = (opts[:app] || Path.basename(Path.expand(path))) |> String.downcase
+        app = String.downcase(opts[:app] || Path.basename(path))
         check_application_name!(app)
         mod = Macro.camelize(app)
 
