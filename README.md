@@ -245,6 +245,7 @@ mix credo
 
 Have a question?
 
+* Check the [wiki][wiki] first
 * See [elixirforum/kitto](https://elixirforum.com/t/kitto-a-framework-for-interactive-dashboards)
 * Open an [issue](https://github.com/kittoframework/kitto/issues/new)
 * Ask in [gitter.im/kittoframework](https://gitter.im/kittoframework/Lobby)
