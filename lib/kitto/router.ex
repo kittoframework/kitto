@@ -78,7 +78,7 @@ defmodule Kitto.Router do
   post "widgets/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body(conn)
 
-    Notifier.broadcast!(id, body |> Poison.decode!)
+    Notifier.broadcast!(id |>  String.to_atom, body |> Poison.decode!(keys: :atoms!))
 
     conn |> send_resp(204, "")
   end
