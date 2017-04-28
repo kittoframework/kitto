@@ -1,6 +1,8 @@
 defmodule Kitto.TestHelper do
   def atomify_map(map) do
-    for {key, value} <- map, into: %{}, do: {String.to_atom(key), value}
+    for {key, value} <- map, into: %{}, do:
+      if(is_atom(key), do: {key, value},
+      else: {String.to_atom(key), value})
   end
 
   def wait_for(name, interval \\ 100, timeout \\ 1000) do

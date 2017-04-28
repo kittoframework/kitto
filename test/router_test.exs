@@ -346,7 +346,6 @@ defmodule Kitto.RouterTest do
     assert conn.status == 204
 
     conn = conn(:get, "widgets/#{topic}")
-
     conn = Kitto.Router.call(conn, @opts)
     assert conn.state == :sent
     assert conn.status == 200
