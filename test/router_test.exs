@@ -328,11 +328,31 @@ defmodule Kitto.RouterTest do
     body = %{elixir: "is awesome!"}
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
 
-    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
+    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic |> String.to_atom, body)] do
       Kitto.Router.call(conn, @opts)
 
       assert_receive :ok
     end
+  end
+
+  test "POST /widgets/:id updates cache with the body on the given topic" do
+    topic = "technology"
+    body = %{elixir: "is awesome!"}
+    cached_body = %{elixir: "is awesome!"}
+    conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
+
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.state == :sent
+    assert conn.status == 204
+
+    conn = conn(:get, "widgets/#{topic}")
+
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.state == :sent
+    assert conn.status == 200
+    parsed_body = Poison.decode!(conn.resp_body)
+    assert parsed_body != nil
+    assert atomify_map(parsed_body) == cached_body
   end
 
   test "with auth token POST /widgets/:id grants access when provided" do

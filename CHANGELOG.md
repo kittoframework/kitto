@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.6.1] - 2017-04-28
+
+### Fixed
+
+* fix API post on widgets so cache map is updated properly and can get topic
+
 ## [0.6.0] - 2017-04-18
 
 ### Added
