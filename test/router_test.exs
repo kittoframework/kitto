@@ -335,6 +335,24 @@ defmodule Kitto.RouterTest do
     end
   end
 
+  test "POST /widgets/:id updates cache with the body on the given topic" do
+    topic = "technology"
+    cached_body = %{news: "man made it to mars"}
+    Kitto.Notifier.cache :technology, cached_body
+    conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
+
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.state == :sent
+    assert conn.status == 204
+
+    conn = conn(:get, "widgets/#{topic}")
+    conn = Kitto.Router.call(conn, @opts)
+    assert conn.state == :sent
+    assert conn.status == 200
+
+    assert atomify_map(Poison.decode!(conn.resp_body)) != cached_body
+  end
+
   test "with auth token POST /widgets/:id grants access when provided" do
     Application.put_env :kitto, :auth_token, "asecret"
     topic = "technology"
