@@ -73,7 +73,7 @@ defmodule Kitto.Router do
   end
 
   get "widgets", do: conn |> render_json(Notifier.cache)
-  get "widgets/:id", do: conn |> render_json(Notifier.cache[String.to_atom(id)])
+  get "widgets/:id", do: conn |> render_json(Notifier.cache[id])
 
   post "widgets/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body(conn)
