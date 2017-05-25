@@ -64,7 +64,8 @@ defmodule Kitto.Job.DSL do
 
   defp _job(:elixir, name, options, contents) do
     block = Macro.prewalk (options[:do] || contents[:do]), fn
-      {:broadcast!, meta, args = [_]} -> {:broadcast!, meta, [name] ++ args}
+      {:|>, pipe_meta, [lhs, {:broadcast!, meta, context}]} when is_atom(context) or context == [] -> {:|>, pipe_meta, [lhs, {:broadcast!, meta, [name]}]} 
+      {:broadcast!, meta, args = [{:%{}, _, _}]} -> {:broadcast!, meta, [name] ++ args}
       ast_node -> ast_node
     end
 

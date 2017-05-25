@@ -44,6 +44,7 @@ defmodule Kitto.Notifier do
   Emits a server-sent event to each of the active connections with the given
   topic and payload
   """
+  def broadcast!(data, topic) when is_atom(topic), do: broadcast!(topic, data)
   def broadcast!(topic, data) do
     unless topic == "_kitto", do: cache(topic, data)
 
