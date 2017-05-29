@@ -18,6 +18,12 @@ defmodule KittoTest do
     assert Kitto.root == path
   end
 
+  test "#root when the :root config is set to :otp_app, returns the app_dir" do
+    Application.put_env :kitto, :root, :otp_app
+
+    assert Kitto.root == Application.app_dir(:kitto)
+  end
+
   test "#root when the :root config is set to a non-bitstring, it raises error" do
     num = 42
     Application.put_env :kitto, :root, num

@@ -44,6 +44,7 @@ defmodule Kitto.Notifier do
   Emits a server-sent event to each of the active connections with the given
   topic and payload
   """
+  def broadcast!(data, topic) when is_atom(topic), do: broadcast!(topic, data)
   def broadcast!(topic, data) do
     unless topic == "_kitto", do: cache(topic, data)
 
@@ -54,10 +55,7 @@ defmodule Kitto.Notifier do
   Emits a server-sent event to each of the active connections with the given
   topic and payload to a specific process
   """
-  def broadcast!(pid, topic, data) when is_bitstring(topic) do
-    broadcast!(pid, topic |> String.to_atom, data)
-  end
-
+  def broadcast!(pid, topic, data) when is_atom(topic), do: broadcast!(pid, topic |> to_string, data)
   def broadcast!(pid, topic, data) do
     if !Process.alive?(pid), do: delete(pid)
 
@@ -86,6 +84,7 @@ defmodule Kitto.Notifier do
   @doc """
   Caches the given payload with the key provided as the first argument
   """
+  def cache(topic, data) when is_atom(topic), do: cache(topic |> to_string, data)
   def cache(topic, data), do: notifier_cache() |> update(&(Map.merge(&1, %{topic => data})))
 
   @doc """

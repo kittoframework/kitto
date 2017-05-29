@@ -28,9 +28,7 @@ defmodule Kitto.CodeReloader do
   Returns true when the code reloader is set to start
   See: https://github.com/kittoframework/kitto/wiki/Code-Reloading
   """
-  def reload_code? do
-    Application.get_env(:kitto, :reload_code?, true) && Mix.env == :dev
-  end
+  def reload_code?, do: Application.get_env(:kitto, :reload_code?, true)
 
   ### Callbacks
 
@@ -43,6 +41,10 @@ defmodule Kitto.CodeReloader do
     do: stop(path, state)
 
   # Mac fsevent
+  def handle_info({_pid, {:fs, :file_event}, {path, [_, _, :modified, _]}}, state) do
+    reload(path, state)
+  end
+
   def handle_info({_pid, {:fs, :file_event}, {path, [_, :modified]}}, state) do
     reload(path, state)
   end

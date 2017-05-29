@@ -5,9 +5,9 @@
 # is restricted to this project.
 use Mix.Config
 
-config :kitto, root: Path.dirname(__DIR__), port: 4000
+config :kitto, root: Path.dirname(__DIR__), port: 4000, otp_app: :<%= application_name %>
 
-# Use code_reload?: false to disable code reloading in development environment
+# Use reload_code?: false to disable code reloading in development environment
 # Read More: https://github.com/kittoframework/kitto/wiki/Code-Reloading
 
 # Use ip: {:system, "KITTO_IP"} to have binding ip configurable via env variable
@@ -22,6 +22,9 @@ config :kitto, root: Path.dirname(__DIR__), port: 4000
 # Change the binding port of the asset watcher server
 # config :kitto, assets_port: 8080
 
+# Use serve_assets?: true to enable serving static assets
+# config :kitto, serve_assets?: true
+#
 # Use default_dashboard: "your-dashboard" to specify the dashboard to be served
 # when the root path is requested.
 
@@ -34,3 +37,6 @@ config :logger, :console,
 # secure.
 #
 # config :kitto, :auth_token: "asecret"
+
+# Load environment specific configuration
+import_config "#{Mix.env}.exs"

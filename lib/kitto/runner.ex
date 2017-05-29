@@ -8,8 +8,6 @@ defmodule Kitto.Runner do
   require Logger
   alias Kitto.Job.{Validator, Workspace}
 
-  @max_restarts Application.get_env :kitto, :job_max_restarts, 300
-
   @doc """
   Starts the runner supervision tree
   """

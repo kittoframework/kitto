@@ -31,9 +31,10 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 * Uses a modern asset tool-chain, [Webpack][webpack]
 * Allows streaming SSE to numerous clients concurrently with low
   memory/CPU footprint
-* Easy to deploy using the provided Docker images, or Heroku
+* Easy to deploy using the provided Docker images, Heroku ([guide][wiki-heroku])
+  or [Distillery][distillery] ([guide][wiki-distillery])
 * Can serve assets in production
-* Keeps stats about defined jobs and comes with a dashboard to monitor them
+* Keeps stats about defined jobs and comes with a dashboard to monitor them ([demo][demo-jobs])
 * Can apply exponential back-offs to failing jobs
 * [Reloads][code-reloading] code upon change in development
 
@@ -42,7 +43,7 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.5.1.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.6.0.ez
 ```
 
 ## Requirements
@@ -55,7 +56,7 @@ mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_
 * `Node`: 4.3.1
 * `npm`: 1.4
 
-It may may anadvertedly work in versions other than the above, but it won't have been
+It may inadvertently work in versions other than the above, but it won't have been
 thoroughly tested (see [.travis.yml][.travis.yml] for the defined build matrix).
 
 You may also use the official [Docker image](https://github.com/kittoframework/kitto#using-docker).
@@ -124,7 +125,7 @@ a few sample jobs in the directory `jobs/`.
 A job file is structured as follows:
 
 ```elixir
-# File jobs/random.ex
+# File jobs/random.exs
 use Kitto.Job.DSL
 
 job :random, every: :second do
@@ -218,6 +219,7 @@ Spawn a container of the image
 ```shell
 docker run -i -p 127.0.0.1:4000:4000 -t my-awesome-dashboard
 ```
+
 #### Heroku
 
 Please read the detailed [instructions][wiki-heroku] in the wiki.
@@ -233,10 +235,17 @@ Please read the [upgrading guide][upgrading-guide] in the wiki.
 mix test
 ```
 
+#### Run the Linter
+
+```shell
+mix credo
+```
+
 ### Support
 
 Have a question?
 
+* Check the [wiki][wiki] first
 * See [elixirforum/kitto](https://elixirforum.com/t/kitto-a-framework-for-interactive-dashboards)
 * Open an [issue](https://github.com/kittoframework/kitto/issues/new)
 * Ask in [gitter.im/kittoframework](https://gitter.im/kittoframework/Lobby)
@@ -263,3 +272,7 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [code-reloading]: https://github.com/kittoframework/kitto/wiki/Code-Reloading
 [upgrading-guide]: https://github.com/kittoframework/kitto/wiki/Upgrading-Guide
 [.travis.yml]: https://github.com/kittoframework/kitto/blob/master/.travis.yml
+[distillery]: https://github.com/bitwalker/distillery
+[wiki-heroku]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku
+[wiki-distillery]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Distillery
+[demo-jobs]: https://kitto.io/dashboards/jobs

@@ -4,6 +4,35 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.6.0] - 2017-04-18
+
+### Added
+
+* Add {edge, dev, app} kitto.new options (see: https://github.com/kittoframework/kitto/blob/v0.6.0/installer/lib/kitto_new.ex#L83)
+
+## [0.6.0-rc0] - 2017-04-11
+
+### Added
+
+* Sample distillery config and asset compilation plugin
+* Sample `config/dev.exs` and `config/prod.exs`
+
+### Changed
+
+* `Kitto.root` returns `Application.app_dir` when `:root` is set to `:otp_app`
+* For newly scaffolded apps, assets are built in `priv/static`
+* Static assets are served from `priv/static` of application
+* Assets are forwarder to webpack live builder only when `:watch_assets?` is set to true
+* Elixir CodeReloader is disabled when `:reload_code?` is set to false
+
+## [0.5.2] - 2017-03-30
+
+### Fixed
+
+* Prevent DoS due to Atom creation for event topic subscription (5323717)
+* Prevent XSS in 404 page (63570c0)
+* Prevent directory traversal for dashboard templates (#103)
+
 ## [0.5.1] - 2017-02-21
 
 ### Fixed

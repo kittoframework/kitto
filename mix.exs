@@ -1,9 +1,11 @@
 defmodule Kitto.Mixfile do
   use Mix.Project
 
+  @version "0.6.0"
+
   def project do
     [app: :kitto,
-     version: "0.5.1",
+     version: @version,
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -19,7 +21,7 @@ defmodule Kitto.Mixfile do
        "coveralls.html": :test],
      name: "Kitto",
      source_url: "https://github.com/kittoframework/kitto",
-     docs: [main: "Kitto"]
+     docs: [extras: ["README.md"], main: "readme"]
     ]
   end
 
@@ -33,7 +35,7 @@ defmodule Kitto.Mixfile do
      {:plug, "~> 1.3.2"},
      {:poison, "~> 3.0"},
      {:fs, "~> 2.12.0"},
-     {:httpoison, "~> 0.10.0"},
+     {:httpoison, "~> 0.11.1"},
      {:ex_doc, "~> 0.14", only: :dev},
      {:credo, "~> 0.5", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},

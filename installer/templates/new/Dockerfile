@@ -10,7 +10,7 @@ ADD ./mix.lock ./
 RUN mix deps.get
 
 ADD ./package.json ./
-RUN npm install
+RUN npm install --silent
 
 ADD . /dashboard
 RUN npm run build

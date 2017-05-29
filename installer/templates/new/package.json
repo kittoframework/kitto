@@ -21,7 +21,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "kitto": "file:deps/kitto",
+    "kitto": "file:<%= npm_kitto_dep %>",
     "webpack": "^1.12.13",
     "webpack-merge": "^0.15.0",
     "compression-webpack-plugin": "0.3.1",

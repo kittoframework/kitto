@@ -10,16 +10,11 @@ defmodule Kitto.Router do
   plug :match
   plug Kitto.Plugs.Authentication
 
-  @app_dir (case Application.get_env(:kitto, :otp_app) do
-    nil -> ""
-    app -> Path.join("apps", app |> to_string)
-  end)
-
   if Application.get_env(:kitto, :serve_assets?, true) do
     plug Plug.Static,
          at: "assets",
          gzip: true,
-         from: Path.join [@app_dir, "public", "assets"]
+         from: Application.get_env(:kitto, :otp_app)
   end
 
   plug :dispatch
@@ -48,7 +43,7 @@ defmodule Kitto.Router do
     if View.exists?(id) do
       conn |> render(id)
     else
-      render_error(conn, 404, "Dashboard \"#{id}\" does not exist")
+      render_error(conn, 404, "Dashboard does not exist")
     end
   end
 
@@ -78,7 +73,7 @@ defmodule Kitto.Router do
   end
 
   get "widgets", do: conn |> render_json(Notifier.cache)
-  get "widgets/:id", do: conn |> render_json(Notifier.cache[String.to_atom(id)])
+  get "widgets/:id", do: conn |> render_json(Notifier.cache[id])
 
   post "widgets/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body(conn)
@@ -89,7 +84,7 @@ defmodule Kitto.Router do
   end
 
   get "assets/*asset" do
-    if Mix.env == :dev do
+    if Kitto.watch_assets? do
       conn |> redirect_to("#{development_assets_url()}#{asset |> Enum.join("/")}")
     else
       conn |> render_error(404, "Not Found") |> halt
@@ -120,7 +115,7 @@ defmodule Kitto.Router do
   defp listen_sse(conn, topics) do
     receive do
       {:broadcast, {topic, data}} ->
-        res = case is_nil(topics) || topic in topics do
+        res = case is_nil(topics) || to_string(topic) in topics do
           true -> send_event(conn, topic, data)
           false -> conn
         end
@@ -175,9 +170,8 @@ defmodule Kitto.Router do
   defp subscribed_topics(conn) do
     case Plug.Conn.fetch_query_params(conn).query_params
          |> Map.get("topics", "")
-         |> String.split(",")
-         |> Enum.map(&String.to_atom/1) do
-      [:""] -> nil
+         |> String.split(",") do
+      [""] -> nil
       topics -> MapSet.new(topics)
     end
   end

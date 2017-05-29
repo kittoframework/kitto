@@ -3,10 +3,6 @@ defmodule Mix.Tasks.Kitto.InstallTest do
   import Mock
   import Kitto.FileAssertionHelper
 
-  @job_gist_response %{
-    files: %{"job.exs" => %{filename: "job.exs", language: "Elixir", content: "job"}}
-  }
-
   @css_gist_response %{
     files: %{"number.scss" => %{filename: "number.scss",
                                 language: "SCSS",

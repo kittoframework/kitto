@@ -15,42 +15,23 @@ defmodule Kitto.CodeReloaderTest do
     on_exit fn ->
       Application.delete_env :kitto, :jobs_dir
       Application.delete_env :kitto, :reload_code?
-      Mix.env(:test)
     end
   end
 
-  test """
-  #reload_code? returns true when :reload_code? env is not set and Mix env is :dev
-  """ do
+  test "#reload_code? returns true when :reload_code? env is not set" do
     Application.delete_env :kitto, :reload_code?
-    Mix.env(:dev)
 
     assert CodeReloader.reload_code? == true
   end
 
-  test """
-  #reload_code? returns true when :reload_code? env is true and Mix env is :dev
-  """ do
+  test "#reload_code? returns true when :reload_code? env is true" do
     Application.put_env :kitto, :reload_code?, true
-    Mix.env(:dev)
 
     assert CodeReloader.reload_code? == true
   end
 
-  test """
-  #reload_code? returns false when :reload_code? env is false and Mix env is :dev
-  """ do
+  test "#reload_code? returns false when :reload_code? env is false" do
     Application.put_env :kitto, :reload_code?, false
-    Mix.env(:dev)
-
-    assert CodeReloader.reload_code? == false
-  end
-
-  test """
-  #reload_code? returns false when :reload_code? env is true and Mix env is not :dev
-  """ do
-    Application.put_env :kitto, :reload_code?, true
-    Mix.env(:test)
 
     assert CodeReloader.reload_code? == false
   end
@@ -97,17 +78,40 @@ defmodule Kitto.CodeReloaderTest do
     end
   end
 
-  test "#when a job modification event is received on macOS, calls Runner.reload_job/1" do
-    self() |> Process.register(:mock_server)
+  describe "macOS job modifications events" do
+    test "#when [:inodemetamod, :modified] is received, calls Runner.reload_job/1" do
+      self() |> Process.register(:mock_server)
 
-    {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
+      {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:inodemetamod, :modified]}}
+      file_change = {@valid_job, [:inodemetamod, :modified]}
 
-    receive do
-      message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
-    after
-      100 -> exit({:shutdown, "runner did not receive reload message"})
+      send reloader, {make_ref(), {:fs, :file_event}, file_change}
+
+      receive do
+        message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
+      after
+        100 -> exit({:shutdown, "runner did not receive reload message"})
+      end
+    end
+
+    test """
+    #when [:created, :renamed, :modified, :changeowner] is received,
+    #calls Runner.reload_job/1
+    """ do
+      self() |> Process.register(:mock_server)
+
+      {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
+
+      file_change = {@valid_job, [:inodemetamod, :modified]}
+
+      send reloader, {make_ref(), {:fs, :file_event}, file_change}
+
+      receive do
+        message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
+      after
+        100 -> exit({:shutdown, "runner did not receive reload message"})
+      end
     end
   end
 
