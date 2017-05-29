@@ -19,16 +19,16 @@ defmodule Kitto.Runner do
   def init(opts) do
     server = self()
     spawn fn -> load_jobs(server) end
+    spawn fn -> load_hooks(server) end
 
-    {:ok, %{opts: opts, jobs: [], supervisor: nil}}
+    {:ok, %{opts: opts, jobs: [], hooks: %{}, supervisor: nil}}
   end
 
   @doc """
   Updates the list of jobs to be run with the provided one
   """
-  def register(server, job) do
-    GenServer.call(server, {:register, job})
-  end
+  def register(server, {:job, job}), do: GenServer.call(server, {:register_job, job})
+  def register(server, {:hook, hook}), do: GenServer.call(server, {:register_hook, hook})
 
   @doc """
   Reloads all jobs defined in the given file
@@ -52,18 +52,43 @@ defmodule Kitto.Runner do
   end
 
   @doc """
+  Returns all the registered hooks
+  """
+  def hooks(server) do
+    GenServer.call(server, {:hooks})
+  end
+
+  @doc """
+  Gets a specific hook from the registry
+  """
+  def hook(server, id) do
+    GenServer.call(server, {:hook, id})
+  end
+
+  @doc """
   Returns the directory where the job scripts are located
   """
-  def jobs_dir, do: Path.join(Kitto.root, Application.get_env(:kitto, :jobs_dir, "jobs"))
+  def jobs_dir, do: dir Application.get_env(:kitto, :jobs_dir, "jobs")
+
+  @doc """
+  Returns the directory where the hook scripts are located
+  """
+  def hooks_dir, do: dir Application.get_env(:kitto, :hooks_dir, "hooks")
 
   ### Callbacks
 
-  def handle_call({:jobs}, _from, state) do
-    {:reply, state.jobs, state}
+  def handle_call({:jobs}, _from, state), do: {:reply, state.jobs, state}
+
+  def handle_call({:hooks}, _from, state), do: {:reply, state.hooks, state}
+
+  def handle_call({:hook, id}, _from, state), do: {:reply, state.hooks[to_string(id)], state}
+
+  def handle_call({:register_job, job}, _from, state) do
+    {:reply, job, %{state | jobs: state.jobs ++ [job]}}
   end
 
-  def handle_call({:register, job}, _from, state) do
-    {:reply, job, %{state | jobs: state.jobs ++ [job]}}
+  def handle_call({:register_hook, hook}, _from, state) do
+    {:reply, hook, %{state | hooks: Map.put(state.hooks, hook[:name], hook)}}
   end
 
   @doc false
@@ -74,6 +99,12 @@ defmodule Kitto.Runner do
    {:ok, supervisor} = start_supervisor(supervisor_opts)
 
    {:noreply, %{state | supervisor: supervisor}}
+  end
+
+  def handle_cast({:hooks_loaded}, state) do
+    # Use this method to handle anything that needs to be done after all hooks
+    # are loaded into Kitto
+    {:noreply, state}
   end
 
   def handle_cast({:reload_job, file}, state) do
@@ -111,12 +142,9 @@ defmodule Kitto.Runner do
     Kitto.Runner.JobSupervisor.start_job(supervisor, job)
   end
 
-  defp load_job(pid, file) do
-    case file |> Validator.valid? do
-      true -> file |> Workspace.load_file(pid)
-      false -> Logger.warn "Job: #{file} contains syntax error(s) and will not be loaded"
-    end
-  end
+  defp load_job(pid, file), do: load_file(pid, file, "Job")
+
+  defp load_hook(pid, file), do: load_file(pid, file, "Hook")
 
   defp stop_jobs(state, file) do
     state.jobs
@@ -134,5 +162,24 @@ defmodule Kitto.Runner do
     GenServer.cast pid, {:jobs_loaded}
   end
 
-  defp job_files, do: Path.wildcard(Path.join(jobs_dir(), "/**/*.{ex,exs}"))
+  defp load_hooks(pid) do
+    hook_files() |> Enum.each(&(load_hook(pid, &1)))
+
+    GenServer.cast pid, {:hooks_loaded}
+  end
+
+  def load_file(pid, file, type) do
+    case file |> Validator.valid? do
+      true -> file |> Workspace.load_file(pid)
+      false -> Logger.warn "#{type}: #{file} contains syntax error(s) and will not be loaded"
+    end
+  end
+
+  defp job_files, do: jobs_dir() |> files
+
+  defp hook_files, do: hooks_dir() |> files
+
+  defp files(dir), do: Path.wildcard(Path.join(dir, "/**/*.{ex,exs}"))
+
+  defp dir(path), do: Path.join(Kitto.root, path)
 end
