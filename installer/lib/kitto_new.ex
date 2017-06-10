@@ -174,6 +174,10 @@ defmodule Mix.Tasks.Kitto.New do
 
         #{Enum.join(steps, "\n    ")}
 
+    To access generators compile your application first with:
+
+        $ mix compile
+
     You can also run your app inside IEx (Interactive Elixir) as:
 
         $ iex -S mix
