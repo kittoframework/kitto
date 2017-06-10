@@ -69,15 +69,14 @@ defmodule Kitto.JobTest do
     pid = self()
     job = fn -> send pid, :ok end
     interval = 100
-    times = 3
-
     spawn(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{first_at: false, interval: interval}}])
 
-    :timer.sleep(interval * times + 10)
+    :timer.sleep(1000)
+
     {:messages, mesg} = :erlang.process_info(pid, :messages)
 
-    assert Enum.count(mesg) == times
+    assert Enum.count(mesg) > 1
   end
 end
