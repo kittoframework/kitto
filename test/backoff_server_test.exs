@@ -46,7 +46,7 @@ defmodule Kitto.BackoffServerTest do
 
   test "#backoff! puts the current process to sleep for backoff time" do
     maxval = 100
-    Application.put_env :kitto, :job_mix_backoff, 64
+    Application.put_env :kitto, :job_min_backoff, 64
     Application.put_env :kitto, :job_max_backoff, maxval
     Subject.fail :failjob
 
