@@ -69,15 +69,25 @@ defmodule Kitto.JobTest do
     pid = self()
     job = fn -> send pid, :ok end
     interval = 100
-    times = 3
 
-    spawn(Kitto.Job, :new, [%{name: :dummy_job,
+    spawn_link(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{first_at: false, interval: interval}}])
 
-    :timer.sleep(interval * times + 10)
-    {:messages, mesg} = :erlang.process_info(pid, :messages)
-
-    assert Enum.count(mesg) == times
+    receive do
+      :ok ->
+      receive do
+        :ok ->
+          receive do
+            :ok -> :done
+          after
+            130 -> raise "Job was not called within the expected time"
+          end
+      after
+        130 -> raise "Job was not called within the expected time"
+      end
+    after
+      130 -> raise "Job was not called within the expected time"
+    end
   end
 end
