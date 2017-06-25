@@ -12,6 +12,9 @@ defmodule Kitto.Mixfile do
      description: description(),
      package: package(),
      deps: deps(),
+     dialyzer: [
+       flags: [:unmatched_returns, :error_handling, :race_conditions, :no_opaque, :underspecs],
+       paths: ["_build/dev/lib/kitto/ebin"]],
      test_coverage: [tool: ExCoveralls],
      preferred_cli_env: [
        "coveralls": :test,
@@ -37,6 +40,7 @@ defmodule Kitto.Mixfile do
      {:fs, "~> 2.12.0"},
      {:httpoison, "~> 0.11.1"},
      {:ex_doc, "~> 0.14", only: :dev},
+     {:dialyxir, "~> 0.5", only: :dev, runtime: false},
      {:credo, "~> 0.5", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},
      {:excoveralls, "~> 0.5", only: :test},
