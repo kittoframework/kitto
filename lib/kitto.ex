@@ -24,6 +24,7 @@ defmodule Kitto do
     Supervisor.start_link(children(), opts)
   end
 
+  @spec start_server() :: {:ok, pid()}
   def start_server do
     Logger.info "Starting Kitto server, listening on #{ip_human(ip())}:#{port()}"
     {:ok, _pid} = Plug.Adapters.Cowboy.http(Kitto.Router, [], ip: ip(), port: port())
@@ -32,6 +33,7 @@ defmodule Kitto do
   @doc """
   Returns the root path of the dashboard project
   """
+  @spec root() :: String.t() | no_return()
   def root do
     case Application.get_env(:kitto, :root) do
       :otp_app -> Application.app_dir(Application.get_env(:kitto, :otp_app))
@@ -48,16 +50,19 @@ defmodule Kitto do
   @doc """
   Returns true when the asset development server is set to be watching for changes
   """
+  @spec watch_assets?() :: any()
   def watch_assets?, do: Application.get_env :kitto, :watch_assets?, true
 
   @doc """
   Returns the binding ip of the assets watcher server
   """
+  @spec asset_server_host() :: any()
   def asset_server_host, do: Application.get_env :kitto, :assets_host, "127.0.0.1"
 
   @doc """
   Returns the binding port of the assets watcher server
   """
+  @spec asset_server_port() :: any()
   def asset_server_port, do: Application.get_env :kitto, :assets_port, 8080
 
   defp ip, do: ip(Application.get_env(:kitto, :ip, @defaults.ip))

@@ -31,6 +31,7 @@ defmodule Kitto.BackoffServer do
   @doc """
   Resets the backoff for the given atom to 0
   """
+  @spec succeed(atom()) :: atom()
   def succeed(name), do: set(name, 0)
 
   @doc """
@@ -49,11 +50,15 @@ defmodule Kitto.BackoffServer do
   Makes the calling process sleep for the accumulated backoff time
   for the given atom
   """
+  @spec backoff!(atom()) :: :nop | :ok
   def backoff!(name), do: backoff!(name, name |> get)
   defp backoff!(_name, val) when is_nil(val) or val == 0, do: :nop
   defp backoff!(_name, val), do: :timer.sleep(val)
 
+  @spec get(atom()) :: nil | non_neg_integer()
   def get(name), do: GenServer.call(@server, {:get, name})
+
+  @spec reset() :: nil
   def reset, do: GenServer.call(@server, :reset)
 
   ### Callbacks
