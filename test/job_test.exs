@@ -6,7 +6,7 @@ defmodule Kitto.JobTest do
     job = fn -> send pid, :ok end
     interval = 100
 
-    spawn(Kitto.Job, :new, [%{name: :dummy_job,
+    spawn_link(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{interval: interval}}])
 
@@ -19,7 +19,7 @@ defmodule Kitto.JobTest do
     job = fn -> send pid, :ok end
     interval = 100
 
-    spawn(Kitto.Job, :new, [%{name: :dummy_job,
+    spawn_link(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{interval: interval}}])
 
@@ -31,7 +31,7 @@ defmodule Kitto.JobTest do
     job = fn -> send pid, :ok end
     first_at = 100
 
-    spawn(Kitto.Job, :new, [%{name: :dummy_job,
+    spawn_link(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{first_at: first_at}}])
 
@@ -45,7 +45,7 @@ defmodule Kitto.JobTest do
     job = fn -> send pid, :ok end
     first_at = 100
 
-    spawn(Kitto.Job, :new, [%{name: :dummy_job,
+    spawn_link(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{first_at: first_at}}])
 
@@ -56,7 +56,7 @@ defmodule Kitto.JobTest do
     pid = self()
     job = fn -> send pid, :ok end
 
-    spawn(Kitto.Job, :new, [%{name: :dummy_job,
+    spawn_link(Kitto.Job, :new, [%{name: :dummy_job,
                               job: job,
                               options: %{}}])
 
