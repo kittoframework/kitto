@@ -25,6 +25,7 @@ defmodule Kitto.StatsServer do
   @doc """
   Executes the given function and keeps stats about it in the provided key
   """
+  @spec measure(map()) :: :ok
   def measure(job), do: measure(@server, job)
   def measure(server, job) do
     server |> initialize_stats(job.name)
@@ -35,12 +36,16 @@ defmodule Kitto.StatsServer do
   @doc """
   Returns the current stats
   """
+  @spec stats() :: map()
+  @spec stats(pid() | atom()) :: map()
   def stats, do: stats(@server)
   def stats(server), do: GenServer.call(server, :stats)
 
   @doc """
   Resets the current stats
   """
+  @spec reset() :: :ok
+  @spec reset(pid() | atom()) :: :ok
   def reset, do: reset(@server)
   def reset(server), do: GenServer.cast(server, :reset)
 
