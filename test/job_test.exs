@@ -81,13 +81,13 @@ defmodule Kitto.JobTest do
           receive do
             :ok -> :done
           after
-            110 -> raise "Job was not called within the expected time"
+            140 -> raise "Job was not called within the expected time"
           end
       after
-        110 -> raise "Job was not called within the expected time"
+        114 -> raise "Job was not called within the expected time"
       end
     after
-      110 -> raise "Job was not called within the expected time"
+      140 -> raise "Job was not called within the expected time"
     end
   end
 end

@@ -52,7 +52,7 @@ defmodule Kitto.BackoffServerTest do
 
     {time, _} = :timer.tc fn -> Subject.backoff! :failjob end
 
-    assert_in_delta time / 1000, maxval, 5
+    assert_in_delta time / 1000, maxval, 15
   end
 
   describe "when :job_min_backoff is configured" do
