@@ -11,6 +11,7 @@ defmodule Kitto.Time do
 
   An atom can also be used (one of `[:second, :minute, :hour, :day]`) for convenience.
   """
+  @spec mseconds(tuple() | atom()) :: nil | non_neg_integer()
   def mseconds({n, :milliseconds}), do: n
 
   def mseconds({1, duration}) when duration in [:second, :minute, :hour, :day] do

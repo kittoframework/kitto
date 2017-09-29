@@ -18,6 +18,7 @@ defmodule Kitto.Job do
   @doc """
   Registers a job to be started as a process by the runner supervisor
   """
+  @spec register(pid(), atom(), keyword(), map(), (() -> any())) :: map()
   def register(server, name, options, definition, job) do
     import Kitto.Time
 
@@ -30,6 +31,7 @@ defmodule Kitto.Job do
   @doc """
   Runs the job based on the given options
   """
+  @spec new(map()) :: no_return()
   def new(job) do
     case job.options[:interval] do
       nil -> once(job)

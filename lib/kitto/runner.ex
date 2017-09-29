@@ -26,6 +26,7 @@ defmodule Kitto.Runner do
   @doc """
   Updates the list of jobs to be run with the provided one
   """
+  @spec register(pid() | atom(), map()) :: map()
   def register(server, job) do
     GenServer.call(server, {:register, job})
   end
@@ -33,6 +34,7 @@ defmodule Kitto.Runner do
   @doc """
   Reloads all jobs defined in the given file
   """
+  @spec register(pid() | atom(), map()) :: :ok
   def reload_job(server, file) do
     GenServer.cast(server, {:reload_job, file})
   end
@@ -40,6 +42,7 @@ defmodule Kitto.Runner do
   @doc """
   Stops all jobs defined in the given file
   """
+  @spec stop_job(pid() | atom(), String.t()) :: :ok
   def stop_job(server, file) do
     GenServer.cast(server, {:stop_job, file})
   end
@@ -47,6 +50,7 @@ defmodule Kitto.Runner do
   @doc """
   Returns all the registered jobs
   """
+  @spec jobs(pid() | atom()) :: list(map())
   def jobs(server) do
     GenServer.call(server, {:jobs})
   end
@@ -54,6 +58,7 @@ defmodule Kitto.Runner do
   @doc """
   Returns the directory where the job scripts are located
   """
+  @spec jobs_dir() :: String.t()
   def jobs_dir, do: Path.join(Kitto.root, Application.get_env(:kitto, :jobs_dir, "jobs"))
 
   ### Callbacks
