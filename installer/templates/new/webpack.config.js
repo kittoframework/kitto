@@ -67,7 +67,7 @@ if (TARGET === 'start' || !TARGET) {
     devtool: 'eval-source-map',
     devServer: {
       contentBase: PATHS.build,
-
+      headers: { 'Access-Control-Allow-Origin': '*' },
       historyApiFallback: true,
       hot: true,
       inline: true,
