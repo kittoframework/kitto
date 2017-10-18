@@ -199,8 +199,16 @@ defmodule Mix.Tasks.Kitto.New do
     nil
   end
 
+  def recompile(regex) do
+    if Code.ensure_loaded?(Regex) and function_exported?(Regex, :recompile!, 1) do
+      apply(Regex, :recompile!, [regex])
+    else
+      regex
+    end
+  end
+
   defp check_application_name!(app_name) do
-    unless app_name =~ ~r/^[a-z][\w_]*$/ do
+    unless app_name =~ recompile(~r/^[a-z][\w_]*$/) do
       Mix.raise "Application name must start with a letter and have only " <>
                 "lowercase letters, numbers and underscore, " <>
                 "received: #{inspect app_name}"
