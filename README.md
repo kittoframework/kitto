@@ -43,13 +43,13 @@ To start creating your own, read [below](https://github.com/kittoframework/kitto
 Install the latest archive
 
 ```shell
-mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.6.0.ez
+mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_new-0.7.0.ez
 ```
 
 ## Requirements
 
-* `Elixir`: 1.3
-* `Erlang/OTP`: 19
+* `Elixir`: >= 1.3
+* `Erlang/OTP`: >= 19
 
 ### Assets
 

@@ -4,6 +4,31 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.7.0] - 2017-10-18
+
+### Added
+
+* `Kitto.Notifier.broadcast!/2` supports railroading.
+
+Example:
+
+```elixir
+job :ci_status, every: :minute do
+  # All the combinations below will do the expected thing and infer which
+  parameter is the topic and which is the message
+
+  CI.status(:awesome_project) |> broadcast!
+  CI.status(:awesome_project) |> broadcast!(:projects)
+  CI.status(:awesome_project) |> broadcast!(:projects)
+  broadcast!(:projects, CI.status(:awesome_project))
+end
+```
+
+### Fixed
+
+* `mix.kitto new <name>` check for valid name in OTP 20
+* Font loading in development, due to webpack-dev-server not setting CORS headers
+
 ## [0.6.0] - 2017-04-18
 
 ### Added
