@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Kitto.Server do
   require Logger
 
   @watchers webpack: [bin: "./node_modules/.bin/webpack-dev-server",
-                      opts: ["--stdin", "--progress"]]
+                      opts: ["--watch", "--progress", "--colors"]]
 
   @shortdoc "Starts applications and their servers"
 
