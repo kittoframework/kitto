@@ -47,7 +47,7 @@
     "gridster": "0.5.6",
     "imports": "^1.0.0",
     "rickshaw": "1.6.0",
-    "jquery": "2.2.3",
+    "jquery": "^3.0.0",
     "jquery-knob": "1.2.11"
   }
 }
