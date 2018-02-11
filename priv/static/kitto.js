@@ -1,11 +1,15 @@
 import $ from 'jquery';
 import Gridster from 'jquery.gridster';
+import fscreen from 'fscreen';
 
 window.jQuery = window.$ = $;
 
 class Kitto {
   static start() {
-    Kitto.initializeGridster().initializeRotator();
+    Kitto
+      .initializeGridster()
+      .initializeRotator()
+      .initializeFullScreenButton();
   }
 
   static config(config) {
@@ -75,6 +79,23 @@ class Kitto {
 
     rotate();
     setInterval(rotate, interval);
+
+    return this;
+  }
+
+  static initializeFullScreenButton() {
+    var timer;
+    var $button = $('.fullscreen-button');
+
+    $('body').on('mousemove', function() {
+      clearTimeout(timer);
+      if (!$button.hasClass('active')) { $button.addClass('active') }
+      timer = setTimeout(function() { $button.removeClass('active') }, 1000);
+    })
+
+    $button.on('click', function() {
+      fscreen.requestFullscreen(document.getElementById('container'));
+    })
 
     return this;
   }

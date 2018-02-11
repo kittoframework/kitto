@@ -12,11 +12,11 @@
   </head>
 
   <body>
+    <i class="fullscreen-button fa fa-arrows-alt"></i>
+
     <div id="container">
       <%= @template %>
     </div>
-
-    <i class="fullscreen-button fa fa-arrows-alt"></i>
 
     <script type="text/javascript" src="/assets/application.js"></script>
     <script type="text/javascript" src="/assets/widgets.js"></script>
