@@ -12,6 +12,8 @@
   </head>
 
   <body>
+    <i class="fullscreen-button fa fa-arrows-alt"></i>
+
     <div id="container">
       <%= @template %>
     </div>
