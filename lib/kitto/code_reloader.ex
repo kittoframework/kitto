@@ -34,11 +34,10 @@ defmodule Kitto.CodeReloader do
 
   # Linux inotify
   def handle_info({_pid, {:fs, :file_event}, {path, event}}, state)
-    when event in [[:modified, :closed], [:created]],
-    do: reload(path, state)
+      when event in [[:modified, :closed], [:created]],
+      do: reload(path, state)
 
-  def handle_info({_pid, {:fs, :file_event}, {path, [:deleted]}}, state),
-    do: stop(path, state)
+  def handle_info({_pid, {:fs, :file_event}, {path, [:deleted]}}, state), do: stop(path, state)
 
   # Mac fsevent
   def handle_info({_pid, {:fs, :file_event}, {path, [_, _, :modified, _]}}, state) do
@@ -64,17 +63,23 @@ defmodule Kitto.CodeReloader do
   defp reload(path, state) do
     with file <- path |> to_string do
       cond do
-        file |> job? -> Runner.reload_job(state.opts[:server], file)
-        file |> lib? -> Mix.Tasks.Compile.Elixir.run ["--ignore-module-conflict"]
-        true -> :noop # File not watched.
+        file |> job? ->
+          Runner.reload_job(state.opts[:server], file)
+
+        file |> lib? ->
+          Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"])
+
+        # File not watched.
+        true ->
+          :noop
       end
     end
 
     {:noreply, state}
   end
 
-  defp jobs_rexp, do: ~r/#{Kitto.Runner.jobs_dir}.+.*exs?$/
-  defp lib_rexp, do: ~r/#{Kitto.root}\/lib.+.*ex$/
+  defp jobs_rexp, do: ~r/#{Kitto.Runner.jobs_dir()}.+.*exs?$/
+  defp lib_rexp, do: ~r/#{Kitto.root()}\/lib.+.*ex$/
 
   defp lib?(path), do: String.match?(path, lib_rexp())
   defp job?(path), do: path |> String.match?(jobs_rexp())
