@@ -25,6 +25,9 @@ config :kitto, root: Path.dirname(__DIR__), port: 4000, otp_app: :<%= applicatio
 # Use serve_assets?: true to enable serving static assets
 # config :kitto, serve_assets?: true
 #
+# Use :assets_path to configure the directory from which static assets are served
+# config :kitto, assets_path: "priv/static"
+#
 # Use default_dashboard: "your-dashboard" to specify the dashboard to be served
 # when the root path is requested.
 
@@ -33,7 +36,7 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Add authentication to `PORT /widgets/:id`. Change "asecret" to something more
+# Add authentication to `POST /widgets/:id`. Change "asecret" to something more
 # secure.
 #
 # config :kitto, :auth_token: "asecret"

@@ -14,7 +14,7 @@ defmodule Kitto.Router do
     plug Plug.Static,
          at: "assets",
          gzip: true,
-         from: Application.get_env(:kitto, :otp_app)
+         from: Application.get_env(:kitto, :assets_path) || Application.get_env(:kitto, :otp_app)
   end
 
   plug :dispatch
