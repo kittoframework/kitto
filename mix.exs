@@ -40,7 +40,7 @@ defmodule Kitto.Mixfile do
       {:cowboy, "~> 1.0.0"},
       {:plug, "~> 1.4"},
       {:poison, "~> 3.0"},
-      {:fs, "~> 2.12.0"},
+      {:file_system, "~> 0.2.1 or ~> 0.3"},
       {:httpoison, "~> 0.11.1"},
       {:ex_doc, "~> 0.14", only: :dev},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},

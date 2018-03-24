@@ -7,6 +7,8 @@ defmodule Kitto.CodeReloader do
 
   alias Kitto.Runner
 
+  @monitor_name :kitto_live_reload_file_monitor
+
   @doc """
   Starts the code reloader server
   """
@@ -17,8 +19,8 @@ defmodule Kitto.CodeReloader do
   @doc false
   def init(opts) do
     if reload_code?() do
-      :fs.start_link(:default_fs)
-      :fs.subscribe(:default_fs)
+      FileSystem.start_link(dirs: [Path.absname("")], name: @monitor_name)
+      FileSystem.subscribe(@monitor_name)
     end
 
     {:ok, %{opts: opts}}
@@ -33,22 +35,36 @@ defmodule Kitto.CodeReloader do
   ### Callbacks
 
   # Linux inotify
-  def handle_info({_pid, {:fs, :file_event}, {path, event}}, state)
+  def handle_info({:file_event, _pid, {path, event}}, state)
       when event in [[:modified, :closed], [:created]],
       do: reload(path, state)
 
-  def handle_info({_pid, {:fs, :file_event}, {path, [:deleted]}}, state), do: stop(path, state)
+  def handle_info({:file_event, _pid, {path, [change]}}, state)
+      when change in [:deleted, :removed] do
+    stop(path, state)
+  end
 
   # Mac fsevent
-  def handle_info({_pid, {:fs, :file_event}, {path, [_, _, :modified, _]}}, state) do
+  def handle_info({:file_event, _pid, {path, [:inodemetamod]}}, state) do
     reload(path, state)
   end
 
-  def handle_info({_pid, {:fs, :file_event}, {path, [_, :modified]}}, state) do
+  def handle_info(
+        {:file_event, _pid, {path, [:created, :removed, :renamed, :modified, :changeowner]}},
+        state
+      ) do
+    stop(path, state)
+  end
+
+  def handle_info({:file_event, _pid, {path, [_, _, :modified, _] = some}}, state) do
     reload(path, state)
   end
 
-  def handle_info(_other, state) do
+  def handle_info({:file_event, _pid, {path, [_, :modified] = other}}, state) do
+    reload(path, state)
+  end
+
+  def handle_info(other, state) do
     {:noreply, state}
   end
 
