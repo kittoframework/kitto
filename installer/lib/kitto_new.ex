@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Kitto.New do
   @repo "https://github.com/kittoframework/kitto"
 
   # File mappings
-  @lint {Credo.Check.Readability.MaxLineLength, false}
+  # credo:disable-for-next-line Credo.Check.Readability.MaxLineLength
   @new [
     {:eex,  "new/config/config.exs",                    "config/config.exs"},
     {:text, "new/config/dev.exs",                       "config/dev.exs"},
@@ -231,12 +231,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   defp cmd(cmd) do
     Mix.shell.info [:green, "* running ", :reset, cmd]
-
-    # We use :os.cmd/1 because there is a bug in OTP
-    # where we cannot execute .cmd files on Windows.
-    # We could use Mix.shell.cmd/1 but that automatically
-    # outputs to the terminal and we don't want that.
-    :os.cmd(String.to_char_list(cmd))
+    Mix.shell(cmd, quiet: true)
   end
 
   defp kitto_dep(opts) do

@@ -6,7 +6,7 @@ defmodule Kitto.Mixfile do
   def project do
     [app: :kitto,
      version: @version,
-     elixir: "~> 1.3",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: description(),
@@ -41,7 +41,7 @@ defmodule Kitto.Mixfile do
      {:httpoison, "~> 0.11.1"},
      {:ex_doc, "~> 0.14", only: :dev},
      {:dialyxir, "~> 0.5", only: :dev, runtime: false},
-     {:credo, "~> 0.5", only: [:dev, :test]},
+     {:credo, "~> 0.9", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},
      {:excoveralls, "~> 0.5", only: :test},
      {:inch_ex, "~> 0.5", only: :docs}]
