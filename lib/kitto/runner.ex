@@ -99,7 +99,7 @@ defmodule Kitto.Runner do
   end
 
   def handle_cast({:stop_job, file}, state) do
-    Logger.info "Stoppping jobs in file: #{file}"
+    Logger.info "Stopping jobs in file: #{file}"
 
     {:noreply, %{state | jobs: stop_jobs(state, file)}}
   end
