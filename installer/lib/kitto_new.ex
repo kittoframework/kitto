@@ -231,7 +231,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   defp cmd(cmd) do
     Mix.shell.info [:green, "* running ", :reset, cmd]
-    Mix.shell(cmd, quiet: true)
+    Mix.shell.cmd(cmd, quiet: true)
   end
 
   defp kitto_dep(opts) do
