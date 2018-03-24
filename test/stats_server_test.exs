@@ -8,26 +8,26 @@ defmodule Kitto.StatsServerTest do
 
     def succeed(_), do: {:ok, :success}
     def fail(_), do: {:ok, :fail}
-    def backoff!(_), do: send self(), {:ok, :backoff}
+    def backoff!(_), do: send(self(), {:ok, :backoff})
   end
 
   setup do
-    Application.put_env :kitto, :backoff_module, Kitto.StatsServerTest.BackoffMock
+    Application.put_env(:kitto, :backoff_module, Kitto.StatsServerTest.BackoffMock)
     definition = %{file: "jobs/dummy.exs", line: 1}
     job = %{name: :dummy_job, options: %{}, definition: definition, job: fn -> :ok end}
     {:ok, server} = StatsServer.start_link(name: :stats_server)
 
-    on_exit fn ->
-      Application.delete_env :kitto, :backoff_module
-      Application.delete_env :kitto, :job_backoff_enabled?
+    on_exit(fn ->
+      Application.delete_env(:kitto, :backoff_module)
+      Application.delete_env(:kitto, :job_backoff_enabled?)
       server |> Process.exit(:normal)
-    end
+    end)
 
     %{
       successful_job: job,
       failing_job: %{job | job: fn -> raise RuntimeError end},
       server: server
-     }
+    }
   end
 
   test "#measure initializes the job stats", %{successful_job: job, server: server} do
@@ -36,8 +36,10 @@ defmodule Kitto.StatsServerTest do
     assert StatsServer.stats(server).dummy_job.times_completed == 1
   end
 
-  test "#measure when a job succeeds increments :times_triggered",
-    %{successful_job: job, server: server} do
+  test "#measure when a job succeeds increments :times_triggered", %{
+    successful_job: job,
+    server: server
+  } do
     server |> StatsServer.measure(job)
     server |> StatsServer.measure(job)
 
@@ -46,6 +48,7 @@ defmodule Kitto.StatsServerTest do
 
   test "#measure when a job fails increments :times_triggered", context do
     context.server |> StatsServer.measure(context.successful_job)
+
     assert_raise Kitto.Job.Error, fn ->
       context.server |> StatsServer.measure(context.failing_job)
     end
@@ -53,8 +56,10 @@ defmodule Kitto.StatsServerTest do
     assert StatsServer.stats(context.server).dummy_job.times_triggered == 2
   end
 
-  test "#measure when a job succeeds increments :times_completed",
-    %{successful_job: job, server: server} do
+  test "#measure when a job succeeds increments :times_completed", %{
+    successful_job: job,
+    server: server
+  } do
     server |> StatsServer.measure(job)
     server |> StatsServer.measure(job)
 
@@ -114,18 +119,19 @@ defmodule Kitto.StatsServerTest do
   test "#measure when a job fails, message contains the original error", context do
     job = context.failing_job
 
-    error = Exception.format_banner(:error, %RuntimeError{}) |> Regex.escape
-    assert_raise Kitto.Job.Error,
-                 ~r/Error: #{error}/,
-                 fn -> context.server |> StatsServer.measure(job) end
+    error = Exception.format_banner(:error, %RuntimeError{}) |> Regex.escape()
+
+    assert_raise Kitto.Job.Error, ~r/Error: #{error}/, fn ->
+      context.server |> StatsServer.measure(job)
+    end
   end
 
   test "#measure when a job fails, message contains the stacktrace", context do
     job = context.failing_job
 
-    assert_raise Kitto.Job.Error,
-                 ~r/Stacktrace: .*? anonymous fn/,
-                 fn -> context.server |> StatsServer.measure(job) end
+    assert_raise Kitto.Job.Error, ~r/Stacktrace: .*? anonymous fn/, fn ->
+      context.server |> StatsServer.measure(job)
+    end
   end
 
   describe "when :job_backoff_enabled? is set to false" do
@@ -157,10 +163,10 @@ defmodule Kitto.StatsServerTest do
   end
 
   defp disable_job_backoff(_context) do
-    Application.put_env :kitto, :job_backoff_enabled?, false
+    Application.put_env(:kitto, :job_backoff_enabled?, false)
   end
 
   defp enable_job_backoff(_context) do
-    Application.put_env :kitto, :job_backoff_enabled?, true
+    Application.put_env(:kitto, :job_backoff_enabled?, true)
   end
 end

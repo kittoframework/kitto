@@ -38,7 +38,7 @@ defmodule Kitto.Notifier do
   """
   @spec initial_broadcast!(pid()) :: list()
   def initial_broadcast!(pid) do
-    cache() |> Enum.each(fn ({topic, data}) -> broadcast!(pid, topic, data) end)
+    cache() |> Enum.each(fn {topic, data} -> broadcast!(pid, topic, data) end)
   end
 
   @doc """
@@ -47,10 +47,11 @@ defmodule Kitto.Notifier do
   """
   @spec broadcast!(atom() | String.t(), atom() | map() | list()) :: list()
   def broadcast!(data, topic) when is_atom(topic), do: broadcast!(topic, data)
+
   def broadcast!(topic, data) do
     unless topic == "_kitto", do: cache(topic, data)
 
-    connections() |> Enum.each(fn (connection) -> broadcast!(connection, topic, data) end)
+    connections() |> Enum.each(fn connection -> broadcast!(connection, topic, data) end)
   end
 
   @doc """
@@ -58,11 +59,13 @@ defmodule Kitto.Notifier do
   topic and payload to a specific process
   """
   @spec broadcast!(pid(), atom() | String.t(), map() | list()) :: list()
-  def broadcast!(pid, topic, data) when is_atom(topic), do: broadcast!(pid, topic |> to_string, data)
+  def broadcast!(pid, topic, data) when is_atom(topic),
+    do: broadcast!(pid, topic |> to_string, data)
+
   def broadcast!(pid, topic, data) do
     if !Process.alive?(pid), do: delete(pid)
 
-    send pid, {:broadcast, {topic, data |> Map.merge(updated_at())}}
+    send(pid, {:broadcast, {topic, data |> Map.merge(updated_at())}})
   end
 
   @doc """
@@ -79,19 +82,19 @@ defmodule Kitto.Notifier do
   Returns cached broadcasts
   """
   @spec cache() :: map()
-  def cache, do: notifier_cache() |> get(&(&1))
+  def cache, do: notifier_cache() |> get(& &1)
 
   @doc """
   Resets the broadcast cache
   """
   @spec clear_cache() :: :ok
-  def clear_cache, do: notifier_cache() |> update(fn (_) -> %{} end)
+  def clear_cache, do: notifier_cache() |> update(fn _ -> %{} end)
 
   @doc """
   Caches the given payload with the key provided as the first argument
   """
   def cache(topic, data) when is_atom(topic), do: cache(topic |> to_string, data)
-  def cache(topic, data), do: notifier_cache() |> update(&(Map.merge(&1, %{topic => data})))
+  def cache(topic, data), do: notifier_cache() |> update(&Map.merge(&1, %{topic => data}))
 
   @doc """
   Removes a connection from the connections list
@@ -103,7 +106,7 @@ defmodule Kitto.Notifier do
   Returns the registered connections
   """
   @spec connections() :: [Conn.t()]
-  def connections, do: notifier_connections() |> get(&(&1))
+  def connections, do: notifier_connections() |> get(& &1)
 
   defp notifier_connections, do: Process.whereis(:notifier_connections)
   defp notifier_cache, do: Process.whereis(:notifier_cache)

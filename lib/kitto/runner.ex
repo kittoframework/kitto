@@ -18,7 +18,7 @@ defmodule Kitto.Runner do
   @doc false
   def init(opts) do
     server = self()
-    spawn fn -> load_jobs(server) end
+    spawn(fn -> load_jobs(server) end)
 
     {:ok, %{opts: opts, jobs: [], supervisor: nil}}
   end
@@ -59,7 +59,7 @@ defmodule Kitto.Runner do
   Returns the directory where the job scripts are located
   """
   @spec jobs_dir() :: String.t()
-  def jobs_dir, do: Path.join(Kitto.root, Application.get_env(:kitto, :jobs_dir, "jobs"))
+  def jobs_dir, do: Path.join(Kitto.root(), Application.get_env(:kitto, :jobs_dir, "jobs"))
 
   ### Callbacks
 
@@ -73,33 +73,37 @@ defmodule Kitto.Runner do
 
   @doc false
   def handle_cast({:jobs_loaded}, state) do
-    supervisor_opts = %{name: state.opts[:supervisor_name] || :runner_supervisor,
-                        jobs: state.jobs}
+    supervisor_opts = %{
+      name: state.opts[:supervisor_name] || :runner_supervisor,
+      jobs: state.jobs
+    }
 
-   {:ok, supervisor} = start_supervisor(supervisor_opts)
+    {:ok, supervisor} = start_supervisor(supervisor_opts)
 
-   {:noreply, %{state | supervisor: supervisor}}
+    {:noreply, %{state | supervisor: supervisor}}
   end
 
   def handle_cast({:reload_job, file}, state) do
-    Logger.info "Reloading job file: #{file}"
+    Logger.info("Reloading job file: #{file}")
 
     jobs = stop_jobs(state, file)
 
     server = self()
-    spawn fn ->
+
+    spawn(fn ->
       load_job(server, file)
+
       server
       |> jobs
       |> jobs_in_file(file)
-      |> Enum.each(&(start_job(state.supervisor, &1)))
-    end
+      |> Enum.each(&start_job(state.supervisor, &1))
+    end)
 
     {:noreply, %{state | jobs: jobs}}
   end
 
   def handle_cast({:stop_job, file}, state) do
-    Logger.info "Stoppping jobs in file: #{file}"
+    Logger.info("Stoppping jobs in file: #{file}")
 
     {:noreply, %{state | jobs: stop_jobs(state, file)}}
   end
@@ -117,16 +121,16 @@ defmodule Kitto.Runner do
   end
 
   defp load_job(pid, file) do
-    case file |> Validator.valid? do
+    case file |> Validator.valid?() do
       true -> file |> Workspace.load_file(pid)
-      false -> Logger.warn "Job: #{file} contains syntax error(s) and will not be loaded"
+      false -> Logger.warn("Job: #{file} contains syntax error(s) and will not be loaded")
     end
   end
 
   defp stop_jobs(state, file) do
     state.jobs
     |> jobs_in_file(file)
-    |> Enum.reduce(state.jobs, fn (job, jobs) ->
+    |> Enum.reduce(state.jobs, fn job, jobs ->
       Supervisor.terminate_child(state.supervisor, job.name)
       Supervisor.delete_child(state.supervisor, job.name)
       jobs |> List.delete(job)
@@ -134,9 +138,9 @@ defmodule Kitto.Runner do
   end
 
   defp load_jobs(pid) do
-    job_files() |> Enum.each(&(load_job(pid, &1)))
+    job_files() |> Enum.each(&load_job(pid, &1))
 
-    GenServer.cast pid, {:jobs_loaded}
+    GenServer.cast(pid, {:jobs_loaded})
   end
 
   defp job_files, do: Path.wildcard(Path.join(jobs_dir(), "/**/*.{ex,exs}"))

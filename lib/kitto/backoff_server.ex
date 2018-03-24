@@ -41,7 +41,7 @@ defmodule Kitto.BackoffServer do
   def fail(name) do
     case get(name) do
       nil -> set(name, min(minval(), maxval()))
-      0   -> set(name, min(minval(), maxval()))
+      0 -> set(name, min(minval(), maxval()))
       val -> set(name, min(val <<< 1, maxval()))
     end
   end
@@ -64,6 +64,7 @@ defmodule Kitto.BackoffServer do
   ### Callbacks
   def handle_call(:reset, _from, _state), do: {:reply, nil, %{}}
   def handle_call({:get, name}, _from, state), do: {:reply, state[name], state}
+
   def handle_call({:set, name, value}, _from, state) do
     {:reply, name, put_in(state[name], value)}
   end

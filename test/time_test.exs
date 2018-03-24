@@ -2,11 +2,11 @@ defmodule Kitto.TimeTest do
   use ExUnit.Case, async: true
   doctest Kitto.Time
 
-  test "#mseconds(:day)", do: assert Kitto.Time.mseconds(:day) == 24 * 3600 * 1000
-  test "#mseconds(:hour)", do: assert Kitto.Time.mseconds(:hour) == 3600 * 1000
-  test "#mseconds(:minute)", do: assert Kitto.Time.mseconds(:minute) == 60 * 1000
-  test "#mseconds(:second)", do: assert Kitto.Time.mseconds(:second) == 1000
-  test "#mseconds(nil)", do: assert Kitto.Time.mseconds(nil) == nil
+  test "#mseconds(:day)", do: assert(Kitto.Time.mseconds(:day) == 24 * 3600 * 1000)
+  test "#mseconds(:hour)", do: assert(Kitto.Time.mseconds(:hour) == 3600 * 1000)
+  test "#mseconds(:minute)", do: assert(Kitto.Time.mseconds(:minute) == 60 * 1000)
+  test "#mseconds(:second)", do: assert(Kitto.Time.mseconds(:second) == 1000)
+  test "#mseconds(nil)", do: assert(Kitto.Time.mseconds(nil) == nil)
 
   test "#mseconds({n, :days})" do
     assert Kitto.Time.mseconds({2, :days}) == 2 * 24 * 3600 * 1000

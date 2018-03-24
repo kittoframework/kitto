@@ -11,8 +11,8 @@ defmodule Kitto.View do
   "layout" found in the `templates_dir`.
   """
 
-  @templates_dir Application.get_env :kitto, :templates_dir, "dashboards"
-  @default_layout Application.get_env :kitto, :default_layout, "layout"
+  @templates_dir Application.get_env(:kitto, :templates_dir, "dashboards")
+  @default_layout Application.get_env(:kitto, :default_layout, "layout")
 
   @doc """
   Returns the EEx compiled output of the layout with template specified
@@ -34,7 +34,7 @@ defmodule Kitto.View do
   Returns the EEx compiled output of the error template
   """
   def render_error(code, message) do
-    "error" |> path |> EEx.eval_file([code: code, message: message])
+    "error" |> path |> EEx.eval_file(code: code, message: message)
   end
 
   @doc """
@@ -42,13 +42,13 @@ defmodule Kitto.View do
   """
   def exists?(template) do
     file = template |> path
-    File.exists?(file) && !(invalid_path?(template |> Path.split))
+    File.exists?(file) && !invalid_path?(template |> Path.split())
   end
 
   defp path(template), do: Path.join(templates_path(), "#{template}.html.eex")
-  defp templates_path, do: Path.join Kitto.root, @templates_dir
+  defp templates_path, do: Path.join(Kitto.root(), @templates_dir)
 
-  defp invalid_path?([h|_]) when h in [".", "..", ""], do: true
-  defp invalid_path?([h|t]), do: String.contains?(h, ["/", "\\", ":", "\0"]) or invalid_path?(t)
+  defp invalid_path?([h | _]) when h in [".", "..", ""], do: true
+  defp invalid_path?([h | t]), do: String.contains?(h, ["/", "\\", ":", "\0"]) or invalid_path?(t)
   defp invalid_path?([]), do: false
 end

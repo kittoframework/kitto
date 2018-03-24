@@ -21,7 +21,7 @@ defmodule Kitto.TestHelper do
         awaited = Process.whereis(name)
 
         if awaited && Process.alive?(awaited) do
-          send pid, {:started, awaited}
+          send(pid, {:started, awaited})
           exit(:normal)
         else
           await_process(pid, name, interval)

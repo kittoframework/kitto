@@ -3,8 +3,8 @@ defmodule Kitto.Router do
 
   alias Kitto.{View, Notifier}
 
-  if Application.get_env(:kitto, :debug), do: use Plug.Debugger, otp_app: :kitto
-  unless Mix.env == :test, do: plug Plug.Logger
+  if Application.get_env(:kitto, :debug), do: use(Plug.Debugger, otp_app: :kitto)
+  unless Mix.env() == :test, do: plug(Plug.Logger)
   use Plug.ErrorHandler
 
   plug :match
@@ -12,9 +12,9 @@ defmodule Kitto.Router do
 
   if Application.get_env(:kitto, :serve_assets?, true) do
     plug Plug.Static,
-         at: "assets",
-         gzip: true,
-         from: Application.get_env(:kitto, :assets_path) || Application.get_env(:kitto, :otp_app)
+      at: "assets",
+      gzip: true,
+      from: Application.get_env(:kitto, :assets_path) || Application.get_env(:kitto, :otp_app)
   end
 
   plug :dispatch
@@ -29,7 +29,7 @@ defmodule Kitto.Router do
     interval = query_params["interval"] || 60
 
     if View.exists?("rotator") do
-      conn |> render("rotator", [dashboards: dashboards, interval: interval])
+      conn |> render("rotator", dashboards: dashboards, interval: interval)
     else
       info = "Rotator template is missing.
               See: https://github.com/kittoframework/kitto/wiki/Cycling-Between-Dashboards
@@ -48,17 +48,17 @@ defmodule Kitto.Router do
   end
 
   post "dashboards", private: %{authenticated: true} do
-    {:ok, body, conn} = read_body conn
-    command = body |> Poison.decode! |> Map.put_new("dashboard", "*")
-    Notifier.broadcast! "_kitto", command
+    {:ok, body, conn} = read_body(conn)
+    command = body |> Poison.decode!() |> Map.put_new("dashboard", "*")
+    Notifier.broadcast!("_kitto", command)
 
     conn |> send_resp(204, "")
   end
 
   post "dashboards/:id", private: %{authenticated: true} do
-    {:ok, body, conn} = read_body conn
-    command = body |> Poison.decode! |> Map.put("dashboard", id)
-    Notifier.broadcast! "_kitto", command
+    {:ok, body, conn} = read_body(conn)
+    command = body |> Poison.decode!() |> Map.put("dashboard", id)
+    Notifier.broadcast!("_kitto", command)
 
     conn |> send_resp(204, "")
   end
@@ -72,19 +72,19 @@ defmodule Kitto.Router do
     conn
   end
 
-  get "widgets", do: conn |> render_json(Notifier.cache)
-  get "widgets/:id", do: conn |> render_json(Notifier.cache[id])
+  get "widgets", do: conn |> render_json(Notifier.cache())
+  get "widgets/:id", do: conn |> render_json(Notifier.cache()[id])
 
   post "widgets/:id", private: %{authenticated: true} do
     {:ok, body, conn} = read_body(conn)
 
-    Notifier.broadcast!(id, body |> Poison.decode!)
+    Notifier.broadcast!(id, body |> Poison.decode!())
 
     conn |> send_resp(204, "")
   end
 
   get "assets/*asset" do
-    if Kitto.watch_assets? do
+    if Kitto.watch_assets?() do
       conn |> redirect_to("#{development_assets_url()}#{asset |> Enum.join("/")}")
     else
       conn |> render_error(404, "Not Found") |> halt
@@ -112,28 +112,39 @@ defmodule Kitto.Router do
     do: send_resp(conn, code, View.render_error(code, message))
 
   defp listen_sse(conn, :""), do: listen_sse(conn, nil)
+
   defp listen_sse(conn, topics) do
     receive do
       {:broadcast, {topic, data}} ->
-        res = case is_nil(topics) || to_string(topic) in topics do
-          true -> send_event(conn, topic, data)
-          false -> conn
-        end
+        res =
+          case is_nil(topics) || to_string(topic) in topics do
+            true -> send_event(conn, topic, data)
+            false -> conn
+          end
 
         case res do
           :closed -> conn |> halt
           _ -> res |> listen_sse(topics)
         end
-      {:error, :closed} -> conn |> halt
-      {:misc, :close} -> conn |> halt
-      _ -> listen_sse(conn, topics)
+
+      {:error, :closed} ->
+        conn |> halt
+
+      {:misc, :close} ->
+        conn |> halt
+
+      _ ->
+        listen_sse(conn, topics)
     end
   end
 
   defp send_event(conn, topic, data) do
-    {_, conn} = chunk(conn, (["event: #{topic}",
-                              "data: {\"message\": #{Poison.encode!(data)}}"]
-                             |> Enum.join("\n")) <> "\n\n")
+    {_, conn} =
+      chunk(
+        conn,
+        (["event: #{topic}", "data: {\"message\": #{Poison.encode!(data)}}"]
+         |> Enum.join("\n")) <> "\n\n"
+      )
 
     conn
   end
@@ -158,7 +169,7 @@ defmodule Kitto.Router do
   defp default_dashboard, do: Application.get_env(:kitto, :default_dashboard, "sample")
 
   defp development_assets_url do
-    "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/assets/"
+    "http://#{Kitto.asset_server_host()}:#{Kitto.asset_server_port()}/assets/"
   end
 
   defp render_json(conn, json, opts \\ %{status: 200}) do

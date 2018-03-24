@@ -5,7 +5,7 @@ defmodule Kitto.Runner.JobSupervisor do
 
   use Supervisor
 
-  @max_restarts Application.get_env :kitto, :job_max_restarts, 300
+  @max_restarts Application.get_env(:kitto, :job_max_restarts, 300)
 
   @doc """
   Starts the job supervision tree

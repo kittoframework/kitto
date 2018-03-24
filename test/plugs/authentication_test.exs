@@ -27,37 +27,41 @@ defmodule Kitto.PlugAuthenticationTest do
   end
 
   test "grants access when auth token set without authenticated private param" do
-    Application.put_env :kitto, :auth_token, "asecret"
+    Application.put_env(:kitto, :auth_token, "asecret")
     conn = conn(:post, "/dashboard")
 
     assert Kitto.Plugs.Authentication.call(conn, @opts) == conn
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 
   test """
   denies access when auth token and authenticated private param set without
   authorization header provided
   """ do
-    Application.put_env :kitto, :auth_token, "asecret"
-    conn = conn(:post, "/widgets")
+    Application.put_env(:kitto, :auth_token, "asecret")
+
+    conn =
+      conn(:post, "/widgets")
       |> put_private(:authenticated, true)
       |> Kitto.Plugs.Authentication.call(@opts)
 
     assert conn.status == 401
     assert conn.state == :sent
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 
   test """
   grants access when auth token and authenticated private param set with
   authorization header provided
   """ do
-    Application.put_env :kitto, :auth_token, "asecret"
-    conn = conn(:post, "/widgets")
+    Application.put_env(:kitto, :auth_token, "asecret")
+
+    conn =
+      conn(:post, "/widgets")
       |> put_private(:authenticated, true)
       |> put_req_header("authentication", "Token asecret")
 
     assert Kitto.Plugs.Authentication.call(conn, @opts) == conn
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 end

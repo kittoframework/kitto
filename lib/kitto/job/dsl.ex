@@ -55,6 +55,7 @@ defmodule Kitto.Job.DSL do
   """
   defmacro job(name, options, contents \\ []) do
     name = if is_atom(name), do: name, else: String.to_atom(name)
+
     if options[:command] do
       _job(:shell, name, options)
     else
@@ -63,36 +64,48 @@ defmodule Kitto.Job.DSL do
   end
 
   defp _job(:elixir, name, options, contents) do
-    block = Macro.prewalk (options[:do] || contents[:do]), fn
-      {:|>, pipe_meta, [lhs, {:broadcast!, meta, context}]} when is_atom(context) or context == [] -> {:|>, pipe_meta, [lhs, {:broadcast!, meta, [name]}]} 
-      {:broadcast!, meta, args = [{:%{}, _, _}]} -> {:broadcast!, meta, [name] ++ args}
-      ast_node -> ast_node
-    end
+    block =
+      Macro.prewalk(options[:do] || contents[:do], fn
+        {:|>, pipe_meta, [lhs, {:broadcast!, meta, context}]}
+        when is_atom(context) or context == [] ->
+          {:|>, pipe_meta, [lhs, {:broadcast!, meta, [name]}]}
+
+        {:broadcast!, meta, args = [{:%{}, _, _}]} ->
+          {:broadcast!, meta, [name] ++ args}
+
+        ast_node ->
+          ast_node
+      end)
 
     quote do
-      Job.register binding()[:runner_server],
-                   unquote(name),
-                   unquote(options |> Keyword.delete(:do)),
-                   (__ENV__ |> Map.take([:file, :line])),
-                   fn -> unquote(block) end
+      Job.register(
+        binding()[:runner_server],
+        unquote(name),
+        unquote(options |> Keyword.delete(:do)),
+        __ENV__ |> Map.take([:file, :line]),
+        fn -> unquote(block) end
+      )
     end
   end
 
   defp _job(:shell, name, options) do
     quote do
       command = unquote(options)[:command]
+
       block = fn ->
-        [sh | arguments] = command |> String.split
+        [sh | arguments] = command |> String.split()
         {stdout, exit_code} = System.cmd(sh, arguments)
 
         Notifier.broadcast!(unquote(name), %{stdout: stdout, exit_code: exit_code})
       end
 
-      Job.register binding()[:runner_server],
-                   unquote(name),
-                   unquote(options),
-                   (__ENV__ |> Map.take([:file, :line])),
-                   block
+      Job.register(
+        binding()[:runner_server],
+        unquote(name),
+        unquote(options),
+        __ENV__ |> Map.take([:file, :line]),
+        block
+      )
     end
   end
 end

@@ -27,6 +27,7 @@ defmodule Kitto.StatsServer do
   """
   @spec measure(map()) :: :ok
   def measure(job), do: measure(@server, job)
+
   def measure(server, job) do
     server |> initialize_stats(job.name)
     server |> update_trigger_count(job.name)
@@ -52,9 +53,11 @@ defmodule Kitto.StatsServer do
   ### Callbacks
 
   def handle_call(:stats, _from, state), do: {:reply, state, state}
+
   def handle_call({:initialize_stats, name}, _from, state) do
     {:reply, name, Map.merge(state, %{name => Map.get(state, name, @default_stats)})}
   end
+
   def handle_call({:update_trigger_count, name}, _from, state) do
     old_stats = state[name]
     new_stats = %{name => %{old_stats | times_triggered: old_stats[:times_triggered] + 1}}
@@ -63,23 +66,28 @@ defmodule Kitto.StatsServer do
   end
 
   def handle_cast(:reset, _state), do: {:noreply, %{}}
+
   def handle_cast({:measure_call, job, run}, state) do
     current_stats = state[job.name]
 
-    new_stats = case run do
-      {:ok, time_took} ->
-        backoff_module().succeed(job.name)
-        times_completed = current_stats[:times_completed] + 1
-        total_running_time = current_stats[:total_running_time] + time_took
+    new_stats =
+      case run do
+        {:ok, time_took} ->
+          backoff_module().succeed(job.name)
+          times_completed = current_stats[:times_completed] + 1
+          total_running_time = current_stats[:total_running_time] + time_took
 
-        %{current_stats |
-          times_completed: times_completed,
-          total_running_time: total_running_time
-        } |> Map.merge(%{avg_time_took: total_running_time / times_completed})
-      {:error, _} ->
-        backoff_module().fail(job.name)
-        %{current_stats | failures: current_stats[:failures] + 1}
-    end
+          %{
+            current_stats
+            | times_completed: times_completed,
+              total_running_time: total_running_time
+          }
+          |> Map.merge(%{avg_time_took: total_running_time / times_completed})
+
+        {:error, _} ->
+          backoff_module().fail(job.name)
+          %{current_stats | failures: current_stats[:failures] + 1}
+      end
 
     {:noreply, Map.merge(state, %{job.name => new_stats})}
   end
@@ -88,6 +96,7 @@ defmodule Kitto.StatsServer do
 
   defp update_trigger_count(server, name),
     do: GenServer.call(server, {:update_trigger_count, name})
+
   defp measure_call(server, job) do
     if backoff_enabled?(), do: backoff_module().backoff!(job.name)
 
@@ -102,15 +111,15 @@ defmodule Kitto.StatsServer do
 
   defp timed_call(f) do
     try do
-      {:ok, ((f |> :timer.tc |> elem(0)) / 1_000_000)}
+      {:ok, (f |> :timer.tc() |> elem(0)) / 1_000_000}
     rescue
       e -> {:error, e}
     end
   end
 
-  defp backoff_enabled?, do: Application.get_env :kitto, :job_backoff_enabled?, true
+  defp backoff_enabled?, do: Application.get_env(:kitto, :job_backoff_enabled?, true)
 
   defp backoff_module do
-    Application.get_env :kitto, :backoff_module, Kitto.BackoffServer
+    Application.get_env(:kitto, :backoff_module, Kitto.BackoffServer)
   end
 end

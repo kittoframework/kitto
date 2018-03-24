@@ -10,8 +10,10 @@ defmodule Kitto.ViewTest do
     end
 
     test "renders template with the given assigns" do
-      html = "<div class=\"layout green\"><h1>Hello from kitto</h1>" <>
-             "\n\n  <h2>Hello from contributor</h2>\n\n</div>\n"
+      html =
+        "<div class=\"layout green\"><h1>Hello from kitto</h1>" <>
+          "\n\n  <h2>Hello from contributor</h2>\n\n</div>\n"
+
       assigns = [color: "green", user: "contributor"]
 
       assert Kitto.View.render("sample", assigns) == html

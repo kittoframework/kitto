@@ -6,34 +6,34 @@ defmodule Kitto.CodeReloaderTest do
   alias Kitto.CodeReloader
 
   @jobs_dir "test/fixtures/jobs"
-  @valid_job Path.join(@jobs_dir, "valid_job.exs") |> Path.absname
-  @lib_file Path.join("lib", "travis.ex") |> Path.absname
+  @valid_job Path.join(@jobs_dir, "valid_job.exs") |> Path.absname()
+  @lib_file Path.join("lib", "travis.ex") |> Path.absname()
 
   setup do
-    Application.put_env :kitto, :jobs_dir, @jobs_dir
+    Application.put_env(:kitto, :jobs_dir, @jobs_dir)
 
-    on_exit fn ->
-      Application.delete_env :kitto, :jobs_dir
-      Application.delete_env :kitto, :reload_code?
-    end
+    on_exit(fn ->
+      Application.delete_env(:kitto, :jobs_dir)
+      Application.delete_env(:kitto, :reload_code?)
+    end)
   end
 
   test "#reload_code? returns true when :reload_code? env is not set" do
-    Application.delete_env :kitto, :reload_code?
+    Application.delete_env(:kitto, :reload_code?)
 
-    assert CodeReloader.reload_code? == true
+    assert CodeReloader.reload_code?() == true
   end
 
   test "#reload_code? returns true when :reload_code? env is true" do
-    Application.put_env :kitto, :reload_code?, true
+    Application.put_env(:kitto, :reload_code?, true)
 
-    assert CodeReloader.reload_code? == true
+    assert CodeReloader.reload_code?() == true
   end
 
   test "#reload_code? returns false when :reload_code? env is false" do
-    Application.put_env :kitto, :reload_code?, false
+    Application.put_env(:kitto, :reload_code?, false)
 
-    assert CodeReloader.reload_code? == false
+    assert CodeReloader.reload_code?() == false
   end
 
   test "#when a job modification event is received on linux, calls Runner.reload_job/1" do
@@ -41,7 +41,7 @@ defmodule Kitto.CodeReloaderTest do
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:modified, :closed]}}
+    send(reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:modified, :closed]}})
 
     receive do
       message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -55,7 +55,7 @@ defmodule Kitto.CodeReloaderTest do
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:created]}}
+    send(reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:created]}})
 
     receive do
       message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -69,7 +69,7 @@ defmodule Kitto.CodeReloaderTest do
 
     {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-    send reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:deleted]}}
+    send(reloader, {make_ref(), {:fs, :file_event}, {@valid_job, [:deleted]}})
 
     receive do
       message -> assert message == {:"$gen_cast", {:stop_job, @valid_job}}
@@ -86,7 +86,7 @@ defmodule Kitto.CodeReloaderTest do
 
       file_change = {@valid_job, [:inodemetamod, :modified]}
 
-      send reloader, {make_ref(), {:fs, :file_event}, file_change}
+      send(reloader, {make_ref(), {:fs, :file_event}, file_change})
 
       receive do
         message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -105,7 +105,7 @@ defmodule Kitto.CodeReloaderTest do
 
       file_change = {@valid_job, [:inodemetamod, :modified]}
 
-      send reloader, {make_ref(), {:fs, :file_event}, file_change}
+      send(reloader, {make_ref(), {:fs, :file_event}, file_change})
 
       receive do
         message -> assert message == {:"$gen_cast", {:reload_job, @valid_job}}
@@ -117,12 +117,12 @@ defmodule Kitto.CodeReloaderTest do
 
   test "#when a lib modification file event is received, calls elixir compilation task" do
     test_pid = self()
-    mock_run = fn (_) -> send test_pid, :compiled end
+    mock_run = fn _ -> send(test_pid, :compiled) end
 
-    with_mock Mix.Tasks.Compile.Elixir, [run: mock_run] do
+    with_mock Mix.Tasks.Compile.Elixir, run: mock_run do
       {:ok, reloader} = CodeReloader.start_link(name: :reloader, server: :mock_server)
 
-      send reloader, {make_ref(), {:fs, :file_event}, {@lib_file, [:modified, :closed]}}
+      send(reloader, {make_ref(), {:fs, :file_event}, {@lib_file, [:modified, :closed]}})
 
       receive do
         :compiled -> :ok

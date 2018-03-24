@@ -3,10 +3,11 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
   import Kitto.FileAssertionHelper
 
   setup do
-    on_exit fn ->
-      File.rm_rf! Path.join(tmp_path(), "my_dash.html.eex")
-    end
-    Mix.Task.clear
+    on_exit(fn ->
+      File.rm_rf!(Path.join(tmp_path(), "my_dash.html.eex"))
+    end)
+
+    Mix.Task.clear()
     :ok
   end
 
@@ -18,6 +19,6 @@ defmodule Mix.Tasks.Kitto.Gen.DashboardTest do
 
   test "creates dashboard" do
     Mix.Tasks.Kitto.Gen.Dashboard.run(["--path", tmp_path(), "my_dash"])
-    assert_file Path.join(tmp_path(), "my_dash.html.eex")
+    assert_file(Path.join(tmp_path(), "my_dash.html.eex"))
   end
 end

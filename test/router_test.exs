@@ -8,9 +8,9 @@ defmodule Kitto.RouterTest do
   @opts Kitto.Router.init([])
 
   setup do
-    on_exit fn ->
-      Application.delete_env :kitto, :watch_assets?
-    end
+    on_exit(fn ->
+      Application.delete_env(:kitto, :watch_assets?)
+    end)
   end
 
   test "GET with unrecognized request path responds with 404 Not Found" do
@@ -25,36 +25,36 @@ defmodule Kitto.RouterTest do
 
   test "GET / with :default_dashboard left unconfigured redirects to dashboards/sample" do
     conn = conn(:get, "/")
-    Application.delete_env :kitto, :default_dashboard
+    Application.delete_env(:kitto, :default_dashboard)
     conn = Kitto.Router.call(conn, @opts)
 
     assert conn.state == :sent
     assert conn.status == 301
-    assert (conn |> get_resp_header("location") |> hd) == "/dashboards/sample"
+    assert conn |> get_resp_header("location") |> hd == "/dashboards/sample"
   end
 
   test "GET / with :default_dashboard configured redirects to the configured dashboard" do
     conn = conn(:get, "/")
 
-    Application.put_env :kitto, :default_dashboard, "jobs"
+    Application.put_env(:kitto, :default_dashboard, "jobs")
     conn = Kitto.Router.call(conn, @opts)
-    Application.delete_env :kitto, :default_dashboard
+    Application.delete_env(:kitto, :default_dashboard)
 
     assert conn.state == :sent
     assert conn.status == 301
-    assert (conn |> get_resp_header("location") |> hd) == "/dashboards/jobs"
+    assert conn |> get_resp_header("location") |> hd == "/dashboards/jobs"
   end
 
   test """
   GET /dashboards with :default_dashboard left unconfigured redirects to dashboards/sample
   """ do
     conn = conn(:get, "/dashboards")
-    Application.delete_env :kitto, :default_dashboard
+    Application.delete_env(:kitto, :default_dashboard)
     conn = Kitto.Router.call(conn, @opts)
 
     assert conn.state == :sent
     assert conn.status == 301
-    assert (conn |> get_resp_header("location") |> hd) == "/dashboards/sample"
+    assert conn |> get_resp_header("location") |> hd == "/dashboards/sample"
   end
 
   test """
@@ -62,20 +62,20 @@ defmodule Kitto.RouterTest do
   """ do
     conn = conn(:get, "/dashboards")
 
-    Application.put_env :kitto, :default_dashboard, "jobs"
+    Application.put_env(:kitto, :default_dashboard, "jobs")
     conn = Kitto.Router.call(conn, @opts)
-    Application.delete_env :kitto, :default_dashboard
+    Application.delete_env(:kitto, :default_dashboard)
 
     assert conn.state == :sent
     assert conn.status == 301
-    assert (conn |> get_resp_header("location") |> hd) == "/dashboards/jobs"
+    assert conn |> get_resp_header("location") |> hd == "/dashboards/jobs"
   end
 
   test "GET /dashboards/rotator responds with 200 OK when the template exists" do
     view = "body"
     conn = conn(:get, "/dashboards/rotator?dashboards=sample,jobs&interval=10")
 
-    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_template, _bindings) -> view end] do
+    with_mock Kitto.View, exists?: fn _ -> true end, render: fn _template, _bindings -> view end do
       conn = Kitto.Router.call(conn, @opts)
 
       assert conn.state == :sent
@@ -88,7 +88,7 @@ defmodule Kitto.RouterTest do
     is missing" do
     conn = conn(:get, "/dashboards/rotator?dashboards=sample,jobs&interval=10")
 
-    with_mock Kitto.View, [exists?: fn (_) -> false end] do
+    with_mock Kitto.View, exists?: fn _ -> false end do
       conn = Kitto.Router.call(conn, @opts)
 
       assert conn.state == :sent
@@ -101,10 +101,10 @@ defmodule Kitto.RouterTest do
     view = "body"
     conn = conn(:get, "/dashboards/rotator?dashboards=sample,jobs&interval=10")
 
-    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_template, _bindings) -> view end] do
+    with_mock Kitto.View, exists?: fn _ -> true end, render: fn _template, _bindings -> view end do
       Kitto.Router.call(conn, @opts)
 
-      assert called Kitto.View.render("rotator", [dashboards: ["sample", "jobs"], interval: "10"])
+      assert called(Kitto.View.render("rotator", dashboards: ["sample", "jobs"], interval: "10"))
     end
   end
 
@@ -123,7 +123,7 @@ defmodule Kitto.RouterTest do
     view = "body"
     conn = conn(:get, "/dashboards/sample")
 
-    with_mock Kitto.View, [exists?: fn (_) -> true end, render: fn (_, _) -> view end] do
+    with_mock Kitto.View, exists?: fn _ -> true end, render: fn _, _ -> view end do
       conn = Kitto.Router.call(conn, @opts)
 
       assert conn.state == :sent
@@ -135,12 +135,12 @@ defmodule Kitto.RouterTest do
   test "GET /events responds with 200 OK" do
     conn = conn(:get, "events")
 
-    spawn fn ->
+    spawn(fn ->
       receive do
       after
-        1 -> send conn.owner, {:misc, :close}
+        1 -> send(conn.owner, {:misc, :close})
       end
-    end
+    end)
 
     conn = Kitto.Router.call(conn, @opts)
     assert conn.state == :chunked
@@ -148,19 +148,19 @@ defmodule Kitto.RouterTest do
   end
 
   test "GET /events streams broadcasted messages" do
-    Kitto.Notifier.clear_cache
+    Kitto.Notifier.clear_cache()
     conn = conn(:get, "events")
     topic = "technology"
     message = "Kitto is awesome!"
 
-    spawn fn ->
+    spawn(fn ->
       receive do
       after
         1 ->
-          send conn.owner, {:broadcast, {topic, message}}
-          send conn.owner, {:misc, :close}
+          send(conn.owner, {:broadcast, {topic, message}})
+          send(conn.owner, {:misc, :close})
       end
-    end
+    end)
 
     conn = Kitto.Router.call(conn, @opts)
     assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
@@ -169,19 +169,19 @@ defmodule Kitto.RouterTest do
   test """
   GET /events streams does not broadcast messages not included in the provided topics
   """ do
-    Kitto.Notifier.clear_cache
+    Kitto.Notifier.clear_cache()
     conn = conn(:get, "events?topics=weather")
     topic = "technology"
     message = "Kitto is awesome!"
 
-    spawn fn ->
+    spawn(fn ->
       receive do
       after
         1 ->
-          send conn.owner, {:broadcast, {topic, message}}
-          send conn.owner, {:misc, :close}
+          send(conn.owner, {:broadcast, {topic, message}})
+          send(conn.owner, {:misc, :close})
       end
-    end
+    end)
 
     conn = Kitto.Router.call(conn, @opts)
     assert conn.resp_body == ""
@@ -190,45 +190,47 @@ defmodule Kitto.RouterTest do
   test """
   GET /events streams broadcasts only messages included in the provided topics
   """ do
-    Kitto.Notifier.clear_cache
+    Kitto.Notifier.clear_cache()
     conn = conn(:get, "events?topics=technology")
+
     events = [
       {:weather, "cloudy with a chance of meatballs"},
       {:technology, "kitto is awesome"}
     ]
 
-    spawn fn ->
+    spawn(fn ->
       receive do
       after
         1 ->
-          send conn.owner, {:broadcast, events |> Enum.at(0)}
-          send conn.owner, {:broadcast, events |> Enum.at(1)}
-          send conn.owner, {:misc, :close}
+          send(conn.owner, {:broadcast, events |> Enum.at(0)})
+          send(conn.owner, {:broadcast, events |> Enum.at(1)})
+          send(conn.owner, {:misc, :close})
       end
-    end
+    end)
 
     conn = Kitto.Router.call(conn, @opts)
+
     assert conn.resp_body == """
-    event: #{events |> Enum.at(1) |> elem(0)}
-    data: {\"message\": \"#{events |> Enum.at(1) |> elem(1)}\"}\n
-    """
+           event: #{events |> Enum.at(1) |> elem(0)}
+           data: {\"message\": \"#{events |> Enum.at(1) |> elem(1)}\"}\n
+           """
   end
 
   @tag :pending
   test "GET /events streams cached events first" do
-    Kitto.Notifier.clear_cache
-    Kitto.Notifier.cache :technology, %{news: "man made it to mars"}
+    Kitto.Notifier.clear_cache()
+    Kitto.Notifier.cache(:technology, %{news: "man made it to mars"})
     conn = conn(:get, "events")
     topic = "technology"
     message = "man made it to mars"
 
-    spawn fn ->
+    spawn(fn ->
       receive do
       after
         1 ->
-          send conn.owner, {:misc, :close}
+          send(conn.owner, {:misc, :close})
       end
-    end
+    end)
 
     conn = Kitto.Router.call(conn, @opts)
     assert conn.resp_body == "event: #{topic}\ndata: {\"message\": \"#{message}\"}\n\n"
@@ -246,15 +248,15 @@ defmodule Kitto.RouterTest do
     conn = conn(:get, "widgets")
     conn = Kitto.Router.call(conn, @opts)
 
-    Poison.decode! conn.resp_body
+    Poison.decode!(conn.resp_body)
   end
 
   test "GET /widgets responds with all cached events" do
     conn = conn(:get, "widgets")
 
-    Kitto.Notifier.clear_cache
-    Kitto.Notifier.cache :technology, %{news: "man made it to mars"}
-    Kitto.Notifier.cache :stockmarket, %{trend: "it's going up"}
+    Kitto.Notifier.clear_cache()
+    Kitto.Notifier.cache(:technology, %{news: "man made it to mars"})
+    Kitto.Notifier.cache(:stockmarket, %{trend: "it's going up"})
 
     conn = Kitto.Router.call(conn, @opts)
 
@@ -269,9 +271,9 @@ defmodule Kitto.RouterTest do
     cached_event = %{news: "man made it to mars"}
     irrelevant_event = %{message: "nobody cares about this"}
 
-    Kitto.Notifier.clear_cache
-    Kitto.Notifier.cache :technology, cached_event
-    Kitto.Notifier.cache :irrelevant, irrelevant_event
+    Kitto.Notifier.clear_cache()
+    Kitto.Notifier.cache(:technology, cached_event)
+    Kitto.Notifier.cache(:irrelevant, irrelevant_event)
 
     conn = Kitto.Router.call(conn, @opts)
     parsed_body = Poison.decode!(conn.resp_body)
@@ -283,29 +285,29 @@ defmodule Kitto.RouterTest do
     test "when :watch_assets? is not set, it redirects to the asset builder url" do
       path = "assets/application.js"
       conn = conn(:get, path) |> Kitto.Router.call(@opts)
-      asset_builder_url = "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/"
+      asset_builder_url = "http://#{Kitto.asset_server_host()}:#{Kitto.asset_server_port()}/"
 
       assert conn.state == :sent
       assert conn.status == 301
 
-      assert ((conn |> get_resp_header("location")) |> hd) == asset_builder_url <> path
+      assert conn |> get_resp_header("location") |> hd == asset_builder_url <> path
     end
 
     test "when :watch_assets? is set to true, it redirects to the asset builder url" do
-      Application.put_env :kitto, :watch_assets?, true
+      Application.put_env(:kitto, :watch_assets?, true)
 
       path = "assets/application.js"
       conn = conn(:get, path) |> Kitto.Router.call(@opts)
-      asset_builder_url = "http://#{Kitto.asset_server_host}:#{Kitto.asset_server_port}/"
+      asset_builder_url = "http://#{Kitto.asset_server_host()}:#{Kitto.asset_server_port()}/"
 
       assert conn.state == :sent
       assert conn.status == 301
 
-      assert ((conn |> get_resp_header("location")) |> hd) == asset_builder_url <> path
+      assert conn |> get_resp_header("location") |> hd == asset_builder_url <> path
     end
 
     test "when :watch_assets? is set to false, it responds with 404" do
-      Application.put_env :kitto, :watch_assets?, false
+      Application.put_env(:kitto, :watch_assets?, false)
 
       conn = conn(:get, "assets/application.js") |> Kitto.Router.call(@opts)
 
@@ -328,7 +330,7 @@ defmodule Kitto.RouterTest do
     body = %{elixir: "is awesome!"}
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
 
-    with_mock Kitto.Notifier, [broadcast!: mock_broadcast(topic, body)] do
+    with_mock Kitto.Notifier, broadcast!: mock_broadcast(topic, body) do
       Kitto.Router.call(conn, @opts)
 
       assert_receive :ok
@@ -338,7 +340,7 @@ defmodule Kitto.RouterTest do
   test "POST /widgets/:id updates cache with the body on the given topic" do
     topic = "technology"
     cached_body = %{news: "man made it to mars"}
-    Kitto.Notifier.cache :technology, cached_body
+    Kitto.Notifier.cache(:technology, cached_body)
     conn = conn(:post, "widgets/#{topic}", Poison.encode!(%{elixir: "is awesome!"}))
 
     conn = Kitto.Router.call(conn, @opts)
@@ -354,40 +356,44 @@ defmodule Kitto.RouterTest do
   end
 
   test "with auth token POST /widgets/:id grants access when provided" do
-    Application.put_env :kitto, :auth_token, "asecret"
+    Application.put_env(:kitto, :auth_token, "asecret")
     topic = "technology"
     body = %{elixir: "is awesome!"}
 
-    conn = conn(:post, "widgets/#{topic}", Poison.encode!(body))
+    conn =
+      conn(:post, "widgets/#{topic}", Poison.encode!(body))
       |> put_req_header("authentication", "Token asecret")
       |> Kitto.Router.call(@opts)
 
     assert conn.state == :sent
     assert conn.status == 204
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 
   test "with auth token POST /widgets/:id denies access when not provided" do
-    Application.put_env :kitto, :auth_token, "asecret"
+    Application.put_env(:kitto, :auth_token, "asecret")
     topic = "technology"
     body = %{elixir: "is awesome!"}
 
-    conn = conn(:post, "widgets/#{topic}", Poison.encode!(body))
+    conn =
+      conn(:post, "widgets/#{topic}", Poison.encode!(body))
       |> Kitto.Router.call(@opts)
 
     assert conn.state == :sent
     assert conn.status == 401
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 
   test "POST /dashboards/:id requires authentication" do
-    Application.put_env :kitto, :auth_token, "asecret"
-    conn = conn(:post, "dashboards/sample", "")
+    Application.put_env(:kitto, :auth_token, "asecret")
+
+    conn =
+      conn(:post, "dashboards/sample", "")
       |> Kitto.Router.call(@opts)
 
     assert conn.state == :sent
     assert conn.status == 401
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 
   test "POST /dashboards/:id reloads single dashboard" do
@@ -395,9 +401,9 @@ defmodule Kitto.RouterTest do
     body = %{command: "reload"}
     conn = conn(:post, "dashboards/#{dashboard}", Poison.encode!(body))
 
-    mock = mock_broadcast "_kitto", Map.put(body, :dashboard, dashboard)
+    mock = mock_broadcast("_kitto", Map.put(body, :dashboard, dashboard))
 
-    with_mock Kitto.Notifier, [broadcast!: mock] do
+    with_mock Kitto.Notifier, broadcast!: mock do
       Kitto.Router.call(conn, @opts)
 
       assert_receive :ok
@@ -405,22 +411,24 @@ defmodule Kitto.RouterTest do
   end
 
   test "POST /dashboards requires authentication" do
-    Application.put_env :kitto, :auth_token, "asecret"
-    conn = conn(:post, "dashboards", "")
+    Application.put_env(:kitto, :auth_token, "asecret")
+
+    conn =
+      conn(:post, "dashboards", "")
       |> Kitto.Router.call(@opts)
 
     assert conn.state == :sent
     assert conn.status == 401
-    Application.delete_env :kitto, :auth_token
+    Application.delete_env(:kitto, :auth_token)
   end
 
   test "POST /dashboards reloads all dashboards" do
     body = %{command: "reload"}
     conn = conn(:post, "dashboards", Poison.encode!(body))
 
-    mock = mock_broadcast "_kitto", Map.put(body, :dashboard, "*")
+    mock = mock_broadcast("_kitto", Map.put(body, :dashboard, "*"))
 
-    with_mock Kitto.Notifier, [broadcast!: mock] do
+    with_mock Kitto.Notifier, broadcast!: mock do
       Kitto.Router.call(conn, @opts)
 
       assert_receive :ok
@@ -431,9 +439,9 @@ defmodule Kitto.RouterTest do
     body = %{command: "reload", dashboard: "sample"}
     conn = conn(:post, "dashboards", Poison.encode!(body))
 
-    mock = mock_broadcast "_kitto", Map.put(body, :dashboard, "sample")
+    mock = mock_broadcast("_kitto", Map.put(body, :dashboard, "sample"))
 
-    with_mock Kitto.Notifier, [broadcast!: mock] do
+    with_mock Kitto.Notifier, broadcast!: mock do
       Kitto.Router.call(conn, @opts)
 
       assert_receive :ok
@@ -450,11 +458,11 @@ defmodule Kitto.RouterTest do
   end
 
   def mock_broadcast(expected_topic, expected_body) do
-    fn (topic, body) ->
+    fn topic, body ->
       if topic == expected_topic && atomify_map(body) == expected_body do
-        send self(), :ok
+        send(self(), :ok)
       else
-        send self(), :error
+        send(self(), :error)
       end
     end
   end

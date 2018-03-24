@@ -49,9 +49,10 @@ defmodule Kitto.Plugs.Authentication do
   end
 
   defp authenticated?(conn) do
-    auth_token() == conn
+    auth_token() ==
+      conn
       |> get_req_header("authentication")
-      |> List.first
+      |> List.first()
       |> to_string
       |> String.replace(~r/^Token\s/, "")
   end

@@ -31,24 +31,26 @@ defmodule Mix.Tasks.Kitto.Install do
   end
 
   defp process(%{gist: gist, widget: widget}) do
-    files = gist |> String.split("/")
-    |> build_gist_url
-    |> download_gist
-    |> Map.get(:files)
-    |> Enum.map(&extract_file_properties/1)
-    |> Enum.filter(&supported_file_type?/1)
+    files =
+      gist
+      |> String.split("/")
+      |> build_gist_url
+      |> download_gist
+      |> Map.get(:files)
+      |> Enum.map(&extract_file_properties/1)
+      |> Enum.filter(&supported_file_type?/1)
 
     widget_dir = widget || find_widget_filename(files)
 
     files
-    |> Enum.map(&(determine_file_location(&1, widget_dir)))
+    |> Enum.map(&determine_file_location(&1, widget_dir))
     |> Enum.each(&write_file/1)
   end
 
   defp process(%{gist: gist}), do: process(%{gist: gist, widget: nil})
 
   defp process(_) do
-    Mix.shell.error "Unsupported arguments"
+    Mix.shell().error("Unsupported arguments")
   end
 
   defp write_file(file) do
@@ -57,27 +59,31 @@ defmodule Mix.Tasks.Kitto.Install do
   end
 
   defp determine_file_location(_file, widget_name) when is_nil(widget_name) do
-    Mix.shell.error "Please specify a widget directory using the --widget flag"
-    Mix.raise "Installation failed"
+    Mix.shell().error("Please specify a widget directory using the --widget flag")
+    Mix.raise("Installation failed")
   end
 
   defp determine_file_location(file = %{language: "Elixir", filename: filename}, _) do
-    file |> put_in([:path], (cond do
-      Regex.match?(@job_rexp, filename) -> "jobs"
-      Regex.match?(@lib_rexp, filename) -> "lib"
-      true -> Mix.shell.error "Found Elixir file #{filename} not ending in .ex or exs"
-    end))
+    file
+    |> put_in(
+      [:path],
+      cond do
+        Regex.match?(@job_rexp, filename) -> "jobs"
+        Regex.match?(@lib_rexp, filename) -> "lib"
+        true -> Mix.shell().error("Found Elixir file #{filename} not ending in .ex or exs")
+      end
+    )
   end
 
   # Other files all go into the widgets dir
   defp determine_file_location(file, widget_name) do
-    put_in file, [:path], Path.join(["widgets", widget_name])
+    put_in(file, [:path], Path.join(["widgets", widget_name]))
   end
 
   defp find_widget_filename(files) do
     files
     |> Enum.filter(&(&1.language == "JavaScript"))
-    |> List.first
+    |> List.first()
     |> extract_widget_dir
   end
 
@@ -91,7 +97,7 @@ defmodule Mix.Tasks.Kitto.Install do
 
   defp extract_file_properties({_filename, file}), do: file
 
-  defp download_gist(url), do: url |> HTTPoison.get! |> process_response
+  defp download_gist(url), do: url |> HTTPoison.get!() |> process_response
 
   defp build_gist_url([gist_url]), do: @github_base_url <> gist_url
   defp build_gist_url([_ | gist_url]), do: build_gist_url(gist_url)
@@ -103,8 +109,10 @@ defmodule Mix.Tasks.Kitto.Install do
   defp process_response(%HTTPoison.Response{status_code: code, body: body}) do
     decoded_body = body |> Poison.decode!(keys: :atoms)
 
-    Mix.shell.error "Could not fetch the gist from GitHub: " <>
-                    "#{code}: #{decoded_body.message}"
-    Mix.raise "Installation failed"
+    Mix.shell().error(
+      "Could not fetch the gist from GitHub: " <> "#{code}: #{decoded_body.message}"
+    )
+
+    Mix.raise("Installation failed")
   end
 end

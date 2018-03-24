@@ -1,7 +1,7 @@
 defmodule Kitto.Job.ValidatorTest do
   use ExUnit.Case, async: true
 
-  @jobs_dir Path.join ~w(test fixtures jobs)
+  @jobs_dir Path.join(~w(test fixtures jobs))
 
   setup do
     %{
@@ -11,14 +11,16 @@ defmodule Kitto.Job.ValidatorTest do
   end
 
   test """
-  #valid? returns true when the given file does not contain syntax errors
-  """, %{valid_job: job} do
+       #valid? returns true when the given file does not contain syntax errors
+       """,
+       %{valid_job: job} do
     assert Kitto.Job.Validator.valid?(job) == true
   end
 
   test """
-  #valid? returns false when the given file contains syntax errors
-  """, %{invalid_job: job} do
+       #valid? returns false when the given file contains syntax errors
+       """,
+       %{invalid_job: job} do
     assert Kitto.Job.Validator.valid?(job) == false
   end
 end

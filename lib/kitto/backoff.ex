@@ -4,6 +4,6 @@ defmodule Kitto.Backoff do
   """
 
   @callback succeed(atom) :: any
-  @callback fail(atom):: any
+  @callback fail(atom) :: any
   @callback backoff!(atom) :: any
 end

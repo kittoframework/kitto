@@ -3,10 +3,11 @@ defmodule Mix.Tasks.Kitto.Gen.JobTest do
   import Kitto.FileAssertionHelper
 
   setup do
-    on_exit fn ->
-      File.rm_rf! Path.join(tmp_path, "my_widget")
-    end
-    Mix.Task.clear
+    on_exit(fn ->
+      File.rm_rf!(Path.join(tmp_path, "my_widget"))
+    end)
+
+    Mix.Task.clear()
     :ok
   end
 
@@ -18,6 +19,6 @@ defmodule Mix.Tasks.Kitto.Gen.JobTest do
 
   test "creates job" do
     Mix.Tasks.Kitto.Gen.Job.run(["--path", tmp_path, "my_job"])
-    assert_file Path.join(tmp_path, "my_job.exs")
+    assert_file(Path.join(tmp_path, "my_job.exs"))
   end
 end
