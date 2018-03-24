@@ -4,6 +4,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.8.0] - 2018-03-27
+
+### Added
+
+* Button to make a dashboard fullscreen
+
+### Changed
+
+* [security] jQuery npm dependency is specified with `^3.0.0`, (7c9dff)
+
+### Fixed
+
+* Static asset serving for heroku by providing `:assets_path`,
+  see: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku#configure-assets
+
 ## [0.7.0] - 2017-10-18
 
 ### Added
