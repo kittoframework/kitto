@@ -180,6 +180,11 @@ Each widget is updated with data from one source specified using the
 
 ## Deployment
 
+
+### Deployment Guides
+
+[distillery][wiki.distillery] | [docker][wiki.docker] | [heroku][wiki.heroku] | [systemd][wiki.systemd]
+
 Compile the project
 
 ```shell
@@ -276,3 +281,7 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [wiki-heroku]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku
 [wiki-distillery]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Distillery
 [demo-jobs]: https://kitto.io/dashboards/jobs
+[wiki.distillery]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Distillery
+[wiki.docker]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Docker
+[wiki.heroku]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku
+[wiki.systemd]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-systemd-Unit
