@@ -1,0 +1,4 @@
+<h1>Hello from <%= Kitto.Mixfile.project[:app] %></h1>
+<%= if assigns[:user] do %>
+  <h2>Hello from <%= @user %></h2>
+<% end %>

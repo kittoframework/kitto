@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.9.0] - 2018-10-15
+
+### Added
+
+* Rendering support for templates in subdirectories of templates_dir 
+
 ## [0.8.0] - 2018-03-27
 
 ### Added

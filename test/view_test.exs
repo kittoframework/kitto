@@ -33,5 +33,9 @@ defmodule Kitto.ViewTest do
       refute Kitto.View.exists?("../../../mix.exs\0")
       refute Kitto.View.exists?("/etc/passwd\0")
     end
+
+    test "when the template is in a subdirectory of dashboards, returns true" do
+      assert Kitto.View.exists?("folder/sample")
+    end
   end
 end

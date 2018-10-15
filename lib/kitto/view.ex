@@ -49,6 +49,6 @@ defmodule Kitto.View do
   defp templates_path, do: Path.join Kitto.root, @templates_dir
 
   defp invalid_path?([h|_]) when h in [".", "..", ""], do: true
-  defp invalid_path?([h|t]), do: String.contains?(h, ["/", "\\", ":", "\0"]) or invalid_path?(t)
+  defp invalid_path?([h|t]), do: String.contains?(h, ["\\", ":", "\0"]) or invalid_path?(t)
   defp invalid_path?([]), do: false
 end
