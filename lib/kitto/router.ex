@@ -43,7 +43,9 @@ defmodule Kitto.Router do
     path = Enum.join(id, "/")
 
     if View.exists?(path) do
-      conn |> render(path)
+      conn
+      |> put_resp_header("content-type", "text/html")
+      |> render(path)
     else
       render_error(conn, 404, "Dashboard does not exist")
     end
