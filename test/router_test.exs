@@ -22,7 +22,7 @@ defmodule Kitto.RouterTest do
     assert conn.status == 404
     assert conn.resp_body == "<div class=\"error\">404 - Not Found</div>\n"
   end
-  
+
   test "GET with unrecognized request path in nested folder responds with 404 Not Found" do
     conn = conn(:get, "/dashboards/folder/nope")
 
@@ -83,7 +83,7 @@ defmodule Kitto.RouterTest do
 
   test "GET with request path in nested folder responds with 200 when the template exists" do
     conn = conn(:get, "/dashboards/folder/sample")
-    
+
     conn = Kitto.Router.call(conn, @opts)
 
     assert conn.state == :sent
@@ -148,6 +148,7 @@ defmodule Kitto.RouterTest do
 
       assert conn.state == :sent
       assert conn.status == 200
+      assert List.keyfind(conn.resp_headers, "content-type", 0) == {"content-type", "text/html"}
       assert conn.resp_body == view
     end
   end
