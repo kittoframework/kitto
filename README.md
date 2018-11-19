@@ -147,6 +147,15 @@ job :kitto_last_commit,
     command: "curl https://api.github.com/repos/kittoframework/kitto/commits\?page\=1\&per_page\=1"
 ```
 
+You can set a job to start at a later time using the `first_at` option:
+
+```elixir
+# Delay the first run by 2 minutes
+job :random, every: :second, first_at: {2, :minutes} do
+  broadcast! :random, %{value: :rand.uniform * 100 |> Float.round}
+end
+```
+
 ## Widgets
 
 Widgets live in `widgets/` are compiled using
