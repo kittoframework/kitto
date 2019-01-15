@@ -4,11 +4,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.9.1] - 2019-01-15
+
+### Changed
+
+* Bumped version of webpack-dev-server to 3.1.11 and added webpack-cli@3.2.1
+
 ## [0.9.0] - 2018-10-15
 
 ### Added
 
-* Rendering support for templates in subdirectories of templates_dir 
+* Rendering support for templates in subdirectories of templates_dir
 
 ## [0.8.0] - 2018-03-27
 
