@@ -111,7 +111,7 @@ defmodule Mix.Tasks.Kitto.New do
 
   def run(argv) do
     {opts, argv} =
-      case OptionParser.parse(argv, switches: [edge: :boolean, dev: :string, app: :string]) do
+      case OptionParser.parse(argv, strict: [edge: :boolean, dev: :string, app: :string]) do
         {opts, argv, []} ->
           {opts, argv}
         {_opts, _argv, [switch | _]} ->
