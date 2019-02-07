@@ -6,7 +6,6 @@
 [![Package Version](https://img.shields.io/hexpm/v/kitto.svg)](https://hex.pm/packages/kitto)
 [![Coverage](https://coveralls.io/repos/github/kittoframework/kitto/badge.svg?branch=master)](https://coveralls.io/github/kittoframework/kitto)
 [![Inline docs](http://inch-ci.org/github/kittoframework/kitto.svg)](http://inch-ci.org/github/kittoframework/kitto)
-[![Deps Status](https://beta.hexfaktor.org/badge/all/github/kittoframework/kitto.svg)](https://beta.hexfaktor.org/github/kittoframework/kitto)
 [![Chat on Gitter](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/kittoframework/Lobby)
 
 Kitto is a framework to help you create dashboards, written in [Elixir][elixir] / [React][react].
