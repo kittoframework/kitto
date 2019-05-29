@@ -30,13 +30,15 @@ defmodule Kitto.Mixfile do
 
   def application do
     [mod: {Kitto, []},
+     extra_applications: [:plug],
      applications: [:logger]]
   end
 
   defp deps do
     [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 1.3.2"},
-     {:poison, "~> 3.0"},
+     {:plug, "~> 1.8"},
+     {:plug_cowboy, "~> 1.0"},
+     {:poison, "~> 4.0"},
      {:fs, "~> 2.12.0"},
      {:httpoison, "~> 0.11.1"},
      {:ex_doc, "~> 0.14", only: :dev},
@@ -44,7 +46,7 @@ defmodule Kitto.Mixfile do
      {:credo, "~> 0.9", only: [:dev, :test]},
      {:mock, "~> 0.2", only: :test},
      {:excoveralls, "~> 0.5", only: :test},
-     {:inch_ex, "~> 0.5", only: :docs}]
+     {:inch_ex, "~> 2.0", only: :docs}]
   end
 
   defp description, do: "Framework for creating interactive dashboards"
