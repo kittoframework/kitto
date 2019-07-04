@@ -17,7 +17,7 @@ Kitto is a framework to help you create dashboards, written in [Elixir][elixir] 
 + [Sample Dashboard](https://kitto.io/dashboards/sample)
 + [Elixir Dashboard](https://kitto.io/dashboards/elixir)
 + [Jobs Dashboard](https://kitto.io/dashboards/jobs)
-+ [1080 Dashboard](https://kitto.io/dashboards/sample1080) (optimized for 1080 screens)
++ [1080 Dashboard](https://kitto.io/dashboards/sample1080) (optimized for 1080 screens) ([source][source-1080])
 
 The source for the demo dashboards can be found at: [kittoframework/demo](https://github.com/kittoframework/demo).
 
@@ -293,3 +293,4 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [wiki.docker]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Docker
 [wiki.heroku]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku
 [wiki.systemd]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-systemd-Unit
+[source-1080]: https://github.com/kittoframework/demo/blob/master/dashboards/sample1080.html.eex
