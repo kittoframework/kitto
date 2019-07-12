@@ -276,6 +276,8 @@ The [road to Erlang / Elixir](https://www.google.gr/maps/place/Erlanger+Rd,+Lond
 Copyright (c) 2017 Dimitris Zorbas, MIT License.
 See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.txt) for further details.
 
+Logo by Vangelis Tzortzis ([github][srekoble-github] / [site][srekoble-site]).
+
 [elixir]: http://elixir-lang.org
 [react]: https://facebook.github.io/react/
 [webpack]: https://webpack.github.io/
@@ -294,3 +296,5 @@ See [LICENSE.txt](https://github.com/kittoframework/kitto/blob/master/LICENSE.tx
 [wiki.heroku]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-Heroku
 [wiki.systemd]: https://github.com/kittoframework/kitto/wiki/%5BDeployment%5D-systemd-Unit
 [source-1080]: https://github.com/kittoframework/demo/blob/master/dashboards/sample1080.html.eex
+[srekoble-github]: https://github.com/srekoble
+[srekoble-site]: https://vangeltzo.com/
