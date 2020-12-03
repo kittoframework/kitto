@@ -2,8 +2,8 @@ defmodule Mix.Tasks.Kitto.Server do
   use Mix.Task
   require Logger
 
-  @watchers webpack: [bin: "./node_modules/.bin/webpack-dev-server",
-                      opts: ["--stdin", "--progress"]]
+  @watchers webpack: [bin: "./node_modules/.bin/webpack",
+                      opts: ["serve", "--stdin", "--progress"]]
 
   @shortdoc "Starts applications and their servers"
 
