@@ -52,8 +52,8 @@ mix archive.install https://github.com/kittoframework/archives/raw/master/kitto_
 
 ### Assets
 
-* `Node`: 4.3.1
-* `npm`: 1.4
+* `Node`: 14.15.1
+* `npm`: 6.14.9
 
 It may inadvertently work in versions other than the above, but it won't have been
 thoroughly tested (see [.travis.yml][.travis.yml] for the defined build matrix).
