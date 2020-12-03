@@ -203,6 +203,7 @@ h3 {
   right: 5px;
   top: 5px;
   opacity: 0;
+  z-index: 10;
   transition: opacity 0.5s ease-out;
 
   &.active {
