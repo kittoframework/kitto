@@ -21,8 +21,11 @@ const common = {
     widgets: PATHS.widgets
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', 'css', 'scss'],
-    modulesDirectories: ['node_modules', PATHS.gridster],
+    extensions: ['.js', '.jsx', 'css', 'scss'],
+    modules: [
+      'node_modules',
+      PATHS.gridster
+    ],
     alias: {
       d3: PATHS.d3
     }
@@ -33,29 +36,62 @@ const common = {
     filename: '[name].js'
   },
   module: {
-    loaders: [
-      { test: /\.css$/, loaders: ['style', 'css'] },
-      { test: /\.scss$/, loaders: ['style', 'css', 'sass'] },
-      { test: /\.jsx?$/, loaders: ['babel?cacheDirectory'] },
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
+      },
+      {
+        test: /\.jsx?$/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true
+            }
+          }
+        ]
+      },
       {
         test: /\.(svg|png|jpe?g|gif)(\?\S*)?$/,
-        loader: 'url?limit=1000&name=images/[name].[ext]'
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'images/[name].[ext]'
+            }
+          }
+        ]
       },
       {
         test: /\.(eot|woff|woff2|ttf)(\?\S*)?$/,
-        loader: 'url?limit=1000&name=fonts/[name].[ext]'
+        loader: 'file-loader',
+        options: {
+          outputPath: 'fonts'
+        }
       },
       {
         test: require.resolve('jquery-knob'),
-        loader: "imports?require=>false,define=>false,this=>window"
+        use: 'imports-loader?require=>false,define=>false,this=>window'
       },
       {
         test: PATHS.d3,
-        loader: "script"
+        use: ['script-loader']
       },
       {
         test: require.resolve('rickshaw'),
-        loader: "script"
+        use: ['script-loader']
       }
     ]
   }
@@ -72,6 +108,7 @@ if (TARGET === 'start' || !TARGET) {
       hot: true,
       inline: true,
       progress: true,
+      publicPath: '/assets/',
 
       // display only errors to reduce the amount of output
       stats: 'errors-only',
@@ -101,10 +138,12 @@ if (TARGET === 'build') {
         }
       }),
       new CompressionPlugin({
-        asset: '[path].gz[query]',
+        filename: '[path].gz[query]',
         algorithm: 'gzip',
         test: /\.js$|\.html$/,
-        verbose: true
+        compressionOptions: {
+          verbose: true
+        }
       })
     ]
   });
