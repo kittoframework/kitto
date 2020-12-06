@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.9.2] - 2020-12-06
+
+### Changed
+
+* Updated project to work with more recent version of nodejs (14.15.1) and Webpack
+
 ## [0.9.1] - 2019-01-15
 
 ### Changed
